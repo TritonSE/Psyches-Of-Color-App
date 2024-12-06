@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "TSE Psyches of Color Mobile Application backend",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "nodemon src/server.ts",
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongodb": "^6.11.0",
+    "mongoose": "^8.8.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "concurrently": "^9.1.0",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.7",
+    "npm": "^10.9.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
