@@ -1,0 +1,28 @@
+name: Lint and style checks
+
+on:
+  pull_request:
+    branches:
+      main
+
+jobs:
+  backend:
+    name: Backend lint and style check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+    - working-directory: backend # Change this to the name of your backend directory
+      run: |
+        npm ci
+        npm run lint-check
+  frontend:
+    name: Frontend lint and style check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+    - working-directory: frontend # Change this to the name of your frontend directory
+      run: |
+        npm ci
+        npm run lint-check
