@@ -45,7 +45,11 @@ This section describes various CLI commands to run parts of the project, such as
 
 ### Frontend
 
-TODO
+1. `cd frontend` to enter the frontend directory
+2. `npm install` to install any dependencies 
+3. `npm run start` to run the frontend.
+
+Upon running the frontend, you should see a screen with a QR code and a few keyboard options below. You can scan the QR code on your phone to see the app there, or use keyboard options to open Android, iOS, the debugger, etc. You can also run the project on iOS or Android using `npm run ios` or `npm run android`.
 
 ### Linting
 
