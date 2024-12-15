@@ -60,4 +60,4 @@ This project has ESLint and Prettier set up to run linting and code formatting, 
 
 ### Testing
 
-TODO
+TODO: Add unit tests, Github actions to run those tests
