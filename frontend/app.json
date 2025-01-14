@@ -15,14 +15,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "psychesofcolorapp"
+      "bundleIdentifier": "psychesofcolorapp",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.tse_psyches.frontend"
+      "package": "com.tse_psyches.frontend",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -32,6 +34,18 @@
         "projectId": "0a3eda46-e6da-4fae-81c8-88c7f060ceb9"
       }
     },
-    "plugins": ["expo-build-properties", "expo-router"]
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "expo-router",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
+    ]
   }
 }

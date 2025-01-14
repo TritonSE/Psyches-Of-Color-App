@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "795345347789",
+    "project_id": "tse-psyches-of-color",
+    "storage_bucket": "tse-psyches-of-color.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795345347789:android:2258dfc12a70ded70b3584",
+        "android_client_info": {
+          "package_name": "com.tse_psyches.frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795345347789-5l2nmavccplipkl9jj3tgfnsk5u0u690.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tse_psyches.frontend",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2tU42Jv2ShHvmll9yJz4gZlgSPgfID8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "795345347789-moav40me1bb8366oghv3dl7o3nsf4bn9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "psychesofcolorapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
