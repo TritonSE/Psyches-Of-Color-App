@@ -1,15 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
+import { UserContextProvider } from "@/contexts/userContext";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>New Home</Text>
-      <StatusBar />
-    </View>
+    <UserContextProvider>
+      <View style={styles.container}>
+        <Text style={styles.text}>New Home</Text>
+        <StatusBar />
+      </View>
+    </UserContextProvider>
   );
 }
 
