@@ -2,23 +2,12 @@ import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "reac
 
 import Button from "../components/Button";
 
-export default function App() {
+export default function Loading() {
   return (
     <View style={styles.container}>
-      <View style={styles.topSection}>
-        <Image source={require("../assets/logo.png")} style={styles.logo} />
-        <Text style={styles.title}>Psyches of Color</Text>
-        <Text style={styles.text}>slogan goes here</Text>
-      </View>
-      <View style={styles.bottomSection}>
-        <Button title="Login" targetScreen="login" />
-        <Button
-          title="Sign Up"
-          onPress={() => {
-            alert("Button Pressed");
-          }}
-        />
-      </View>
+      <Image source={require("../assets/logo.png")} style={styles.logo} />
+      <Text style={styles.title}>Psyches of Color</Text>
+      <Text style={styles.text}>slogan/mindful tip goes here</Text>
       <StatusBar />
     </View>
   );
@@ -28,17 +17,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // alignItems: "center",
-    // justifyContent: "center",
-    justifyContent: "space-between",
-  },
-  topSection: {
-    marginTop: 200,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomSection: {
-    marginBottom: 25,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -54,6 +32,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 25.5,
+    marginBottom: 16,
   },
   title: {
     color: "#000000",

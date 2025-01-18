@@ -1,24 +1,31 @@
+import React, { useState } from "react";
 import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Button from "../components/Button";
 
-export default function App() {
+import InputBox from "@/components/InputBox";
+
+export default function Logon() {
+  const [text, setText] = useState("");
+
   return (
     <View style={styles.container}>
-      <View style={styles.topSection}>
-        <Image source={require("../assets/logo.png")} style={styles.logo} />
-        <Text style={styles.title}>Psyches of Color</Text>
-        <Text style={styles.text}>slogan goes here</Text>
-      </View>
-      <View style={styles.bottomSection}>
-        <Button title="Login" targetScreen="login" />
-        <Button
-          title="Sign Up"
-          onPress={() => {
-            alert("Button Pressed");
-          }}
-        />
-      </View>
+      <Image source={require("../assets/logo.png")} style={styles.logo} />
+      <Text style={styles.title}>Psyches of Color</Text>
+      <InputBox placeholder="Enter text here" field="Email" value={text} onChangeText={setText} />
+      <InputBox
+        placeholder="Enter text here"
+        field="Password"
+        value={text}
+        onChangeText={setText}
+      />
+      <Button title="Login" targetScreen="loading" />
+      <Button
+        title="Continue with Google"
+        onPress={() => {
+          alert("Button Pressed");
+        }}
+      />
       <StatusBar />
     </View>
   );
@@ -28,9 +35,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // alignItems: "center",
-    // justifyContent: "center",
-    justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "center",
+    // justifyContent: "space-between",
   },
   topSection: {
     marginTop: 200,
