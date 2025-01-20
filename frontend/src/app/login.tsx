@@ -1,31 +1,23 @@
-import React, { useState } from "react";
-import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+// eslint-disable-next-line import/namespace
+import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import Button from "../components/Button";
-
+import logo from "../assets/logo.png";
 import InputBox from "@/components/InputBox";
 
 export default function Logon() {
-  const [text, setText] = useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
+      <Image source={logo} style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
-      <InputBox placeholder="Enter text here" field="Email" value={text} onChangeText={setText} />
-      <InputBox
-        placeholder="Enter text here"
-        field="Password"
-        value={text}
-        onChangeText={setText}
-      />
+      <InputBox field="Email" value={email} onChangeText={setEmail} />
+      <InputBox field="Password" value={password} onChangeText={setPassword} />
       <Button title="Login" targetScreen="loading" />
-      <Button
-        title="Continue with Google"
-        onPress={() => {
-          alert("Button Pressed");
-        }}
-      />
+      <Button title="Continue with Google" targetScreen="google" />
       <StatusBar />
     </View>
   );

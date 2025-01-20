@@ -1,7 +1,13 @@
 import React from "react";
+// eslint-disable-next-line import/namespace
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
-const InputBox = ({ field, value, onChangeText }) => {
+interface InputBoxProps {
+  field: string;
+  value: string;
+  onChangeText: (text: string) => void;
+}
+const InputBox: React.FC<InputBoxProps> = ({ field, value, onChangeText }) => {
   return (
     <View>
       <Text style={styles.text}>{field}</Text>

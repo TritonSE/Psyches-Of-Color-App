@@ -1,15 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
+// eslint-disable-next-line import/namespace
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
-const Button = ({ title, targetScreen }) => {
+interface ButtonProps {
+  title: string;
+  targetScreen: string;
+}
+const Button: React.FC<ButtonProps> = ({ title, targetScreen }) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
     if (targetScreen) {
       navigation.navigate(targetScreen);
-    } else {
-      alert("Page not created");
     }
   };
 

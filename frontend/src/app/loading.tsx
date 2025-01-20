@@ -1,11 +1,12 @@
-import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+// eslint-disable-next-line import/namespace
+import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import Button from "../components/Button";
+import logo from "../assets/logo.png";
 
 export default function Loading() {
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
+      <Image source={logo} style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
       <Text style={styles.text}>slogan/mindful tip goes here</Text>
       <StatusBar />

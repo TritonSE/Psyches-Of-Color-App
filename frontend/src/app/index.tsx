@@ -1,23 +1,20 @@
-import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+// eslint-disable-next-line import/namespace
+import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 
+import logo from "../assets/logo.png";
 import Button from "../components/Button";
 
 export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
-        <Image source={require("../assets/logo.png")} style={styles.logo} />
+        <Image source={logo} style={styles.logo} />
         <Text style={styles.title}>Psyches of Color</Text>
         <Text style={styles.text}>slogan goes here</Text>
       </View>
       <View style={styles.bottomSection}>
         <Button title="Login" targetScreen="login" />
-        <Button
-          title="Sign Up"
-          onPress={() => {
-            alert("Button Pressed");
-          }}
-        />
+        <Button title="Sign Up" targetScreen="signup" />
       </View>
       <StatusBar />
     </View>
