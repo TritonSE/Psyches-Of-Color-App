@@ -3,6 +3,8 @@ import { Tabs } from "expo-router";
 import { Platform } from "react-native";
 
 import HomeIcon from "../../assets/home-icon.svg";
+import ResourcesIcon from "../../assets/resources-icon.svg";
+import SimpleIcon from "../../assets/simple-icon.svg";
 
 export default function TabLayout() {
   return (
@@ -29,7 +31,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           // tabBarIcon: ({ color }) => <FontAwesome size={24} name="home" color={color} />,
-          tabBarIcon: () => <HomeIcon />,
+          tabBarIcon: () => <HomeIcon fill={"black"} height={24} width={24} />,
         }}
       />
 
@@ -41,14 +43,16 @@ export default function TabLayout() {
         name="resources"
         options={{
           title: "Resources",
-          tabBarIcon: ({ color }) => <FontAwesome size={24} name="book" color={color} />,
+          // tabBarIcon: ({ color }) => <FontAwesome size={24} name="book" color={color} />,
+          tabBarIcon: () => <ResourcesIcon />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => <FontAwesome size={24} name="user" color={color} />,
+          // tabBarIcon: ({ color }) => <FontAwesome size={24} name="user" color={color} />,
+          tabBarIcon: () => <SimpleIcon />,
         }}
       />
     </Tabs>
