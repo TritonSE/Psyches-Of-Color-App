@@ -1,6 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { Platform } from "react-native";
+
 import HomeIcon from "../../assets/home-icon.svg";
 
 export default function TabLayout() {
