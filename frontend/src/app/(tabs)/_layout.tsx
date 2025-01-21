@@ -1,27 +1,17 @@
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import HomeIcon from "../../assets/home-icon.svg";
+import ProfileIcon from "../../assets/profile-icon.svg";
 import ResourcesIcon from "../../assets/resources-icon.svg";
-import SimpleIcon from "../../assets/simple-icon.svg";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // Hides the header on all tabs
-        // tabBarActiveTintColor: "none", // Active tab icon color
-        // tabBarActiveBackgroundColor
+        headerShown: false,
         tabBarShowLabel: false, // Hides the tab labels
-        tabBarStyle: {
-          paddingBottom: Platform.OS === "ios" ? 20 : 10, // Adjusts padding based on platform
-          backgroundColor: "#fff",
-          // borderRadius: 30,
-          borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
-          borderTopRightRadius: 30,
-          overflow: "hidden",
-          position: "absolute",
-        },
+        tabBarStyle: styles.tabBar,
       }}
     >
       {/* Home Tab */}
@@ -29,31 +19,67 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          // tabBarIcon: ({ color }) => <FontAwesome size={24} name="home" color={color} />,
-          tabBarIcon: () => <HomeIcon fill={"black"} height={24} width={24} />,
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <HomeIcon width={24} height={24} />
+              {focused && <View style={styles.underline} />}
+            </View>
+          ),
         }}
       />
 
       {/* Resources Tab */}
-
-      {/* Profile Tab */}
-
       <Tabs.Screen
         name="resources"
         options={{
           title: "Resources",
-          // tabBarIcon: ({ color }) => <FontAwesome size={24} name="book" color={color} />,
-          tabBarIcon: () => <ResourcesIcon />,
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <ResourcesIcon width={24} height={24} />
+              {focused && <View style={styles.underline} />}
+            </View>
+          ),
         }}
       />
+
+      {/* Profile Tab */}
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          // tabBarIcon: ({ color }) => <FontAwesome size={24} name="user" color={color} />,
-          tabBarIcon: () => <SimpleIcon />,
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <ProfileIcon width={24} height={24} />
+              {focused && <View style={styles.underline} />}
+            </View>
+          ),
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    paddingTop: 10,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
+    borderTopRightRadius: 30,
+    overflow: "hidden",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+  },
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  underline: {
+    marginTop: 4,
+    height: 2,
+    width: 24,
+    backgroundColor: "#000",
+    borderRadius: 1,
+  },
+});
