@@ -9,10 +9,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Tab() {
+export default function resources() {
   return (
     <View style={styles.container}>
-      <Text>Tab [Home|Heart|Profile]</Text>
+      <Text>Tab [Home|Resources|Profile]</Text>
     </View>
   );
 }

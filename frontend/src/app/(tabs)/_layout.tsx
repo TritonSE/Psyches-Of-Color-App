@@ -5,16 +5,16 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
-          title: "home",
+          title: "index",
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="heart"
+        name="resources"
         options={{
-          title: "heart",
+          title: "resources",
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
         }}
       />
