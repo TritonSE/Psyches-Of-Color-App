@@ -11,6 +11,11 @@ export default function TabLayout() {
         tabBarStyle: {
           paddingBottom: Platform.OS === "ios" ? 20 : 10, // Adjusts padding based on platform
           backgroundColor: "#fff", // Tab bar background color
+          // borderRadius: 30,
+          borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
+          borderTopRightRadius: 30,
+          overflow: "hidden",
+          position: "absolute",
         },
         tabBarLabelStyle: {
           fontSize: 14, // Label font size
