@@ -7,18 +7,17 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false, // Hides the header on all tabs
-        tabBarActiveTintColor: "blue", // Active tab icon color
+        // tabBarActiveTintColor: "none", // Active tab icon color
+        // tabBarActiveBackgroundColor
+        tabBarShowLabel: false, // Hides the tab labels
         tabBarStyle: {
           paddingBottom: Platform.OS === "ios" ? 20 : 10, // Adjusts padding based on platform
-          backgroundColor: "#fff", // Tab bar background color
+          backgroundColor: "#fff",
           // borderRadius: 30,
           borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
           borderTopRightRadius: 30,
           overflow: "hidden",
           position: "absolute",
-        },
-        tabBarLabelStyle: {
-          fontSize: 14, // Label font size
         },
       }}
     >
