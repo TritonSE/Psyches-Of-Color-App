@@ -1,24 +1,13 @@
-import { NextFunction, Request, Response } from "express";
-import { AuthError } from "src/errors/auth";
-import UserModel from "src/models/user";
-import { decodeAuthToken } from "src/services/auth";
+import { Request, Response, NextFunction } from "express";
 
-/**
- * Define this custom type for a request to include the "userUid"
- * property, which middleware will set and validate
- */
-export type PsycheRequest = {
-  userUid?: string;
-} & Request;
+import { decodeAuthToken } from "../services/auth";
 
-/**
- * A middleware that requires the user to be signed in and have a valid Firebase token
- * in the "Authorization" header
- */
-const requireSignedIn = async (req: PsycheRequest, res: Response, next: NextFunction) => {
+import { AuthError } from "../errors/auth";
+
+const verifyAuthToken = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
-  // Token shoud be "Bearer: <token>"
-  const token = authHeader?.split("Bearer ")[1];
+  const token =
+    authHeader && authHeader.split(" ")[0] === "Bearer" ? authHeader.split(" ")[1] : null;
   if (!token) {
     return res
       .status(AuthError.TOKEN_NOT_IN_HEADER.status)
@@ -35,18 +24,44 @@ const requireSignedIn = async (req: PsycheRequest, res: Response, next: NextFunc
   }
 
   if (userInfo) {
-    req.userUid = userInfo.uid;
-    const user = await UserModel.findOne({ uid: userInfo.uid });
-    if (!user) {
-      return res
-        .status(AuthError.USER_NOT_FOUND.status)
-        .send(AuthError.USER_NOT_FOUND.displayMessage(true));
-    }
-    next();
-    return;
+    req.body.uid = userInfo.uid;
+    return next();
   }
 
   return res.status(AuthError.INVALID_AUTH_TOKEN.status).send(AuthError.INVALID_AUTH_TOKEN.message);
 };
 
-export { requireSignedIn };
+export { verifyAuthToken };
+
+// import { NextFunction, Request, Response } from "express";
+
+// import UserModel from "../models/user";
+
+// export type PsycheRequest = {
+//   userUid?: string;
+// } & Request;
+
+// const requireSignedIn = async (req: PsycheRequest, res: Response, next: NextFunction) => {
+//   const authHeader = req.headers.authorization;
+//   // Token shoud be "Bearer: <token>"
+//   const token = authHeader?.split("Bearer ")[1];
+//   if(!token){
+//     return res.status(401).send({error: "Authorization token is required"});
+//   }
+
+//   try{
+//     const userInfo = await decodeAuthToken(token);
+//     req.userUid = userInfo.uid;
+//     const user = await UserModel.findOne({uid: userInfo.uid});
+//     if(!user){
+//       return res.status(404).send({error: "User does not exist"});
+//     }
+//     next();
+//   }
+//   catch(error){
+//     return res.status(401).send({error: "Invalid token"});
+//   }
+
+// };
+
+// export { requireSignedIn };

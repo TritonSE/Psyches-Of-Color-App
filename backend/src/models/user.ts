@@ -1,9 +1,24 @@
-import { ObjectId } from "mongodb";
-import { InferSchemaType, Schema, model } from "mongoose";
+import { Schema } from "mongoose";
+
+import mongoose from "mongoose";
 
 /**
  * A model for a user of our application.
  */
+
+interface UserInterface {
+  uid: string;
+}
+
+interface UserDoc extends mongoose.Document {
+  uid: string;
+}
+
+interface UserModelInterface extends mongoose.Model<UserDoc> {
+  // eslint-disable-next-line no-unused-vars
+  build(attr: UserInterface): UserDoc;
+}
+
 const userSchema = new Schema({
   name: {
     type: String,
@@ -14,7 +29,8 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  // The user's Firebase UID (used to relate the MongoDB user to the Firebas user)
+
+  // The user's Firebase UID (used to relate the MongoDB user to the Firebase user)
   uid: {
     type: String,
     required: true,
@@ -30,6 +46,6 @@ export interface DisplayUser {
 }
   */
 
-type User = InferSchemaType<typeof userSchema>;
+const User = mongoose.model<UserDoc, UserModelInterface>("User", userSchema);
 
-export default model<User>("User", userSchema);
+export { User, userSchema };

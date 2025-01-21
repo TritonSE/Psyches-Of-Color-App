@@ -1,9 +1,42 @@
-import express from "express";
-import * as UserController from "src/controllers/user";
-import { requireAdmin, requireSignedIn, requireStaffOrAdmin } from "src/middleware/auth";
+import express, { NextFunction, Request, Response } from "express";
+
+import { verifyAuthToken } from "../middleware/auth";
+
+
+import { ServiceError } from "../errors/service";
+import { User } from "../models/user";
+
 
 const router = express.Router();
 
-router.get("/whoami", requireSignedIn, UserController.getWhoAmI);
+router.get(
+  "/api/whoami",
+  [verifyAuthToken],
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const uid = req.body.uid;
+      const user = await User.findOne({ uid: uid });
+      if (!user) {
+        throw ServiceError.USER_NOT_FOUND;
+      }
+      const { _id: mongoId} = user;
+      res.status(200).send({
+        message: "Current user information",
+        user: {
+          mongoId,
+          uid,
+        },
+      });
+      return;
+    } catch (e) {
+      next();
+      console.log(e);
+      return res.status(400).json({
+        error: e,
+      });
+    }
+  },
+);
 
-export default router;
+export { router as userRouter };
+
