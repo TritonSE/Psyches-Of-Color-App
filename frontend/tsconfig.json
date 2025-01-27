@@ -3,5 +3,11 @@
   "compilerOptions": {
     "strict": true
   },
-  "include": ["src"]
+  "include": [
+    "svg.d.ts",
+    "declarations.d.ts",
+    "src/**/*",
+    "src/app/(tabs)/**/*",
+    "App.tsx" // Added to include root-level App.tsx
+  ]
 }

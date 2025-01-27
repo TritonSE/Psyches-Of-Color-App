@@ -3,14 +3,14 @@ import { StyleSheet, Text, View } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e", // Dark background color
-    alignItems: "center", // Horizontally centers the content
-    justifyContent: "center", // Vertically centers the content
+    backgroundColor: "green",
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
-    color: "#ffffff", // White text color
-    fontSize: 24, // Text size
-    fontWeight: "bold", // Bold text
+    color: "#ffffff",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
 

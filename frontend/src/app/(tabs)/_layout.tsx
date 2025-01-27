@@ -1,20 +1,42 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { StyleSheet, View } from "react-native";
+
+import HomeIcon from "../../assets/home-icon.svg";
+import ProfileIcon from "../../assets/profile-icon.svg";
+import ResourcesIcon from "../../assets/resources-icon.svg";
+
+const styles = StyleSheet.create({
+  tabBar: {
+    paddingTop: 10,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
+    borderTopRightRadius: 30,
+    overflow: "hidden",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+  },
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  underline: {
+    marginTop: 4,
+    height: 2,
+    width: 24,
+    backgroundColor: "#000",
+    borderRadius: 1,
+  },
+});
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // Hides the header on all tabs
-        tabBarActiveTintColor: "blue", // Active tab icon color
-        tabBarStyle: {
-          paddingBottom: Platform.OS === "ios" ? 20 : 10, // Adjusts padding based on platform
-          backgroundColor: "#fff", // Tab bar background color
-        },
-        tabBarLabelStyle: {
-          fontSize: 14, // Label font size
-        },
+        headerShown: false,
+        tabBarShowLabel: false, // Hides the tab labels
+        tabBarStyle: styles.tabBar,
       }}
     >
       {/* Home Tab */}
@@ -22,26 +44,40 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <FontAwesome size={24} name="home" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <HomeIcon width={24} height={24} />
+              {focused && <View style={styles.underline} />}
+            </View>
+          ),
         }}
       />
 
       {/* Resources Tab */}
-
-      {/* Profile Tab */}
-
       <Tabs.Screen
         name="resources"
         options={{
           title: "Resources",
-          tabBarIcon: ({ color }) => <FontAwesome size={24} name="book" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <ResourcesIcon width={24} height={24} />
+              {focused && <View style={styles.underline} />}
+            </View>
+          ),
         }}
       />
+
+      {/* Profile Tab */}
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => <FontAwesome size={24} name="user" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <ProfileIcon width={24} height={24} />
+              {focused && <View style={styles.underline} />}
+            </View>
+          ),
         }}
       />
     </Tabs>
