@@ -3,6 +3,11 @@ import { NextFunction, Request, Response } from "express";
 import { AuthError } from "../errors/auth";
 import { decodeAuthToken } from "../services/auth";
 
+export interface PsycheRequest extends Request {
+  userUid?: string;
+}
+
+
 const verifyAuthToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
   const token =

@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 
 import { PsycheRequest } from "../middleware/auth";
-import UserModel from "../models/user";
+import { User } from "../models/user";
 
 /**
  * Retrieves data about the current user (their MongoDB ID, Firebase UID, and role).
@@ -10,7 +10,7 @@ import UserModel from "../models/user";
 export const getWhoAmI: RequestHandler = async (req: PsycheRequest, res, next) => {
   try {
     const { userUid } = req;
-    const user = await UserModel.findOne({ uid: userUid });
+    const user = await User.findOne({ uid: userUid });
     const { _id, uid } = user!;
     res.status(200).send({
       _id,
