@@ -1,28 +1,47 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false, // Hides the header on all tabs
+        tabBarActiveTintColor: "blue", // Active tab icon color
+        tabBarStyle: {
+          paddingBottom: Platform.OS === "ios" ? 20 : 10, // Adjusts padding based on platform
+          backgroundColor: "#fff", // Tab bar background color
+        },
+        tabBarLabelStyle: {
+          fontSize: 14, // Label font size
+        },
+      }}
+    >
+      {/* Home Tab */}
       <Tabs.Screen
         name="index"
         options={{
-          title: "index",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+          title: "Home",
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="home" color={color} />,
         }}
       />
+
+      {/* Resources Tab */}
+
+      {/* Profile Tab */}
+
       <Tabs.Screen
         name="resources"
         options={{
-          title: "resources",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          title: "Resources",
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="book" color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "profile",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          title: "Profile",
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="user" color={color} />,
         }}
       />
     </Tabs>

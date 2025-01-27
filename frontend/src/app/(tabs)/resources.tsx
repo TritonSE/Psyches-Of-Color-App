@@ -1,18 +1,23 @@
-// Route to dummy page
 import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#25292e", // Dark background color
+    alignItems: "center", // Horizontally centers the content
+    justifyContent: "center", // Vertically centers the content
+  },
+  text: {
+    color: "#ffffff", // White text color
+    fontSize: 24, // Text size
+    fontWeight: "bold", // Bold text
   },
 });
 
-export default function resources() {
+export default function Resources() {
   return (
     <View style={styles.container}>
-      <Text>Tab [Home|Resources|Profile]</Text>
+      <Text style={styles.text}>Resources</Text>
     </View>
   );
 }
