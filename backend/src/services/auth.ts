@@ -1,5 +1,6 @@
-import { firebaseAuth } from "./firebase";
 import { AuthError } from "../errors/auth";
+
+import { firebaseAuth } from "./firebase";
 
 async function decodeAuthToken(token: string) {
   try {

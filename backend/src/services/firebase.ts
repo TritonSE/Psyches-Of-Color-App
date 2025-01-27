@@ -5,8 +5,8 @@
  * firebase to for authentication.
  */
 
-import * as firebase from "firebase-admin/app"
-import { getAuth } from "firebase-admin/auth"
+import * as firebase from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 
 import { InternalError } from "../errors/internal";
 // import env from "../util/validateEnv";

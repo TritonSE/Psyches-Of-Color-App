@@ -157,3 +157,9 @@ Pods/
 .idea
 .gradle
 local.properties
+
+GoogleService-Info.plist
+**/GoogleService-Info.plist
+
+google-services.json
+**/google-services.json

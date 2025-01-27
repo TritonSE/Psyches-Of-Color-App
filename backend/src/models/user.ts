@@ -1,23 +1,20 @@
-import { Schema } from "mongoose";
-
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 /**
  * A model for a user of our application.
  */
 
-interface UserInterface {
+type UserInterface = {
   uid: string;
-}
+};
 
-interface UserDoc extends mongoose.Document {
+type UserDoc = {
   uid: string;
-}
+} & mongoose.Document;
 
-interface UserModelInterface extends mongoose.Model<UserDoc> {
-  // eslint-disable-next-line no-unused-vars
+type UserModelInterface = {
   build(attr: UserInterface): UserDoc;
-}
+} & mongoose.Model<UserDoc>;
 
 const userSchema = new Schema({
   name: {

@@ -2,7 +2,7 @@
 
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -24,7 +24,6 @@ mongoose
     console.error("[database]: Failed to connect to MongoDB", err.message);
     process.exit(1); // Exit the app on database connection error
   });
-
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");

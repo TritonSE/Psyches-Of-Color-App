@@ -11,7 +11,7 @@ export const getWhoAmI: RequestHandler = async (req: PsycheRequest, res, next) =
   try {
     const { userUid } = req;
     const user = await UserModel.findOne({ uid: userUid });
-    const { _id, uid} = user!;
+    const { _id, uid } = user!;
     res.status(200).send({
       _id,
       uid,

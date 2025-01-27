@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "psychesofcolorapp",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "frontend/ios/frontend.xcworkspace/GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.tse_psyches.frontend",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "frontend/android/app/google-services.json"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
