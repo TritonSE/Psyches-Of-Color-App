@@ -3,10 +3,10 @@ import React from "react";
 // eslint-disable-next-line import/namespace
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
-interface ButtonProps {
+type ButtonProps = {
   title: string;
   targetScreen: string;
-}
+};
 const Button: React.FC<ButtonProps> = ({ title, targetScreen }) => {
   const navigation = useNavigation();
 

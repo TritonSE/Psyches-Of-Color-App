@@ -2,8 +2,9 @@ import React from "react";
 // eslint-disable-next-line import/namespace
 import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 
+import logo from "../assets/Poc_Mascots.png";
 import Button from "../components/Button";
-import logo from "../assets/logo.png";
+
 import InputBox from "@/components/InputBox";
 
 export default function Logon() {
@@ -14,8 +15,17 @@ export default function Logon() {
     <View style={styles.container}>
       <Image source={logo} style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
-      <InputBox field="Email" value={email} onChangeText={setEmail} />
-      <InputBox field="Password" value={password} onChangeText={setPassword} />
+      <InputBox field="Email" placeholder="Enter Email" value={email} onChangeText={setEmail} />
+      <InputBox
+        field="Password"
+        placeholder="Enter Password"
+        value={password}
+        onChangeText={setPassword}
+        isPassword={true}
+        onForgotPassword={() => {
+          console.log("Forgot Password pressed");
+        }}
+      />
       <Button title="Login" targetScreen="loading" />
       <Button title="Continue with Google" targetScreen="google" />
       <StatusBar />
@@ -42,7 +52,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logo: {
-    width: 116,
+    width: 253,
     height: 116,
     marginBottom: 16,
   },

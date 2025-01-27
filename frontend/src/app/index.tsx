@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/namespace
 import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import logo from "../assets/logo.png";
+import logo from "../assets/Poc_Mascots.png";
 import Button from "../components/Button";
 
 export default function App() {
@@ -10,7 +10,7 @@ export default function App() {
       <View style={styles.topSection}>
         <Image source={logo} style={styles.logo} />
         <Text style={styles.title}>Psyches of Color</Text>
-        <Text style={styles.text}>slogan goes here</Text>
+        <Text style={styles.text}>My melanated psyche is my superpower</Text>
       </View>
       <View style={styles.bottomSection}>
         <Button title="Login" targetScreen="login" />
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logo: {
-    width: 116,
+    width: 253,
     height: 116,
     marginBottom: 16,
   },

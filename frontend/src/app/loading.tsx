@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/namespace
 import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import logo from "../assets/logo.png";
+import logo from "../assets/Poc_Mascots.png";
 
 export default function Loading() {
   return (
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logo: {
-    width: 116,
+    width: 253,
     height: 116,
     marginBottom: 16,
   },
