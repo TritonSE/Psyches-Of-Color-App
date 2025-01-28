@@ -9,14 +9,7 @@ import {
   View,
 } from "react-native";
 
-import mediaIcon from "@/assets/Media.png";
-import fireIcon from "@/assets/bi_fire.png";
-import frogImage from "@/assets/frog.png";
-import settingsIcon from "@/assets/settings.png";
-import trophyIcon from "@/assets/trophy.png";
 import ButtonItem from "@/components/profileButton";
-
-// Importing assets
 
 export default function ProfilePage() {
   return (
@@ -25,9 +18,9 @@ export default function ProfilePage() {
         {/* Profile Picture and Settings */}
         <View style={styles.topSection}>
           <TouchableOpacity style={styles.settingsIcon}>
-            <Image source={settingsIcon} style={styles.icon} />
+            <Image source={require("@/assets/settings.png")} style={styles.icon} />
           </TouchableOpacity>
-          <Image source={frogImage} style={styles.profileImage} />
+          <Image source={require("@/assets/frog.png")} style={styles.profileImage} />
         </View>
 
         {/* Gray Box */}
@@ -46,14 +39,14 @@ export default function ProfilePage() {
             <View style={styles.achievementContainer}>
               <View style={styles.achievementCard}>
                 <View style={styles.imageNumberContainer}>
-                  <Image source={trophyIcon} style={styles.achievementIcon} />
+                  <Image source={require("@/assets/trophy.png")} style={styles.achievementIcon} />
                   <Text style={styles.number}>3</Text>
                 </View>
                 <Text style={styles.label}>Activities Completed</Text>
               </View>
               <View style={styles.achievementCard}>
                 <View style={styles.imageNumberContainer}>
-                  <Image source={fireIcon} style={styles.achievementIcon} />
+                  <Image source={require("@/assets/bi_fire.png")} style={styles.achievementIcon} />
                   <Text style={styles.number}>3</Text>
                 </View>
                 <Text style={styles.label}>Days of Streaks</Text>
@@ -64,26 +57,26 @@ export default function ProfilePage() {
           {/* Saved Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Saved</Text>
-            <ButtonItem icon={mediaIcon} title="Resources" isSaved={true} />
+            <ButtonItem icon={require("@/assets/Media.png")} title="Resources" isSaved={true} />
           </View>
 
           {/* Activity History Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Activity History</Text>
             <ButtonItem
-              icon={mediaIcon}
+              icon={require("@/assets/Media.png")}
               title="Understanding SAD"
               subtitle="Seasonal Affective Disorder"
               position="top"
             />
             <ButtonItem
-              icon={mediaIcon}
+              icon={require("@/assets/Media.png")}
               title="Story: What If?"
               subtitle="Anxiety"
               position="middle"
             />
             <ButtonItem
-              icon={mediaIcon}
+              icon={require("@/assets/Media.png")}
               title="Understanding Depression"
               subtitle="Depression"
               position="bottom"
@@ -211,3 +204,4 @@ const styles = StyleSheet.create({
     color: "#484848",
   },
 });
+//profilepage.tsx
