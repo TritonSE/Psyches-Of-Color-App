@@ -1,20 +1,20 @@
-// eslint-disable-next-line import/namespace
-import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import logo from "../assets/Poc_Mascots.png";
 import Button from "../components/Button";
+
+import logo from "@/assets/Poc_Mascots.png";
 
 export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
-        <Image source={logo} style={styles.logo} />
+        <Image source={logo as ImageSourcePropType} style={styles.logo} />
         <Text style={styles.title}>Psyches of Color</Text>
         <Text style={styles.text}>My melanated psyche is my superpower</Text>
       </View>
       <View style={styles.bottomSection}>
-        <Button title="Login" targetScreen="login" />
-        <Button title="Sign Up" targetScreen="signup" />
+        <Button href="/login">Login</Button>
+        <Button href="/signup">Sign Up</Button>
       </View>
       <StatusBar />
     </View>

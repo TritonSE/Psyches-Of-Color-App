@@ -1,11 +1,11 @@
 import React from "react";
-// eslint-disable-next-line import/namespace
-import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import logo from "../assets/Poc_Mascots.png";
 import Button from "../components/Button";
 
 import InputBox from "@/components/InputBox";
+import { signInWithGoogle } from "@/lib/auth";
 
 export default function Logon() {
   const [email, setEmail] = React.useState("");
@@ -13,7 +13,7 @@ export default function Logon() {
 
   return (
     <View style={styles.container}>
-      <Image source={logo} style={styles.logo} />
+      <Image source={logo as ImageSourcePropType} style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
       <InputBox field="Email" placeholder="Enter Email" value={email} onChangeText={setEmail} />
       <InputBox
@@ -26,8 +26,14 @@ export default function Logon() {
           console.log("Forgot Password pressed");
         }}
       />
-      <Button title="Login" targetScreen="loading" />
-      <Button title="Continue with Google" targetScreen="google" />
+      <Button href="/loading">Login</Button>
+      <Button
+        onPress={() => {
+          void signInWithGoogle();
+        }}
+      >
+        Continue with Google
+      </Button>
       <StatusBar />
     </View>
   );

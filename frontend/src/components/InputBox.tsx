@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-// eslint-disable-next-line import/namespace
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type InputBoxProps = {
