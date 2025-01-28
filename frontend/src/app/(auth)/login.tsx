@@ -1,9 +1,8 @@
 import React from "react";
 import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import logo from "../assets/Poc_Mascots.png";
-import Button from "../components/Button";
-
+import logo from "@/assets/Poc_Mascots.png";
+import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { signInWithGoogle } from "@/lib/auth";
 

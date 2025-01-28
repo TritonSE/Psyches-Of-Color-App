@@ -1,18 +1,21 @@
 import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from "react-native";
 
-import logo from "../assets/Poc_Mascots.png";
-
+import logo from "@/assets/Poc_Mascots.png";
 import Button from "@/components/Button";
-import { logout } from "@/lib/auth";
 
-export default function Loading() {
+export default function App() {
   return (
     <View style={styles.container}>
-      <Image source={logo as ImageSourcePropType} style={styles.logo} />
-      <Text style={styles.title}>Psyches of Color</Text>
-      <Text style={styles.text}>slogan/mindful tip goes here</Text>
+      <View style={styles.topSection}>
+        <Image source={logo as ImageSourcePropType} style={styles.logo} />
+        <Text style={styles.title}>Psyches of Color</Text>
+        <Text style={styles.text}>My melanated psyche is my superpower</Text>
+      </View>
+      <View style={styles.bottomSection}>
+        <Button href="/login">Login</Button>
+        <Button href="/signup">Sign Up</Button>
+      </View>
       <StatusBar />
-      <Button onPress={() => void logout()}>Logout</Button>
     </View>
   );
 }
@@ -21,6 +24,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    // alignItems: "center",
+    // justifyContent: "center",
+    justifyContent: "space-between",
+  },
+  topSection: {
+    marginTop: 200,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bottomSection: {
+    marginBottom: 25,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -36,7 +50,6 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 25.5,
-    marginBottom: 16,
   },
   title: {
     color: "#000000",
