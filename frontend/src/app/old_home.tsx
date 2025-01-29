@@ -1,15 +1,18 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { StatusBar, StyleSheet, Text, View } from "react-native";
+
+import { lightModeColors } from "@/constants/colors";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
-    color: "#fff",
+    color: lightModeColors.darkFont,
   },
 });
 

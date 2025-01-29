@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import OrangeMascot from "../../assets/orange-mascot";
 import { Button } from "../components/Button";
+import OrangeMascot from "@/assets/orange-mascot.svg";
 
 const styles = StyleSheet.create({
   pageContainer: {
