@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 
 import HomeIcon from "../../assets/home-icon.svg";
 import ProfileIcon from "../../assets/profile-icon.svg";
