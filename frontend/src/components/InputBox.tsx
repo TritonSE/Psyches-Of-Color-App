@@ -53,7 +53,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           onChangeText={onChangeText}
           secureTextEntry={!isPasswordVisible}
         />
-        {isPassword && (
+        {isPassword ? (
           <TouchableOpacity
             onPress={() => {
               setPasswordVisible(!isPasswordVisible);
@@ -65,6 +65,15 @@ const InputBox: React.FC<InputBoxProps> = ({
               size={20}
               color={lightModeColors.secondaryLightFont}
             />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={() => {
+              onChangeText("");
+            }}
+            style={styles.iconWrapper}
+          >
+            <Ionicons name={"close-outline"} size={20} color={lightModeColors.secondaryLightFont} />
           </TouchableOpacity>
         )}
       </View>

@@ -54,7 +54,7 @@ export default function Login() {
         </Text>
       </Button>
       <Text style={styles.signupText}>
-        {"Don't have an account?"}{" "}
+        {"Don't have an account? "}
         <Link href="/signup" style={styles.signupLink}>
           Sign Up
         </Link>
