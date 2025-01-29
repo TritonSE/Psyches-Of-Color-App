@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React from "react";
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 
@@ -7,7 +8,6 @@ import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 import { signInWithGoogle } from "@/lib/auth";
-import { Link } from "expo-router";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
