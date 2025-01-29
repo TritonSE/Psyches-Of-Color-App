@@ -1,24 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import InternetError from "../pages/internetError";
 
 export default function Home() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home</Text>
-    </View>
-  );
+  return <InternetError />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "green",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    color: "#ffffff",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-});
-// done

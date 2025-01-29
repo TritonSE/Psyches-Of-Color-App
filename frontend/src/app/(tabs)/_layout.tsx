@@ -5,6 +5,31 @@ import HomeIcon from "../../assets/home-icon.svg";
 import ProfileIcon from "../../assets/profile-icon.svg";
 import ResourcesIcon from "../../assets/resources-icon.svg";
 
+const styles = StyleSheet.create({
+  tabBar: {
+    paddingTop: 10,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
+    borderTopRightRadius: 30,
+    overflow: "hidden",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+  },
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  underline: {
+    marginTop: 4,
+    height: 2,
+    width: 24,
+    backgroundColor: "#000",
+    borderRadius: 1,
+  },
+});
+
 export default function TabLayout() {
   return (
     <Tabs
@@ -58,28 +83,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    paddingTop: 10,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 30, // this is in px since react native uses pixels instead of rem
-    borderTopRightRadius: 30,
-    overflow: "hidden",
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
-  },
-  iconContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  underline: {
-    marginTop: 4,
-    height: 2,
-    width: 24,
-    backgroundColor: "#000",
-    borderRadius: 1,
-  },
-});
