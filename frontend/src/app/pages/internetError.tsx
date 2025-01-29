@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
   },
 });
 
+const buttonStyles = StyleSheet.create({
+  buttonStyle: {
+    width: 218,
+  },
+});
+
 export default function InternetError() {
   const [isConnected, setIsConnected] = useState(true);
 
@@ -56,6 +62,7 @@ export default function InternetError() {
         onClick={() => {
           setIsConnected(!isConnected);
         }}
+        additionalStyle={buttonStyles.buttonStyle}
       >
         Try Again
       </Button>
