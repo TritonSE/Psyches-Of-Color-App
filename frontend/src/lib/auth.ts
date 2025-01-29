@@ -6,30 +6,60 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 GoogleSignin.configure({
-  webClientId: "795345347789-5l2nmavccplipkl9jj3tgfnsk5u0u690.apps.googleusercontent.com",
+  webClientId: "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
 });
+
+type AuthResponse =
+  | {
+      success: true;
+      user: FirebaseAuthTypes.User;
+      error?: never;
+    }
+  | {
+      success: false;
+      error: FirebaseError;
+      user?: never;
+    };
+
+type EmailSendResponse =
+  | {
+      success: true;
+      error?: never;
+    }
+  | {
+      success: false;
+      error: FirebaseError;
+    };
+
+type FirebaseError = {
+  field: "email" | "password" | "unknown";
+  message: string;
+};
 
 /**
  * Signs up a user with email and password
  *
  * @param {string} email validated and trimmed user email
  * @param password validated and trimmed password
- * @returns {Promise<FirebaseAuthTypes.User>} authenticated user object,
- *                                            null if an error occurred
+ * @returns {Promise<AuthResponse>}
  */
 export const signUpEmailPassword = async (
   email: string,
   password: string,
-): Promise<FirebaseAuthTypes.User | null> => {
+): Promise<AuthResponse> => {
   try {
     const userCreds = await auth().createUserWithEmailAndPassword(email, password);
 
-    return userCreds.user;
+    return {
+      success: true,
+      user: userCreds.user,
+    };
   } catch (error) {
-    handleFirebaseAuthError(error as FirebaseAuthTypes.NativeFirebaseAuthError);
+    return {
+      success: false,
+      error: parseFirebaseAuthError(error as FirebaseAuthTypes.NativeFirebaseAuthError),
+    };
   }
-
-  return null;
 };
 
 /**
@@ -37,55 +67,81 @@ export const signUpEmailPassword = async (
  *
  * @param {string} email validated and trimmed user email
  * @param {string} password validated and trimmed password
- * @returns {Promise<FirebaseAuthTypes.User>} authenticated user object,
- *                                            null if an error occurred
+ * @returns {Promise<AuthResponse>}
  */
 export const loginEmailPassword = async (
   email: string,
   password: string,
-): Promise<FirebaseAuthTypes.User | null> => {
+): Promise<AuthResponse> => {
   try {
     const userCreds = await auth().signInWithEmailAndPassword(email, password);
 
-    return userCreds.user;
+    return {
+      success: true,
+      user: userCreds.user,
+    };
   } catch (error) {
-    handleFirebaseAuthError(error as FirebaseAuthTypes.NativeFirebaseAuthError);
+    return {
+      success: false,
+      error: parseFirebaseAuthError(error as FirebaseAuthTypes.NativeFirebaseAuthError),
+    };
   }
-
-  return null;
 };
 
 /**
  * Signs in a user with Google, to be triggered on button press
  *
- * @returns {Promise<FirebaseAuthTypes.User>} authenticated user object,
- *                                            null if an error occurred
+ * @returns {Promise<AuthResponse>}
+ *
  */
-export const signInWithGoogle = async (): Promise<FirebaseAuthTypes.User | null> => {
-  // Check if your device supports Google Play
-  await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+export const signInWithGoogle = async (): Promise<AuthResponse> => {
+  try {
+    // Check if your device supports Google Play
+    const hasGoogleServices = await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
 
-  // Get the users ID token
-  const signInResult = await GoogleSignin.signIn();
+    if (!hasGoogleServices) {
+      throw new Error("Google Play Services are not available");
+    }
 
-  // Try the new style of google-sign in result, from v13+ of that module
-  const idToken = signInResult.data?.idToken;
+    // Get the users ID token
+    const signInResult = await GoogleSignin.signIn();
 
-  if (!idToken) {
-    throw new Error("No ID token found");
+    // Try the new style of google-sign in result, from v13+ of that module
+    const idToken = signInResult.data?.idToken;
+
+    if (!idToken) {
+      throw new Error("No ID token found");
+    }
+
+    // eslint-disable-next-line import/no-named-as-default-member
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // Sign-in the user with the credential
+    const userCreds = await auth().signInWithCredential(googleCredential);
+
+    return {
+      success: true,
+      user: userCreds.user,
+    };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.log(err);
+    return {
+      success: false,
+      error: {
+        field: "unknown",
+        message: err.message,
+      },
+    };
   }
-
-  // eslint-disable-next-line import/no-named-as-default-member
-  const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-  // Sign-in the user with the credential
-  const userCreds = await auth().signInWithCredential(googleCredential);
-
-  return userCreds.user;
 };
 
 /**
  * Logs out the current user
+ *
+ * @returns {Promise<void>}
  */
 export const logout = async (): Promise<void> => {
   await auth().signOut();
@@ -93,30 +149,62 @@ export const logout = async (): Promise<void> => {
 
 /**
  * Send a password reset email to the user
+ *
+ * @param {string} email validated and trimmed user email
+ * @returns {Promise<EmailSendResponse>}
  */
-export const forgotPassword = async (email: string): Promise<void> => {
-  await auth().sendPasswordResetEmail(email);
+export const forgotPassword = async (email: string): Promise<EmailSendResponse> => {
+  try {
+    await auth().sendPasswordResetEmail(email);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: parseFirebaseAuthError(error as FirebaseAuthTypes.NativeFirebaseAuthError),
+    };
+  }
 };
 
 /**
  * Handles Firebase Auth errors and (maybe) dispatches messages to the UI
  */
-const handleFirebaseAuthError = (error: FirebaseAuthTypes.NativeFirebaseAuthError) => {
+const parseFirebaseAuthError = (
+  error: FirebaseAuthTypes.NativeFirebaseAuthError,
+): FirebaseError => {
   switch (error.code) {
     case "auth/email-already-in-use":
-      console.log("Email already in use");
-      break;
+      return {
+        field: "email",
+        message: "Email already in use",
+      };
     case "auth/invalid-email":
-      console.log("Invalid email");
-      break;
+      return {
+        field: "email",
+        message: "Invalid email",
+      };
     case "auth/weak-password":
-      console.log("Weak password");
-      break;
+      return {
+        field: "password",
+        message: "Weak password",
+      };
     case "auth/invalid-credential":
-      console.log("Invalid credential");
-      break;
+      return {
+        field: "unknown",
+        message: "Invalid credential",
+      };
+    case "auth/user-not-found":
+      return {
+        field: "email",
+        message: "User not found",
+      };
     default:
-      console.log("Unknown error");
       console.log(error);
+      return {
+        field: "unknown",
+        message: "An unknown error occurred",
+      };
   }
 };

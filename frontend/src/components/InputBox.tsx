@@ -1,55 +1,77 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import IconPassHide from "@/assets/icon-pass-hide.svg";
 import IconPassShow from "@/assets/icon-pass-show.svg";
 import { lightModeColors } from "@/constants/colors";
 
-type InputBoxProps = {
+type BaseInputBoxProps = {
+  label: string;
   placeholder?: string;
-  field: string;
   value: string;
   onChangeText: (text: string) => void;
-  isPassword?: boolean;
-  onForgotPassword?: () => void;
-};
+  style?: React.ComponentProps<typeof TextInput>["style"];
+  containerStyle?: React.ComponentProps<typeof View>["style"];
+  labelStyle?: React.ComponentProps<typeof Text>["style"];
+  errorMessage?: string;
+} & React.ComponentProps<typeof TextInput>;
 
+type PasswordInputBoxProps = {
+  isPassword: true;
+  onForgotPassword?: () => void;
+} & BaseInputBoxProps;
+
+// For type checking, so that `onForgotPassword` can't been passed in when `isPassword` is false
+type NonPasswordInputBoxProps = {
+  isPassword?: false;
+  onForgotPassword?: never;
+} & BaseInputBoxProps;
+
+type InputBoxProps = PasswordInputBoxProps | NonPasswordInputBoxProps;
+
+/**
+ * Form input component containing the label, input box, and error messages.
+ * If `isPassword` is true, the input is hidden and a password visibility toggle is shown.
+ *
+ * Additional props are passed to the internal `TextInput` component.
+ *
+ * Note: Input validation state should be handled by the parent component.
+ *
+ * @param {string} props.label - Label for the input box
+ * @param {string} props.placeholder - Optional laceholder text for the input box
+ * @param {string} props.value - stateful value of the input
+ * @param {function} props.onChangeText - function called when the input text changes with the new text as an argument
+ * @param {boolean} props.isPassword - whether the input is a password field, determines if the password visibility toggle is shown - defaults to false
+ * @param {function} props.onForgotPassword - optional function to call when the forgot password link is pressed, forgot password link is only shown when this is present AND isPassword is true
+ * @param {object} props.style - optional style to apply to the input box
+ * @param {object} props.containerStyle - optional style to apply to the container of the label and input box
+ * @param {object} props.labelStyle - optional style to apply to the label text
+ * @param {string} props.errorMessage - optional error message to display below the input box
+ *
+ * @returns
+ */
 const InputBox: React.FC<InputBoxProps> = ({
-  field,
+  label,
   placeholder,
   value,
   onChangeText,
   isPassword = false,
   onForgotPassword,
+  style,
+  containerStyle,
+  labelStyle,
+  errorMessage,
+  ...props
 }) => {
   const [isPasswordVisible, setPasswordVisible] = useState(!isPassword);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    validateInput(value);
-  }, [value]);
-
-  const validateInput = (text: string) => {
-    if (field.toLowerCase() === "password" && text && text.length < 8) {
-      setErrorMessage("Password must be at least 8 characters long.");
-    } else if (
-      field.toLowerCase() === "email" &&
-      text &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) // this is the regex format for the email
-    ) {
-      setErrorMessage("Please enter a valid email address.");
-    } else {
-      setErrorMessage("");
-    }
-  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{field}</Text>
+    <View style={containerStyle}>
+      <Text style={[styles.text, labelStyle]}>{label}</Text>
       <View style={[styles.inputWrapper, errorMessage && styles.inputError]}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, style]}
           placeholder={placeholder}
           value={value}
           onChangeText={(text) => {
@@ -58,6 +80,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           autoCapitalize="none"
           autoCorrect={false}
           secureTextEntry={!isPasswordVisible}
+          {...props}
         />
         {isPassword ? (
           <TouchableOpacity
@@ -85,7 +108,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       </View>
       <View style={styles.errorRow}>
         <Text style={styles.errorText}>{errorMessage}</Text>
-        {onForgotPassword && (
+        {isPassword && onForgotPassword && (
           <TouchableOpacity onPress={onForgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -96,9 +119,6 @@ const InputBox: React.FC<InputBoxProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 15,
-  },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",

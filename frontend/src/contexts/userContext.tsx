@@ -20,7 +20,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User) => {
-    console.log(user);
     setFirebaseUser(user);
   });
 

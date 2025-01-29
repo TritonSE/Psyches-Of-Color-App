@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
-import React from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import GoogleLogo from "@/assets/logo-google.svg";
@@ -10,16 +11,120 @@ import { lightModeColors } from "@/constants/colors";
 import { loginEmailPassword, signInWithGoogle } from "@/lib/auth";
 
 export default function Login() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  // input validators
+  const emailValidator = z
+    .string()
+    .trim()
+    .email({ message: "Please enter a valid email address." });
+  const passwordValidator = z
+    .string()
+    .trim()
+    .min(8, { message: "Password must be 8 characters long." });
+
+  useEffect(() => {
+    // Clear errors when the user starts typing again
+    setEmailError("");
+    setPasswordError("");
+  }, [email, password]);
+
+  // Validates email and password and sets error messages
+  // Returns true if both email and password are valid, false otherwise
+  const validateInputs = () => {
+    const emailValidation = emailValidator.safeParse(email);
+    const passwordValidation = passwordValidator.safeParse(password);
+
+    if (!emailValidation.success) {
+      setEmailError(emailValidation.error.errors[0].message);
+    } else {
+      setEmailError("");
+    }
+
+    if (!passwordValidation.success) {
+      setPasswordError(passwordValidation.error.errors[0].message);
+    } else {
+      setPasswordError("");
+    }
+
+    return emailValidation.success && passwordValidation.success;
+  };
+
+  // Event handlers
+  const handleGoogleLogin = async () => {
+    // Prevent spam clicking
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+
+    await signInWithGoogle();
+
+    setLoading(false);
+  };
+
+  const handleLogin = async () => {
+    // Prevent spam clicking
+    if (loading) {
+      return;
+    }
+
+    if (!validateInputs()) {
+      return;
+    }
+
+    // clear errors
+    setEmailError("");
+    setPasswordError("");
+
+    setLoading(true);
+
+    const res = await loginEmailPassword(email, password);
+
+    setLoading(false);
+
+    // If login was successful, we don't need to do anything
+    // redirection happens in auth context
+    if (res.success) {
+      return;
+    }
+
+    // If login was unsuccessful, set the appropriate error message
+    if (res.error.field === "email") {
+      setEmailError(res.error.message);
+    } else if (res.error.field === "password") {
+      setPasswordError(res.error.message);
+    } else {
+      // Unknown error
+      // TODO: maybe have a general error message at the top of the form
+      setPasswordError(res.error.message);
+      setEmailError(res.error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Mascots style={styles.logo} />
-      <Text style={styles.title}>Psyches of Color</Text>
-      <InputBox field="Email" placeholder="Enter Email" value={email} onChangeText={setEmail} />
+      <View style={styles.header}>
+        <Mascots style={styles.logo} />
+        <Text style={styles.title}>Psyches of Color</Text>
+      </View>
       <InputBox
-        field="Password"
+        label="Email"
+        placeholder="Enter Email"
+        value={email}
+        onChangeText={setEmail}
+        containerStyle={{ marginBottom: 16 }}
+        errorMessage={emailError}
+      />
+      <InputBox
+        label="Password"
         placeholder="Enter Password"
         value={password}
         onChangeText={setPassword}
@@ -28,8 +133,16 @@ export default function Login() {
           // TODO: redirect to forgot password page where they can fill in an email
           console.log("Forgot Password pressed");
         }}
+        containerStyle={{ marginBottom: 16 }}
+        errorMessage={passwordError}
       />
-      <Button style={styles.loginButton} onPress={() => void loginEmailPassword(email, password)}>
+
+      <Button
+        style={styles.loginButton}
+        onPress={() => {
+          void handleLogin();
+        }}
+      >
         Login
       </Button>
       <View style={styles.continueWithTextContainer}>
@@ -39,7 +152,7 @@ export default function Login() {
       </View>
       <Button
         onPress={() => {
-          void signInWithGoogle();
+          void handleGoogleLogin();
         }}
         style={{ gap: 16 }}
       >
@@ -65,6 +178,11 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexGrow: 0.4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: lightModeColors.background,
@@ -76,14 +194,6 @@ const styles = StyleSheet.create({
     width: 253,
     height: 116,
     marginBottom: 16,
-  },
-  text: {
-    color: lightModeColors.darkFont,
-    fontFamily: "Open Sans",
-    fontSize: 17,
-    fontStyle: "normal",
-    fontWeight: "400",
-    lineHeight: 25.5,
   },
   title: {
     color: lightModeColors.darkFont,
@@ -112,11 +222,11 @@ const styles = StyleSheet.create({
   },
   line: {
     flex: 1, // Ensures the lines take up equal width
-    height: 0.5,
+    height: 1,
     backgroundColor: lightModeColors.overlayBackground,
   },
   signupText: {
-    marginTop: 16,
+    marginTop: 20,
     fontSize: 17,
     color: lightModeColors.darkFont,
   },
