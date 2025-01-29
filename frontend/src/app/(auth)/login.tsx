@@ -7,7 +7,7 @@ import GoogleLogo from "@/assets/flat-color-icons_google.svg";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
-import { signInWithGoogle } from "@/lib/auth";
+import { loginEmailPassword, signInWithGoogle } from "@/lib/auth";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -28,7 +28,7 @@ export default function Login() {
           console.log("Forgot Password pressed");
         }}
       />
-      <Button href="/loading" style={styles.loginButton}>
+      <Button style={styles.loginButton} onPress={() => void loginEmailPassword(email, password)}>
         Login
       </Button>
       <View style={styles.continueWithTextContainer}>

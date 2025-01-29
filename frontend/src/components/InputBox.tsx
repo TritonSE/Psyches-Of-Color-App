@@ -50,7 +50,11 @@ const InputBox: React.FC<InputBoxProps> = ({
           style={styles.input}
           placeholder={placeholder}
           value={value}
-          onChangeText={onChangeText}
+          onChangeText={(text) => {
+            onChangeText(text.trim());
+          }}
+          autoCapitalize="none"
+          autoCorrect={false}
           secureTextEntry={!isPasswordVisible}
         />
         {isPassword ? (
