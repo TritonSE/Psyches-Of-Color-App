@@ -2,11 +2,11 @@ import React from "react";
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 
 import logo from "@/assets/Poc_Mascots.png";
+import GoogleLogo from "@/assets/flat-color-icons_google.svg";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 import { signInWithGoogle } from "@/lib/auth";
-import GoogleLogo from "@/assets/flat-color-icons_google.svg";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
