@@ -92,6 +92,13 @@ export const logout = async (): Promise<void> => {
 };
 
 /**
+ * Send a password reset email to the user
+ */
+export const forgotPassword = async (email: string): Promise<void> => {
+  await auth().sendPasswordResetEmail(email);
+};
+
+/**
  * Handles Firebase Auth errors and (maybe) dispatches messages to the UI
  */
 const handleFirebaseAuthError = (error: FirebaseAuthTypes.NativeFirebaseAuthError) => {

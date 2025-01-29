@@ -25,6 +25,7 @@ export default function Login() {
         onChangeText={setPassword}
         isPassword={true}
         onForgotPassword={() => {
+          // TODO: redirect to forgot password page where they can fill in an email
           console.log("Forgot Password pressed");
         }}
       />
