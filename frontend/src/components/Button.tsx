@@ -2,6 +2,8 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { GestureResponderEvent, StyleSheet, Text, TouchableOpacity } from "react-native";
 
+import { lightModeColors } from "@/constants/colors";
+
 type ButtonProps = {
   href?: string;
   style?: React.ComponentProps<typeof TouchableOpacity>["style"];
@@ -11,7 +13,8 @@ type ButtonProps = {
 
 /**
  * Button component with routing capabilities,
- * all additional props are passed on to the container `TouchableOpacity` component
+ * all additional props are passed on to the container `TouchableOpacity` component.
+ * If children is of type `string`, it will be wrapped in a `Text` component, otherwise it will be rendered as is.
  *
  * @param href - Optional route to navigate to
  * @param style - Optional style to apply to the button container
@@ -34,7 +37,7 @@ const Button: React.FC<ButtonProps> = ({ href, style, onPress, children, ...prop
 
   return (
     <TouchableOpacity style={[styles.button, style]} {...props} onPress={handlePress}>
-      <Text style={styles.buttonText}>{children}</Text>
+      {typeof children === "string" ? <Text style={styles.buttonText}>{children}</Text> : children}
     </TouchableOpacity>
   );
 };
@@ -43,16 +46,16 @@ const styles = StyleSheet.create({
   button: {
     width: 358,
     height: 48,
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 100,
-    backgroundColor: "#B4B4B4",
-    marginBottom: 32,
+    backgroundColor: lightModeColors.buttonFill,
   },
   buttonText: {
     fontSize: 17,
-    color: "#fff",
+    fontWeight: 600,
+    color: lightModeColors.lightFont,
   },
 });
 

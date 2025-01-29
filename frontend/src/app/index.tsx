@@ -1,6 +1,6 @@
 import { Redirect } from "expo-router";
 import { useContext } from "react";
-import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 
 import logo from "../assets/Poc_Mascots.png";
 
@@ -20,7 +20,6 @@ export default function Loading() {
       <Image source={logo as ImageSourcePropType} style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
       <Text style={styles.text}>slogan/mindful tip goes here</Text>
-      <StatusBar />
       <Button onPress={() => void logout()}>Logout</Button>
     </View>
   );

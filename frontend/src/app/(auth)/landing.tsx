@@ -1,4 +1,4 @@
-import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 
 import logo from "@/assets/Poc_Mascots.png";
 import Button from "@/components/Button";
@@ -15,7 +15,6 @@ export default function App() {
         <Button href="/login">Login</Button>
         <Button href="/signup">Sign Up</Button>
       </View>
-      <StatusBar />
     </View>
   );
 }
@@ -34,9 +33,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomSection: {
-    marginBottom: 25,
+    marginBottom: 60,
     alignItems: "center",
     justifyContent: "center",
+    gap: 25,
   },
   logo: {
     width: 253,

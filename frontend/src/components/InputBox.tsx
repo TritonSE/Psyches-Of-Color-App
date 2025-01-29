@@ -2,6 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
+import { lightModeColors } from "@/constants/colors";
+
 type InputBoxProps = {
   placeholder?: string;
   field: string;
@@ -61,7 +63,7 @@ const InputBox: React.FC<InputBoxProps> = ({
             <Ionicons
               name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
               size={20}
-              color="#000"
+              color={lightModeColors.secondaryLightFont}
             />
           </TouchableOpacity>
         )}
@@ -89,19 +91,19 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#000",
+    borderColor: lightModeColors.overlayBackground,
     paddingHorizontal: 10,
   },
   input: {
     flex: 1,
     fontSize: 16,
-    color: "#000",
+    color: lightModeColors.darkFont,
   },
   iconWrapper: {
     marginLeft: 10,
   },
   text: {
-    color: "#000",
+    color: lightModeColors.darkFont,
     fontFamily: "Open Sans",
     fontSize: 17,
     fontWeight: "600",
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   inputError: {
-    borderColor: "red",
+    borderColor: lightModeColors.error,
   },
   errorRow: {
     flexDirection: "row",
@@ -118,12 +120,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   errorText: {
-    color: "red",
+    color: lightModeColors.error,
     fontSize: 12,
     flex: 1,
   },
   forgotPasswordText: {
-    color: "gray",
+    color: lightModeColors.secondaryLightFont,
     fontSize: 12,
     marginLeft: 10,
   },
