@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 import { signInWithGoogle } from "@/lib/auth";
+import { Link } from "expo-router";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -27,7 +28,9 @@ export default function Login() {
           console.log("Forgot Password pressed");
         }}
       />
-      <Button href="/loading">Login</Button>
+      <Button href="/loading" style={styles.loginButton}>
+        Login
+      </Button>
       <View style={styles.continueWithTextContainer}>
         <View style={styles.line}></View>
         <Text style={styles.continueWithText}>Or continue with</Text>
@@ -50,6 +53,12 @@ export default function Login() {
           Continue with Google
         </Text>
       </Button>
+      <Text style={styles.signupText}>
+        {"Don't have an account?"}{" "}
+        <Link href="/signup" style={styles.signupLink}>
+          Sign Up
+        </Link>
+      </Text>
     </View>
   );
 }
@@ -85,6 +94,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.64,
     marginBottom: 16,
   },
+  loginButton: {
+    marginTop: 16,
+  },
   continueWithTextContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -101,5 +113,13 @@ const styles = StyleSheet.create({
     flex: 1, // Ensures the lines take up equal width
     height: 0.5,
     backgroundColor: lightModeColors.overlayBackground,
+  },
+  signupText: {
+    marginTop: 16,
+    fontSize: 17,
+    color: lightModeColors.darkFont,
+  },
+  signupLink: {
+    textDecorationLine: "underline",
   },
 });
