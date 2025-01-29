@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { Button } from "../components/Button";
 import OrangeMascot from "../../assets/orange-mascot";
+import { Button } from "../components/Button";
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -45,7 +45,7 @@ export default function InternetError() {
   return (
     <View style={styles.pageContainer}>
       <View style={styles.msgContainer}>
-        <OrangeMascot/>
+        <OrangeMascot />
         <Text style={styles.noConnection}>No connection</Text>
         <Text style={styles.noConnectionMessage}>
           No internet connection found. Please check your connection or try again.
