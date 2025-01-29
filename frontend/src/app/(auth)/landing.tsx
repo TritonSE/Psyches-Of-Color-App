@@ -1,13 +1,13 @@
-import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-import logo from "@/assets/Poc_Mascots.png";
+import Mascots from "@/assets/Poc_Mascots.svg";
 import Button from "@/components/Button";
 
 export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
-        <Image source={logo as ImageSourcePropType} style={styles.logo} />
+        <Mascots style={styles.logo} />
         <Text style={styles.title}>Psyches of Color</Text>
         <Text style={styles.text}>My melanated psyche is my superpower</Text>
       </View>

@@ -1,9 +1,9 @@
 import { Link } from "expo-router";
 import React from "react";
-import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-import logo from "@/assets/Poc_Mascots.png";
-import GoogleLogo from "@/assets/flat-color-icons_google.svg";
+import Mascots from "@/assets/Poc_Mascots.svg";
+import GoogleLogo from "@/assets/logo-google.svg";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
@@ -15,7 +15,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Image source={logo as ImageSourcePropType} style={styles.logo} />
+      <Mascots style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
       <InputBox field="Email" placeholder="Enter Email" value={email} onChangeText={setEmail} />
       <InputBox

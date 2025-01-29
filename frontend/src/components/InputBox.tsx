@@ -2,6 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
+import IconPassHide from "@/assets/icon-pass-hide.svg";
+import IconPassShow from "@/assets/icon-pass-show.svg";
 import { lightModeColors } from "@/constants/colors";
 
 type InputBoxProps = {
@@ -64,11 +66,11 @@ const InputBox: React.FC<InputBoxProps> = ({
             }}
             style={styles.iconWrapper}
           >
-            <Ionicons
-              name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
-              size={20}
-              color={lightModeColors.secondaryLightFont}
-            />
+            {isPasswordVisible ? (
+              <IconPassHide width={20} height={20} />
+            ) : (
+              <IconPassShow width={20} height={20} />
+            )}
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
