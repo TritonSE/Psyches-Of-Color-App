@@ -19,7 +19,7 @@
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": true
+    "project": ["**/tsconfig.json"]
   },
   "settings": {
     "react": {
@@ -66,7 +66,7 @@
 
     // Stylistic.
     "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
-    "@typescript-eslint/no-use-before-define": "warn",
+    "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/prefer-readonly": "warn",
     "@typescript-eslint/prefer-regexp-exec": "warn",
     "object-shorthand": ["warn", "properties"],

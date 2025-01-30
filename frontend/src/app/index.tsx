@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, StyleSheet, View } from "react-native";
+
+import ProfilePage from "./profilePage"; // Adjust the path as needed to locate your profile page component
 
 import { lightModeColors } from "@/constants/colors";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>New Home</Text>
+      {/* <Text style={styles.text}>New Home</Text> */}
+      <ProfilePage />
       <StatusBar />
     </View>
   );
