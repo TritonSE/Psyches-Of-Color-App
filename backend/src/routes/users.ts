@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { User } from "../models/users";
-// import { verifyAuthToken } from "src/middleware/auth";
+import { verifyAuthToken } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -16,13 +16,14 @@ const router = express.Router();
 
 router.get(
   "/api/whoami",
-  [verifyAuthToken],
-  async (req: Request, res: Response, next: NextFunction) => {
+  verifyAuthToken,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const uid = req.body.uid;
       const user = await User.findOne({ uid });
       if (!user) {
-        return res.status(404).json({ error: "User not Found" });
+        res.status(404).json({ error: "User not Found" });
+        return;
       }
       const { _id: mongoId } = user;
       res.status(200).send({
@@ -36,9 +37,10 @@ router.get(
     } catch (e) {
       next();
       console.log(e);
-      return res.status(400).json({
+      res.status(400).json({
         error: e,
       });
+      return;
     }
   },
 );

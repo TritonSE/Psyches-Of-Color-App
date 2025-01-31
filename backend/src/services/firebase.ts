@@ -10,7 +10,7 @@ import { getAuth } from "firebase-admin/auth";
 let serviceAccountKey: firebase.ServiceAccount;
 
 if (!env.SERVICE_ACCOUNT_KEY) {
-  throw InternalError.NO_SERVICE_ACCOUNT_KEY;
+  throw new Error("Missing service account key")
 } else {
   serviceAccountKey = env.SERVICE_ACCOUNT_KEY;
 }
