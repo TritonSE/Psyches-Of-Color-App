@@ -20,9 +20,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const uid = req.body.uid;
-      console.log(uid);
       const user = await User.findOne({ uid });
-      console.log(user);
       if (!user) {
         res.status(404).json({ error: "User not Found" });
         return;
