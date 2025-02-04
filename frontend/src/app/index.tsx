@@ -11,7 +11,7 @@ export default function Loading() {
   const { firebaseUser } = useContext(UserContext);
 
   if (!firebaseUser) {
-    return <Redirect href="/landing" />;
+    return <Redirect href="/login" />;
   }
 
   return (
