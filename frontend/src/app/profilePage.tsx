@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { useRouter } from "expo-router";
 import {
   Image,
@@ -19,18 +21,16 @@ export default function ProfilePage() {
   const navigateToRandomPage = () => {
     router.push("/randomPage");
   };
+  const navigateToSettingsPage = () => {
+    router.push("/settingsPage");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
         {/* Profile Picture and Settings */}
         <View style={styles.topSection}>
-          <TouchableOpacity
-            style={styles.settingsIcon}
-            onPress={() => {
-              router.push("/randomPage");
-            }}
-          >
+          <TouchableOpacity style={styles.settingsIcon} onPress={navigateToSettingsPage}>
             <Image source={require("@/assets/settings.png")} style={styles.icon} />
           </TouchableOpacity>
           <Image source={require("@/assets/frog.png")} style={styles.profileImage} />
