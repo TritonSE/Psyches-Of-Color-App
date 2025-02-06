@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "795345347789-5t3fcdsq37a8r19b0fq0e2gck14ueeq6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tse_psyches.frontend",
+            "certificate_hash": "ae0317f39b2ec0474e6b3a9a5d48ceed94d0050c"
+          }
+        },
+        {
           "client_id": "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
           "client_type": 3
         }
