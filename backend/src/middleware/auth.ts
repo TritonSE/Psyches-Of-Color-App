@@ -15,7 +15,7 @@ const verifyAuthToken = async (req: Request, res: Response, next: NextFunction):
   try {
     userInfo = await decodeAuthToken(token);
   } catch (e) {
-    res.status(403).json({ error: "Invalid or expired token" });
+    res.status(403).json({ error: "Invalid or expired token", e });
     return;
   }
 

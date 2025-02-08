@@ -10,5 +10,3 @@ async function decodeAuthToken(token: string) {
 }
 
 export { decodeAuthToken };
-
-

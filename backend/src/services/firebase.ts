@@ -7,12 +7,14 @@
 import * as firebase from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
+import env from "../util/validateEnv";
+
 let serviceAccountKey: firebase.ServiceAccount;
 
 if (!process.env.SERVICE_ACCOUNT_KEY) {
   throw new Error("Missing service account key");
 } else {
-  serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+  serviceAccountKey = env.SERVICE_ACCOUNT_KEY;
 }
 
 firebase.initializeApp({

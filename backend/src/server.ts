@@ -3,21 +3,26 @@
 import "dotenv/config";
 import express, { Express, Request, Response } from "express";
 import mongoose from "mongoose";
+
+import env from "../src/util/validateEnv";
+
 import { userRouter } from "./routes/users";
 
 //dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
-const MONGODB_URI = process.env.MONGODB_URI || "";
+const port = env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
 app.use(express.json());
 app.use(userRouter);
 
 mongoose
   .connect(MONGODB_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((error) => {
+  .then(() => {
+    console.log("✅ Connected to MongoDB");
+  })
+  .catch((error: unknown) => {
     console.error("❌ MongoDB connection error:", error);
     process.exit(1);
   });
