@@ -62,6 +62,12 @@
         "newlines-between": "always"
       }
     ],
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["^firebase-admin/.+"]
+      }
+    ],
 
     // Disabled because of too many false positives.
     "@typescript-eslint/no-unnecessary-condition": "off"

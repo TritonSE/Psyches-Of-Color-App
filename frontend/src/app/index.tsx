@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
