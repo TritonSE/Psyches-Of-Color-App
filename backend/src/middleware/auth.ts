@@ -2,7 +2,15 @@ import { NextFunction, Request, Response } from "express";
 
 import { decodeAuthToken } from "../services/auth";
 
-const verifyAuthToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export type PsychesRequest = {
+  userUid?: string;
+} & Request;
+
+const verifyAuthToken = async (
+  req: PsychesRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   const authHeader = req.headers.authorization;
   const token =
     authHeader && authHeader.split(" ")[0] === "Bearer" ? authHeader.split(" ")[1] : null;
@@ -20,8 +28,7 @@ const verifyAuthToken = async (req: Request, res: Response, next: NextFunction):
   }
 
   if (userInfo) {
-    req.body.uid = userInfo.uid;
-    console.log(req.body.uid);
+    req.userUid = userInfo.uid;
     next();
     return;
   }

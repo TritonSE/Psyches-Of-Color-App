@@ -11,10 +11,10 @@ import env from "../util/validateEnv";
 
 let serviceAccountKey: firebase.ServiceAccount;
 
-if (!process.env.SERVICE_ACCOUNT_KEY) {
+if (!env.SERVICE_ACCOUNT_KEY) {
   throw new Error("Missing service account key");
 } else {
-  serviceAccountKey = env.SERVICE_ACCOUNT_KEY;
+  serviceAccountKey = env.SERVICE_ACCOUNT_KEY as firebase.ServiceAccount;
 }
 
 firebase.initializeApp({
