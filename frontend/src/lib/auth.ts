@@ -96,18 +96,20 @@ export const loginEmailPassword = async (
  */
 const sendTokenToBackend = async (idToken: string) => {
   try {
-    const response = await fetch("http://localhost:3000/api/whoami", {
+    // 10.0.2.2:3000 for android emulators
+    // localhost:3000 for ios
+    // Or just use "http://192.168.x.x:3000/api/whoami" (ip address)
+    const response = await fetch("http://10.0.2.2:3000/api/whoami", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${idToken}`,
         "Content-Type": "application/json",
       },
     });
-    if(response.ok){
+    if (response.ok) {
       const userInfo = await response.json();
       console.log(userInfo);
-    }
-    else{
+    } else {
       console.error("Failed to get user info from JWT Token");
     }
   } catch (error) {
