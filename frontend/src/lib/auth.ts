@@ -75,7 +75,10 @@ export const loginEmailPassword = async (
 ): Promise<AuthResponse> => {
   try {
     const userCreds = await auth().signInWithEmailAndPassword(email, password);
-
+    const idToken = await userCreds.user?.getIdToken();
+    // REMOVE CONSOLE.LOG BELOW AFTER TESTING
+    console.log(idToken);
+    await sendTokenToBackend(idToken);
     return {
       success: true,
       user: userCreds.user,
@@ -85,6 +88,30 @@ export const loginEmailPassword = async (
       success: false,
       error: parseFirebaseAuthError(error as FirebaseAuthTypes.NativeFirebaseAuthError),
     };
+  }
+};
+
+/*
+ * Sends the Firebase ID token to the backend on the whoami route
+ */
+const sendTokenToBackend = async (idToken: string) => {
+  try {
+    const response = await fetch("http://localhost:3000/api/whoami", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if(response.ok){
+      const userInfo = await response.json();
+      console.log(userInfo);
+    }
+    else{
+      console.error("Failed to get user info from JWT Token");
+    }
+  } catch (error) {
+    console.error("Error sending token to backend: ", error);
   }
 };
 
