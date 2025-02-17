@@ -47,7 +47,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconContainer}>
               <HomeIcon width={24} height={24} />
-              {focused && <View style={styles.underline} />}
+              {focused ? <View style={styles.underline} /> : null}
             </View>
           ),
         }}
@@ -61,7 +61,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconContainer}>
               <ResourcesIcon width={24} height={24} />
-              {focused && <View style={styles.underline} />}
+              {focused ? <View style={styles.underline} /> : null}
             </View>
           ),
         }}
@@ -75,7 +75,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconContainer}>
               <ProfileIcon width={24} height={24} />
-              {focused && <View style={styles.underline} />}
+              {focused ? <View style={styles.underline} /> : null}
             </View>
           ),
         }}

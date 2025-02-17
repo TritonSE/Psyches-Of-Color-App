@@ -32,7 +32,7 @@ export function Button(props: {
       style={[styles.button, additionalStyle]} // Combine styles
       onPress={onClick} // Use onPress for React Native
     >
-      <Text style={styles.buttonText}>{children}</Text> {/* Display text inside the button */}
+      <Text style={styles.buttonText}>{children}</Text>
     </TouchableOpacity>
   );
 }
