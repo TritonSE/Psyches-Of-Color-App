@@ -4,15 +4,6 @@ import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>New Home</Text>
-      <StatusBar />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -24,3 +15,12 @@ const styles = StyleSheet.create({
     color: lightModeColors.darkFont,
   },
 });
+
+export default function App() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Old Home</Text>
+      <StatusBar />
+    </View>
+  );
+}
