@@ -1,12 +1,11 @@
 /* eslint-disable */
-
-import dotenv from "dotenv";
+import "dotenv/config";
 import express, { Express, Request, Response } from "express";
-
-dotenv.config();
+import { startTestCronJob } from "./services/notifications";
+import env from "./util/validateEnv";
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = env.PORT || 3000;
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
@@ -14,4 +13,5 @@ app.get("/", (req: Request, res: Response) => {
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
+  startTestCronJob();
 });
