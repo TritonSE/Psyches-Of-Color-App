@@ -2,6 +2,8 @@ import { scheduleJob } from "node-schedule";
 
 import { firebaseMessaging } from "./firebase";
 
+import { getDeviceToken } from "./tokenStore";
+
 const sendNotification = async (title: string, body: string, deviceToken: string) => {
   const message = {
     notification: {
@@ -20,7 +22,13 @@ const sendNotification = async (title: string, body: string, deviceToken: string
 
 const startTestCronJob = () => {
   scheduleJob("*/1 * * * *", async () => {
-    await sendNotification("Test Notification", "This is a test notification", "deviceToken");
+    const deviceToken = getDeviceToken();
+    if (!deviceToken) {
+      console.error("No device token found");
+      return;
+    }
+    console.log("Device Token:", deviceToken); //test
+    await sendNotification("Test Notification", "This is a test notification", deviceToken);
     console.log("Sent test notification");
   });
 };

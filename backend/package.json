@@ -16,6 +16,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@react-native-firebase/app": "^21.10.0",
+    "@react-native-firebase/messaging": "^21.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "envalid": "^8.0.0",
