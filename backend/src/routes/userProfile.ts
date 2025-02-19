@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 
 import { User } from "../models/User";
 
@@ -33,36 +33,36 @@ router.post("/users", async (req: Request, res: Response): Promise<void> => {
 });
 
 // PUT route to update a user profile
-// router.put("/users/:uid", async (req: Request, res: Response): Promise<Response> => {
-//   try {
-//     const { uid } = req.params; // Get the user uid from the URL parameters
-//     const { name, email } = req.body; // Get new data from the request body
+router.put(
+  "/users/:uid",
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { uid } = req.params;
+      const { name, email } = req.body;
 
-//     // Validate the fields
-//     if (!name && !email) {
-//       return res.status(400).json({ message: "At least one field (name or email) is required" });
-//     }
+      if (!name && !email) {
+        res.status(400).json({ message: "At least one field is required" });
+        return;
+      }
 
-//     // Find the user by UID
-//     const user = await User.findOne({ uid });
+      const user = await User.findOne({ uid });
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
 
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+      if (name) user.name = name;
+      if (email) user.email = email;
 
-//     // Update the user profile
-//     if (name) user.name = name;
-//     if (email) user.email = email;
+      await user.save();
 
-//     // Save the updated user
-//     await user.save();
-
-//     // Return the updated user
-//     res.status(200).json({ message: "User profile updated successfully", user });
-//   } catch (error) {
-//     console.error("Error updating user profile:", error);
-//     res.status(500).json({ message: "Server error", error: (error as Error).message });
-//   }
-// });
+      res.status(200).json({ message: "User profile updated successfully", user });
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      // Cast error to Error to safely access error.message
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
+    }
+  },
+);
 
 export { router as userProfileRouter };
