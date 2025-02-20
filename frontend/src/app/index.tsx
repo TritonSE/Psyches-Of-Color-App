@@ -1,13 +1,35 @@
 import messaging from "@react-native-firebase/messaging";
-// eslint-disable-next-line import/namespace
+import React from "react";
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
-import React from "react";
+import env from "@/util/validateEnv";
 
 export default function App() {
+  const sendTokenToBackend = async (token: string) => {
+    try {
+      // check this
+      const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/send-notification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      if (response.ok) {
+        console.log("Notification triggered successfully");
+      } else {
+        console.error("Failed to trigger notification:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error sending token to backend:", error);
+    }
+  };
+
   const requestPermission = async () => {
     try {
+      await messaging().registerDeviceForRemoteMessages();
       const authStatus = await messaging().requestPermission();
 
       if (
@@ -30,27 +52,6 @@ export default function App() {
     }
   };
 
-  const sendTokenToBackend = async (token: string) => {
-    try {
-      // check this
-      const response = await fetch(`${process.env.PUBLIC_BACKEND_URI}/send-notification`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      });
-
-      if (response.ok) {
-        console.log("Notification triggered successfully");
-      } else {
-        console.error("Failed to trigger notification:", await response.text());
-      }
-    } catch (error) {
-      console.error("Error sending token to backend:", error);
-    }
-  };
-
   React.useEffect(() => {
     const getPermission = async () => {
       try {
@@ -60,8 +61,22 @@ export default function App() {
       }
     };
 
-    getPermission();
+    getPermission().catch((error: unknown) => {
+      console.error("Error requesting permission:", error);
+    });
   }, []);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: lightModeColors.background,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    text: {
+      color: lightModeColors.darkFont,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -70,15 +85,3 @@ export default function App() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: lightModeColors.background,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    color: lightModeColors.darkFont,
-  },
-});

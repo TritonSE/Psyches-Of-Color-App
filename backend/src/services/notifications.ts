@@ -1,7 +1,6 @@
 import { scheduleJob } from "node-schedule";
 
 import { firebaseMessaging } from "./firebase";
-
 import { getDeviceToken } from "./tokenStore";
 
 const sendNotification = async (title: string, body: string, deviceToken: string) => {
