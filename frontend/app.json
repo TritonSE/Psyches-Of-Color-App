@@ -32,11 +32,6 @@
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "0a3eda46-e6da-4fae-81c8-88c7f060ceb9"
-      }
-    },
     "plugins": [
       [
         "expo-build-properties",
@@ -49,6 +44,20 @@
       "expo-router",
       "@react-native-firebase/app",
       "@react-native-firebase/auth"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "435c0568-0bbf-4e74-87a6-a0369ba9d724"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/435c0568-0bbf-4e74-87a6-a0369ba9d724"
+    }
   }
 }
