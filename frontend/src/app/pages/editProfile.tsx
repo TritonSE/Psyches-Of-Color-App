@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import { StyleSheet, Text, View, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 // import AvatarSelection from "../../assets/avatar-selection";
 import { Button } from "../../components/Button";
 
@@ -9,13 +10,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileNavbar: {
-    backgroundColor: "green",
+    flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
     height: 58,
   },
+  returnArrow: {
+    paddingLeft: 0,
+  },
   profileTitle: {
     textAlign: "center",
+    color: "#6C6C6C",
+    fontFamily: "Poppins",
+    fontWeight: "600",
+    fontSize: 18,
+    lineHeight: 27,
+    letterSpacing: 0,
   },
   changeAvatarSection: {
     justifyContent: "center",
@@ -23,6 +34,12 @@ const styles = StyleSheet.create({
   },
   changeAvatarText: {
     textAlign: "center",
+    fontFamily: "Inter",
+    fontWeight: "600",
+    fontSize: 18,
+    lineHeight: 20,
+    letterSpacing: 0.1,
+    color: "#484848",
   },
   updateInfoSection: {
     gap: 10,
@@ -55,10 +72,17 @@ export default function EditProfile() {
   const [name, setName] = useState("");
   const [isSaved, setIsSaved] = useState(true);
   const [isCanceled, setIsCanceled] = useState(true);
+  const router = useRouter();
+  const navigateToRandomPage = () => {
+    router.push("/randomPage");
+  };
   return (
-    <View style={styles.editProfilePage}>
+    <SafeAreaView style={styles.editProfilePage}>
       <View style={styles.profileNavbar}>
-        <Text style={styles.profileTitle}>Edit Profile</Text>
+        <TouchableOpacity style={styles.returnArrow} onPress={navigateToRandomPage}>
+          <Text>Arrow</Text>
+        </TouchableOpacity>
+        <Text style={styles.profileTitle}>Profile</Text>
       </View>
       {/* <AvatarSelection /> */}
       <View style={styles.changeAvatarSection}>
@@ -108,6 +132,6 @@ export default function EditProfile() {
       >
         Cancel
       </Button>
-    </View>
+    </SafeAreaView>
   );
 }
