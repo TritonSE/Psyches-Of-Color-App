@@ -26,7 +26,7 @@ const startTestCronJob = () => {
       console.error("No device token found");
       return;
     }
-    console.log("Device Token:", deviceToken); //test
+    console.log("Device Token:", deviceToken);
     await sendNotification("Test Notification", "This is a test notification", deviceToken);
     console.log("Sent test notification");
   });

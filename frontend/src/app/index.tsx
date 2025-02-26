@@ -1,5 +1,6 @@
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
+// eslint-disable-next-line import/namespace
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
@@ -8,7 +9,7 @@ import env from "@/util/validateEnv";
 export default function App() {
   const sendTokenToBackend = async (token: string) => {
     try {
-      // check this
+      // change EXPO_PUBLIC_BACKEND_URI to your computer ip for testing purposes
       const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/send-notification`, {
         method: "POST",
         headers: {
