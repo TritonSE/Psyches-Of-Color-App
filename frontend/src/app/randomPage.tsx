@@ -1,23 +1,22 @@
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function App() {
+export default function RandomPage() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#25292e",
       alignItems: "center",
       justifyContent: "center",
+      backgroundColor: "#f5f5f5",
     },
     text: {
-      color: "#fff",
+      fontSize: 18,
+      color: "#333",
     },
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
-      <StatusBar style="auto" />
+      <Text style={styles.text}>Random Page</Text>
     </View>
   );
 }
@@ -25,11 +24,12 @@ export default function App() {
 // const styles = StyleSheet.create({
 //   container: {
 //     flex: 1,
-//     backgroundColor: "#25292e",
 //     alignItems: "center",
 //     justifyContent: "center",
+//     backgroundColor: "#f5f5f5",
 //   },
 //   text: {
-//     color: "#fff",
+//     fontSize: 18,
+//     color: "#333",
 //   },
 // });

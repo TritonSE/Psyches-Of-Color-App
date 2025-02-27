@@ -1,4 +1,7 @@
-import React from "react";
+/* eslint-disable */
+import { useState } from "react";
+import { useRouter } from "expo-router";
+import { useFonts } from "expo-font";
 import {
   Image,
   SafeAreaView,
@@ -10,26 +13,62 @@ import {
 } from "react-native";
 
 import ButtonItem from "@/components/profileButton";
+import { lightModeColors } from "@/constants/colors";
 
 export default function ProfilePage() {
+  const router = useRouter();
+
+  // State for achievements and streaks
+  const [achievementsCompleted, setAchievementsCompleted] = useState(3);
+  const [daysOfStreaks, setDaysOfStreaks] = useState(3);
+
+  // Function to increment achievements
+  const incrementAchievements = () => {
+    setAchievementsCompleted((prev) => prev + 1);
+  };
+
+  // Function to increment streak days
+  const incrementStreaks = () => {
+    setDaysOfStreaks((prev) => prev + 1);
+  };
+
+  // Navigate to randomPage when the button is pressed
+  const navigateToRandomPage = () => {
+    router.push("/randomPage");
+  };
+  const navigateToSettingsPage = () => {
+    router.push("/settingsPage");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
         {/* Profile Picture and Settings */}
         <View style={styles.topSection}>
-          <TouchableOpacity style={styles.settingsIcon}>
+          <TouchableOpacity style={styles.settingsIcon} onPress={navigateToSettingsPage}>
             <Image source={require("@/assets/settings.png")} style={styles.icon} />
           </TouchableOpacity>
           <Image source={require("@/assets/frog.png")} style={styles.profileImage} />
         </View>
 
-        {/* Gray Box */}
+        {/* WHite Box at Bottom*/}
         <View style={styles.bottomSection}>
           {/* Header Section */}
           <View style={styles.header}>
             <Text style={styles.name}>Michael Jordan</Text>
-            <TouchableOpacity>
-              <Text style={styles.editProfile}>Edit profile</Text>
+          </View>
+
+          {/* Edit Section */}
+          <View style={styles.editContainer}>
+            <TouchableOpacity onPress={navigateToRandomPage}>
+              <View style={styles.editButton}>
+                <Text style={styles.editButtonText}>Edit Profile</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={navigateToRandomPage}>
+              <View style={styles.editButton}>
+                <Text style={styles.editButtonText}>Edit Companion</Text>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -81,7 +120,7 @@ export default function ProfilePage() {
               subtitle="Depression"
               position="bottom"
             />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={navigateToRandomPage}>
               <Text style={styles.viewAll}>View all history →</Text>
             </TouchableOpacity>
           </View>
@@ -96,9 +135,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topSection: {
-    backgroundColor: "#fff",
+    backgroundColor: lightModeColors.profileBackground,
     alignItems: "center",
-    paddingTop: 20,
+    paddingTop: 54.66,
     paddingBottom: 20,
     position: "relative",
   },
@@ -122,33 +161,32 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
   scrollContent: {
     paddingBottom: 0,
   },
   bottomSection: {
     flex: 1,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 80,
     borderTopRightRadius: 80,
     paddingTop: 112,
     paddingHorizontal: 20,
     marginTop: -126,
     marginBottom: -20,
+    paddingBottom: 228,
   },
   header: {
     alignItems: "center",
     marginBottom: 30,
+    marginTop: 0,
   },
   name: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
-  },
-  editProfile: {
-    fontSize: 16,
-    color: "#484848",
+    color: lightModeColors.darkFont,
+    fontFamily: "Social-Gothic-DemiBold",
   },
   section: {
     marginBottom: 20,
@@ -157,7 +195,30 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#1D1B20",
+    color: lightModeColors.secondaryDarkFont,
+  },
+  editContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    gap: 10,
+    marginBottom: 48,
+  },
+  editButton: {
+    flex: 1,
+    width: 169,
+    height: 45,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    backgroundColor: lightModeColors.lightFont,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: lightModeColors.overlayBackground,
+  },
+  editButtonText: {
+    color: "#1E1E1E",
+    fontSize: 14,
   },
   achievementContainer: {
     flexDirection: "row",
@@ -166,16 +227,15 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   achievementCard: {
-    width: "48%",
+    flex: 1,
+    width: 169,
+    height: 114,
     alignItems: "flex-start",
     padding: 15,
-    backgroundColor: "#fff",
+    backgroundColor: lightModeColors.lightFont,
     borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: lightModeColors.overlayBackground,
   },
   imageNumberContainer: {
     flexDirection: "row",
@@ -194,14 +254,17 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: "#555",
+    color: "#1E1E1E",
     textAlign: "left",
     marginTop: 5,
   },
   viewAll: {
     marginTop: 10,
-    fontSize: 18,
-    color: "#484848",
+    fontSize: 16,
+    color: lightModeColors.neutralFont,
+    fontWeight: "600",
+    fontStyle: "normal",
+    lineHeight: 20,
+    letterSpacing: 0.1,
   },
 });
-//profilepage.tsx
