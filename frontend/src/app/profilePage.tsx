@@ -1,5 +1,5 @@
 /* eslint-disable */
-
+import { useState } from "react"
 import { useRouter } from "expo-router";
 import {
   Image,
@@ -16,6 +16,20 @@ import { lightModeColors } from "@/constants/colors";
 
 export default function ProfilePage() {
   const router = useRouter();
+
+  // State for achievements and streaks
+  const [achievementsCompleted, setAchievementsCompleted] = useState(3);
+  const [daysOfStreaks, setDaysOfStreaks] = useState(3);
+
+  // Function to increment achievements
+  const incrementAchievements = () => {
+    setAchievementsCompleted((prev) => prev + 1);
+  };
+
+  // Function to increment streak days
+  const incrementStreaks = () => {
+    setDaysOfStreaks((prev) => prev + 1);
+  };
 
   // Navigate to randomPage when the button is pressed
   const navigateToRandomPage = () => {
@@ -189,6 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   editButton: {
+    flex: 1,
     width: 169,
     height: 45,
     alignItems: "center",
@@ -210,6 +225,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   achievementCard: {
+    flex: 1,
     width: 169,
     height: 114,
     alignItems: "flex-start",

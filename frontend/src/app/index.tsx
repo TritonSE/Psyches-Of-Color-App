@@ -1,14 +1,13 @@
 import { StatusBar, StyleSheet, View } from "react-native";
 
 import ProfilePage from "./profilePage"; // Adjust the path as needed to locate your profile page component
-
+import SettingsPage from "./settingsPage"; // Adjust the path as needed to locate your settings page component
 import { lightModeColors } from "@/constants/colors";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.text}>New Home</Text> */}
-      <ProfilePage />
+      <SettingsPage />
       <StatusBar />
     </View>
   );
