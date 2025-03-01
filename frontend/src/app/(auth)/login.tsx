@@ -142,6 +142,7 @@ export default function Login() {
         onPress={() => {
           void handleLogin();
         }}
+        textStyle={{ fontFamily: "SG-DemiBold" }}
       >
         Login
       </Button>
@@ -162,6 +163,7 @@ export default function Login() {
             fontSize: 17,
             fontWeight: 600,
             color: lightModeColors.lightFont,
+            fontFamily: "SG-DemiBold",
           }}
         >
           Continue with Google
@@ -197,10 +199,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: lightModeColors.darkFont,
-    fontFamily: "Inter",
+    fontFamily: "SG-DemiBold",
     fontSize: 32,
-    fontStyle: "normal",
-    fontWeight: "bold",
     lineHeight: 38.4,
     letterSpacing: -0.64,
     marginBottom: 16,
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     color: lightModeColors.mutedFont,
     fontSize: 14,
     marginHorizontal: 10,
+    fontFamily: "Figtree",
   },
   line: {
     flex: 1, // Ensures the lines take up equal width
@@ -227,10 +228,12 @@ const styles = StyleSheet.create({
   },
   signupText: {
     marginTop: 20,
+    fontFamily: "Figtree",
     fontSize: 17,
     color: lightModeColors.darkFont,
   },
   signupLink: {
     textDecorationLine: "underline",
+    fontFamily: "Figtree",
   },
 });

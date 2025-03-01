@@ -15,7 +15,7 @@ type Colors = {
 };
 
 export const lightModeColors: Colors = {
-  buttonFill: "#B4B4B4",
+  buttonFill: "#D35144",
   darkFont: "#000000",
   secondaryDarkFont: "#1D1B20",
   neutralFont: "#484848",
@@ -29,5 +29,3 @@ export const lightModeColors: Colors = {
   error: "#B93B3B",
   success: "#3BB966",
 };
-
-// export default lightModeColors;

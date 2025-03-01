@@ -4,12 +4,21 @@ import { GestureResponderEvent, StyleSheet, Text, TouchableOpacity } from "react
 
 import { lightModeColors } from "@/constants/colors";
 
-type ButtonProps = {
-  href?: string;
-  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
-  onPress?: ((event: GestureResponderEvent) => void) | undefined;
-  children?: React.ReactNode;
-} & React.ComponentProps<typeof TouchableOpacity>;
+type ButtonProps =
+  | ({
+      href?: string;
+      style?: React.ComponentProps<typeof TouchableOpacity>["style"];
+      textStyle?: React.ComponentProps<typeof Text>["style"];
+      onPress?: ((event: GestureResponderEvent) => void) | undefined;
+      children?: string;
+    } & React.ComponentProps<typeof TouchableOpacity>)
+  | ({
+      href?: string;
+      style?: React.ComponentProps<typeof TouchableOpacity>["style"];
+      textStyle?: never;
+      onPress?: ((event: GestureResponderEvent) => void) | undefined;
+      children?: React.ReactNode;
+    } & React.ComponentProps<typeof TouchableOpacity>);
 
 /**
  * Button component with routing capabilities,
@@ -22,7 +31,7 @@ type ButtonProps = {
  * @param children - Elements to render inside the button, will be wrapped in a `Text` component
  *
  */
-const Button: React.FC<ButtonProps> = ({ href, style, onPress, children, ...props }) => {
+const Button: React.FC<ButtonProps> = ({ href, style, onPress, textStyle, children, ...props }) => {
   const router = useRouter();
 
   const handlePress = (event: GestureResponderEvent) => {
@@ -37,7 +46,11 @@ const Button: React.FC<ButtonProps> = ({ href, style, onPress, children, ...prop
 
   return (
     <TouchableOpacity style={[styles.button, style]} {...props} onPress={handlePress}>
-      {typeof children === "string" ? <Text style={styles.buttonText}>{children}</Text> : children}
+      {typeof children === "string" ? (
+        <Text style={[styles.buttonText, textStyle]}>{children}</Text>
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 };

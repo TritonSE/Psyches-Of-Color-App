@@ -18,6 +18,16 @@ declare module "*.gif" {
   export default value;
 }
 
+declare module "*.otf" {
+  const value: string;
+  export default value;
+}
+
+declare module "*.ttf" {
+  const value: string;
+  export default value;
+}
+
 declare module "*.svg" {
   import React from "react";
   import { SvgProps } from "react-native-svg";

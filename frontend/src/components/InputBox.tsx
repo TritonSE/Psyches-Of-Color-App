@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: lightModeColors.darkFont,
+    fontFamily: "Figtree",
   },
   iconWrapper: {
     marginLeft: 10,
@@ -155,6 +156,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   errorText: {
+    fontFamily: "Figtree",
     color: lightModeColors.error,
     fontSize: 12,
     flex: 1,
@@ -163,6 +165,7 @@ const styles = StyleSheet.create({
     color: lightModeColors.secondaryLightFont,
     fontSize: 12,
     marginLeft: 10,
+    fontFamily: "Figtree",
   },
 });
 

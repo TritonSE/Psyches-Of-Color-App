@@ -1,14 +1,49 @@
-import { Redirect } from "expo-router";
-import { useContext } from "react";
+import { useFonts } from "expo-font";
+import { Redirect, SplashScreen } from "expo-router";
+import { useContext, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
+import FigtreeItalic from "@/assets/fonts/Figtree-Italic.ttf";
+import Figtree from "@/assets/fonts/Figtree.ttf";
+import SGBold from "@/assets/fonts/Social-Gothic-Bold.otf";
+import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
+import SGMedium from "@/assets/fonts/Social-Gothic-Medium.otf";
+import SGRegular from "@/assets/fonts/Social-Gothic-Regular.otf";
+import SGRough from "@/assets/fonts/Social-Gothic-Rough.otf";
+import SGSoft from "@/assets/fonts/Social-Gothic-Soft.otf";
+import SGStencil from "@/assets/fonts/Social-Gothic-Stencil.otf";
 import Button from "@/components/Button";
 import { UserContext } from "@/contexts/userContext";
 import { logout } from "@/lib/auth";
 
 export default function Loading() {
   const { firebaseUser } = useContext(UserContext);
+
+  const [loaded, error] = useFonts({
+    // Social Gothic fonts are static, so can't change the font weight with styles
+    "SG-Bold": SGBold,
+    "SG-DemiBold": SGDemiBold,
+    "SG-Medium": SGMedium,
+    "SG-Regular": SGRegular,
+    "SG-Rough": SGRough,
+    "SG-Soft": SGSoft,
+    "SG-Stencil": SGStencil,
+
+    // Figtree fonts are variable weight, so the font weight can be changed with styles
+    "Figtree-Italic": FigtreeItalic,
+    Figtree,
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      void SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
 
   if (!firebaseUser) {
     return <Redirect href="/login" />;
