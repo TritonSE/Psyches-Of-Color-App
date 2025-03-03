@@ -128,7 +128,8 @@ export default function Login() {
         placeholder="Enter Password"
         value={password}
         onChangeText={setPassword}
-        isPassword={true}
+        hidden={true}
+        showForgotPassword={true}
         onForgotPassword={() => {
           // TODO: redirect to forgot password page where they can fill in an email
           console.log("Forgot Password pressed");
