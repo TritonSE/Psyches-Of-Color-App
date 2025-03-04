@@ -9,6 +9,7 @@ type Colors = {
   background: string;
   overlayBackground: string;
   tabsIcon: string;
+  profileBackground: string;
 };
 
 export const lightModeColors: Colors = {
@@ -22,6 +23,7 @@ export const lightModeColors: Colors = {
   background: "FFFFFF",
   overlayBackground: "D9D9D9",
   tabsIcon: "241E40",
+  profileBackground: "#c13d2f",
 };
 
 // export default lightModeColors;
