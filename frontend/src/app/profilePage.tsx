@@ -1,6 +1,6 @@
 /* eslint-disable */
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { SplashScreen, useRouter } from "expo-router";
 import { useFonts } from "expo-font";
 import {
   Image,
@@ -15,8 +15,25 @@ import {
 import ButtonItem from "@/components/profileButton";
 import { lightModeColors } from "@/constants/colors";
 
+// import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
+
 export default function ProfilePage() {
   const router = useRouter();
+
+  // const [loaded, error] = useFonts({
+  //   "SG-DemiBold": SGDemiBold,
+  // });
+
+  // useEffect(() => {
+  //   if (loaded || error) {
+  //     void SplashScreen.hideAsync();
+  //   }
+  // }, [loaded, error]);
+
+  // if (!loaded && !error) {
+  //   return null;
+  // }
+
 
   // State for achievements and streaks
   const [achievementsCompleted, setAchievementsCompleted] = useState(3);
@@ -184,9 +201,8 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    fontWeight: "bold",
     color: lightModeColors.darkFont,
-    fontFamily: "Social-Gothic-DemiBold",
+    fontFamily: "SG-DemiBold",
   },
   section: {
     marginBottom: 20,
@@ -219,6 +235,7 @@ const styles = StyleSheet.create({
   editButtonText: {
     color: "#1E1E1E",
     fontSize: 14,
+    
   },
   achievementContainer: {
     flexDirection: "row",
