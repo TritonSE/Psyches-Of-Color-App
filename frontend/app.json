@@ -16,7 +16,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "psychesofcolorapp",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to provide better services.",
+        "NSLocationAlwaysUsageDescription": "We need your location to provide location-based recommendations."
+      }
+      
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +30,7 @@
       },
       "package": "com.tse_psyches.frontend",
       "googleServicesFile": "./google-services.json"
+      
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -49,20 +55,7 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ],
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./src/assets/fonts/Social-Gothic-Regular.otf",
-            "./src/assets/fonts/Social-Gothic-Bold.otf",
-            "./src/assets/fonts/Social-Gothic-DemiBold.otf",
-            "./src/assets/fonts/Social-Gothic-Medium.otf",
-            "./src/assets/fonts/Social-Gothic-Rough.otf",
-            "./src/assets/fonts/Social-Gothic-Soft.otf",
-            "./src/assets/fonts/Social-Gothic-Stencil.otf"
-          ]
-        }
-      ],
+      
       "expo-router",
       "@react-native-firebase/app",
       "@react-native-firebase/auth"
