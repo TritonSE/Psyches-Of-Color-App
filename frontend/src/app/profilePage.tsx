@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { useState } from "react"
-import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { SplashScreen, useRouter } from "expo-router";
+import { useFonts } from "expo-font";
 import {
   Image,
   SafeAreaView,
@@ -50,7 +51,7 @@ export default function ProfilePage() {
           <Image source={require("@/assets/frog.png")} style={styles.profileImage} />
         </View>
 
-        {/* WHite Box at Bottom*/}
+        {/* White Box at Bottom*/}
         <View style={styles.bottomSection}>
           {/* Header Section */}
           <View style={styles.header}>
@@ -185,6 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: lightModeColors.darkFont,
+    fontFamily: "SG-DemiBold",
   },
   section: {
     marginBottom: 20,

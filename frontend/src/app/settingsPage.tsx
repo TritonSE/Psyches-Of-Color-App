@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
 import {
   View,
   Text,
@@ -10,15 +13,22 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import * as Location from "expo-location";
+
 
 export default function SettingsScreen() {
   const router = useRouter();
   const [dailyReminder, setDailyReminder] = useState(false);
   const [locationTracking, setLocationTracking] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
+  // Navigation functions
+  const navigateToProfilePage = () => {
+    router.push("/profilePage");
+  };
+
+  const navigateToRandomPage = () => {
+    router.push("/randomPage");
+  };
 
   const handleLocationToggle = async () => {
     if (!locationTracking) {
