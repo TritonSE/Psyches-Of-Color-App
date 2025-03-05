@@ -20,7 +20,7 @@ export default function SettingsScreen() {
   const [dailyReminder, setDailyReminder] = useState(false);
   const [locationTracking, setLocationTracking] = useState(false);
   const [reminderTime] = useState("9:00 AM");
-  const [setErrorMsg] = useState<string | null>(null);
+  const [_errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Navigation functions
   const navigateToProfilePage = () => {
