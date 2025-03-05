@@ -21,7 +21,6 @@
         "NSLocationWhenInUseUsageDescription": "We need your location to provide better services.",
         "NSLocationAlwaysUsageDescription": "We need your location to provide location-based recommendations."
       }
-      
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +29,6 @@
       },
       "package": "com.tse_psyches.frontend",
       "googleServicesFile": "./google-services.json"
-      
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -55,7 +53,7 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ],
-      
+
       "expo-router",
       "@react-native-firebase/app",
       "@react-native-firebase/auth"

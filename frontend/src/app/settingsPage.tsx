@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
+import { PermissionStatus } from "expo-location";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import * as Location from "expo-location";
-import { Alert } from "react-native";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -19,7 +20,7 @@ export default function SettingsScreen() {
   const [dailyReminder, setDailyReminder] = useState(false);
   const [locationTracking, setLocationTracking] = useState(false);
   const [reminderTime] = useState("9:00 AM");
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [setErrorMsg] = useState<string | null>(null);
 
   // Navigation functions
   const navigateToProfilePage = () => {
@@ -34,7 +35,7 @@ export default function SettingsScreen() {
       // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       console.log("status:", status);
-      if (status !== "granted") {
+      if (status !== PermissionStatus.GRANTED) {
         setErrorMsg("Permission to access location was denied.");
         Alert.alert(
           "Location Permission Denied",
@@ -84,7 +85,9 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={dailyReminder}
-              onValueChange={() => setDailyReminder(!dailyReminder)}
+              onValueChange={() => {
+                setDailyReminder(!dailyReminder);
+              }}
               trackColor={{ false: "#E5E7EB", true: "#c13d2f" }}
               thumbColor={dailyReminder ? "#FFFFFF" : "#B4B4B4"}
               style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
