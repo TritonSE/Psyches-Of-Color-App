@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { StyleSheet, Text, View, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
 // import AvatarSelection from "../../assets/avatar-selection";
 import { Button } from "../../components/Button";
 
@@ -95,7 +96,9 @@ export default function EditProfile() {
             style={styles.inputBox}
             placeholder="Type here..."
             value={name}
-            onChangeText={(text) => setName(text)}
+            onChangeText={(text) => {
+              setName(text);
+            }}
           />
         </View>
         <View style={styles.inputSection}>
@@ -104,7 +107,9 @@ export default function EditProfile() {
             style={styles.inputBox}
             placeholder="Type here..."
             value={name}
-            onChangeText={(text) => setName(text)}
+            onChangeText={(text) => {
+              setName(text);
+            }}
           />
         </View>
         <View style={styles.inputSection}>
@@ -113,7 +118,9 @@ export default function EditProfile() {
             style={styles.inputBox}
             placeholder="Type here..."
             value={name}
-            onChangeText={(text) => setName(text)}
+            onChangeText={(text) => {
+              setName(text);
+            }}
           />
         </View>
       </View>

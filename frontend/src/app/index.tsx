@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
-import { lightModeColors } from "@/constants/colors";
+import CharacterSelection from "./pages/characterSelection";
 import EditProfile from "./pages/editProfile";
+
+import { lightModeColors } from "@/constants/colors";
 
 export default function App() {
   return (
@@ -11,7 +11,7 @@ export default function App() {
     //   <Text style={styles.text}>New Home</Text>
     //   <StatusBar />
     // </View>
-    <EditProfile />
+    <CharacterSelection />
   );
 }
 
