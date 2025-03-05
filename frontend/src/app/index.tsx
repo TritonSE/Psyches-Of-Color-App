@@ -4,6 +4,8 @@ import { useContext, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
+import ArchivoItalic from "@/assets/fonts/Archivo-Italic.ttf";
+import Archivo from "@/assets/fonts/Archivo.ttf";
 import FigtreeItalic from "@/assets/fonts/Figtree-Italic.ttf";
 import Figtree from "@/assets/fonts/Figtree.ttf";
 import SGBold from "@/assets/fonts/Social-Gothic-Bold.otf";
@@ -30,9 +32,12 @@ export default function Loading() {
     "SG-Soft": SGSoft,
     "SG-Stencil": SGStencil,
 
-    // Figtree fonts are variable weight, so the font weight can be changed with styles
+    // Figtree and Archivo are variable weight, so the font weight can be changed with styles
     "Figtree-Italic": FigtreeItalic,
     Figtree,
+
+    "Archivo-Italic": ArchivoItalic,
+    Archivo,
   });
 
   useEffect(() => {
@@ -73,7 +78,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#000000",
-    fontFamily: "Open Sans",
+    fontFamily: "Archivo",
     fontSize: 17,
     fontStyle: "normal",
     fontWeight: "400",
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#000000",
-    fontFamily: "Inter",
+    fontFamily: "Archivo",
     fontSize: 32,
     fontStyle: "normal",
     fontWeight: "bold",
