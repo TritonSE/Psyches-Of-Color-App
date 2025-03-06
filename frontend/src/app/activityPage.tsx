@@ -1,15 +1,17 @@
-// ActivitiesScreen.tsx
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import SectionButton from '@/components/sectionButton'; // Import the SectionButton component
-import ActivityOptions from '@/components/activityOptions'; // Import ActivityOptions component
+import React, { useState } from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import SectionButton from "@/components/sectionButton"; // Import the SectionButton component
+import ActivityOptions from "@/components/activityOptions"; // Import ActivityOptions component
 
 export default function ActivitiesScreen() {
-  // Function to handle pressing a section button
-  const handleSectionPress = (section: string) => {
-    console.log(`Navigating to: ${section}`);
-    // Implement navigation logic here if needed
+  // State to manage the visibility of dropdowns for each section
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  // Function to handle section button press and toggle dropdown
+  const handleSectionPress = (header: string) => {
+    // You can add any logic here when a header is pressed
+    console.log(header); // For now, just log the header name
   };
 
   return (
@@ -26,7 +28,7 @@ export default function ActivitiesScreen() {
         <SectionButton
           title="SECTION 1"
           subtitle="Understanding yourself"
-          onPress={() => handleSectionPress('Section 1')}
+          onPress={handleSectionPress}
         />
 
         {/* Circle Images - Use the ActivityOptions component here */}
@@ -41,7 +43,7 @@ export default function ActivitiesScreen() {
         <SectionButton
           title="SECTION 2"
           subtitle="Navigating Mental Health"
-          onPress={() => handleSectionPress('Section 2')}
+          onPress={handleSectionPress}
         />
       </ScrollView>
     </View>
@@ -51,38 +53,38 @@ export default function ActivitiesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
     paddingTop: 50,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     height: 50,
     fontSize: 18,
-    fontStyle: 'normal',
-    fontWeight: '600',
+    fontStyle: "normal",
+    fontWeight: "600",
     paddingTop: 10,
     paddingHorizontal: 20,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     flex: 1,
     marginRight: 24,
-    color: '#6C6C6C',
+    color: "#6C6C6C",
   },
   scrollContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingBottom: 50,
     paddingTop: 32,
   },
   jumpText: {
     fontSize: 16,
-    color: '#6C6C6C',
+    color: "#6C6C6C",
     marginVertical: 10,
-    fontStyle: 'normal',
-    fontWeight: '400',
+    fontStyle: "normal",
+    fontWeight: "400",
   },
 });
