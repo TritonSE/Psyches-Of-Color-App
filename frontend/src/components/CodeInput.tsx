@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -19,6 +19,10 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange, containerStyle 
   const [code, setCode] = useState<string[]>(Array(length).fill(""));
   const inputs = useRef<(TextInput | null)[]>([]);
 
+  useEffect(() => {
+    inputs.current[0]?.focus();
+  }, []);
+
   const handleChange = (text: string, index: number) => {
     const newCode = [...code];
     newCode[index] = text;
@@ -32,11 +36,17 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange, containerStyle 
   };
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
-    console.log(e.nativeEvent.key);
     if (e.nativeEvent.key === "Backspace" && index > 0) {
       e.preventDefault();
       handleChange("", index - 1);
       inputs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleFocus = () => {
+    const firstEmptyIndex = code.findIndex((digit) => digit === "");
+    if (firstEmptyIndex !== -1) {
+      inputs.current[firstEmptyIndex]?.focus();
     }
   };
 
@@ -53,9 +63,18 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange, containerStyle 
           onKeyPress={(e) => {
             handleKeyPress(e, index);
           }}
+          onFocus={handleFocus}
           keyboardType="number-pad"
           maxLength={1}
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              borderColor: inputs.current[index]?.isFocused()
+                ? lightModeColors.secondaryLightFont
+                : lightModeColors.tertiaryLightFont,
+            },
+          ]}
+          caretHidden
         />
       ))}
     </View>
