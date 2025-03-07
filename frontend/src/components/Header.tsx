@@ -1,9 +1,9 @@
+import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Back from "@/assets/back.svg";
 import { lightModeColors } from "@/constants/colors";
-import { router } from "expo-router";
 
 type BaseHeaderProps = {
   title?: string;
