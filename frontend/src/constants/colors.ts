@@ -12,6 +12,7 @@ type Colors = {
   tabsIcon: string;
   error: string;
   success: string;
+  primary: string;
 };
 
 export const lightModeColors: Colors = {
@@ -28,4 +29,5 @@ export const lightModeColors: Colors = {
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",
+  primary: "#D35144",
 };

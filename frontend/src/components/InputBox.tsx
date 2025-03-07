@@ -7,7 +7,7 @@ import IconPassShow from "@/assets/icon-pass-show.svg";
 import { lightModeColors } from "@/constants/colors";
 
 type BaseInputBoxProps = {
-  label: string;
+  label?: string;
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
@@ -71,7 +71,7 @@ const InputBox: React.FC<InputBoxProps> = ({
 
   return (
     <View style={containerStyle}>
-      <Text style={[styles.text, labelStyle]}>{label}</Text>
+      {label && <Text style={[styles.text, labelStyle]}>{label}</Text>}
       <View style={[styles.inputWrapper, errorMessage && styles.inputError]}>
         <TextInput
           style={[styles.input, style]}
@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: lightModeColors.darkFont,
-    fontFamily: "Open Sans",
-    fontSize: 17,
+    fontFamily: "Archivo",
+    fontSize: 16,
     fontWeight: "600",
     lineHeight: 25.5,
     marginBottom: 4,

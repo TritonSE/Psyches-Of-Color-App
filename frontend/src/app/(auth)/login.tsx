@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
@@ -132,8 +132,7 @@ export default function Login() {
         hidden={true}
         showForgotPassword={true}
         onForgotPassword={() => {
-          // TODO: redirect to forgot password page where they can fill in an email
-          console.log("Forgot Password pressed");
+          router.navigate("/forgot-password");
         }}
         containerStyle={{ marginBottom: 16 }}
         errorMessage={passwordError}
@@ -212,7 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
-    // justifyContent: "space-between",
   },
   logo: {
     width: 253,
