@@ -4,8 +4,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 
 import Button from "@/components/Button";
+import CodeInput from "@/components/CodeInput";
 import Header from "@/components/Header";
-import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 
 export default function ForgotPassword() {
@@ -30,7 +30,7 @@ export default function ForgotPassword() {
             Check the email ({email}) associated with your account and enter the code
           </Text>
         </View>
-        <InputBox value={code} onChangeText={setCode} keyboardType="number-pad" maxLength={6} />
+        <CodeInput length={6} onChange={setCode} containerStyle={{ paddingHorizontal: 10 }} />
         <View style={styles.bottomContainer}>
           <Button
             onPress={() => {

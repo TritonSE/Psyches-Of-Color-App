@@ -5,6 +5,7 @@ type Colors = {
   neutralFont: string;
   lightFont: string;
   secondaryLightFont: string;
+  tertiaryLightFont: string;
   mutedFont: string;
   boxBorder: string;
   background: string;
@@ -22,6 +23,7 @@ export const lightModeColors: Colors = {
   neutralFont: "#484848",
   lightFont: "#FFFFFF",
   secondaryLightFont: "#6C6C6C",
+  tertiaryLightFont: "#EBEBEB",
   mutedFont: "#999999",
   boxBorder: "#000000",
   background: "#FFFFFF",
