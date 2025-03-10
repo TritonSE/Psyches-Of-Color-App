@@ -3,13 +3,15 @@
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
+import Onboarding from "@/components/Onboarding/Onboarding";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>New Home</Text>
-      <StatusBar />
-    </View>
+    <Onboarding/>
+    // <View style={styles.container}>
+    //   <Text style={styles.text}>New Home</Text>
+    //   <StatusBar />
+    // </View>
   );
 }
 
