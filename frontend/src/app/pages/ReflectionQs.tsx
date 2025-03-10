@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
     gap: 50,
+    backgroundColor: "white",
   },
   buttonColor: {
     backgroundColor: "#C13D2F",
@@ -27,9 +28,6 @@ export default function ReflectionQs() {
       <View>
         <ResponseBox></ResponseBox>
       </View>
-      {/* <Button onClick={(): void => {}} additionalStyle={styles.buttonColor}>
-        Continue
-      </Button> */}
     </SafeAreaView>
   );
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Button } from "../components/Button";
-// import QuestionAsker from "../../assets/questionAsker.svg";
+// import QuestionAsker from "../../assets/questionAsker";
 
 const styles = StyleSheet.create({
   title: {
@@ -11,9 +11,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 27,
     letterSpacing: 0,
+    paddingTop: 25,
+    left: 25,
   },
   questionSection: {
     alignItems: "center",
+    flexDirection: "column",
   },
   questionBox: {
     borderWidth: 1,
@@ -73,8 +76,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   page: {
-    alignContent: "center",
     gap: 50,
+    alignItems: "center",
   },
 });
 
@@ -84,7 +87,7 @@ export function ResponseBox() {
     <SafeAreaView style={styles.page}>
       <Text style={styles.title}>Time To Reflect</Text>
       <View style={styles.questionSection}>
-        {/* <QuestionAsker></QuestionAsker> */}
+        {/* <img src={QuestionAsker} alt="Question Asker" /> */}
         <View style={styles.questionBox}>
           <Text style={styles.question}>
             What is one way you can create a sense of &apos;sunshine&apos; in your space today?
