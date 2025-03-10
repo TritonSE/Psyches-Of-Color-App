@@ -43,13 +43,22 @@ const styles = StyleSheet.create({
     height: 180,
     position: "absolute",
   },
+  selected: {
+    borderWidth: 1,
+    borderColor: "#D35144",
+  },
 });
 
-export function CharacterCard(props: { color: string; character: string; characterIcon: any }) {
-  const { color, character, characterIcon } = props;
+export function CharacterCard(props: {
+  color: string;
+  character: string;
+  characterIcon: any;
+  selected: boolean;
+}) {
+  const { color, character, characterIcon, selected } = props;
   return (
     <View style={styles.container}>
-      <View style={[styles.card, { backgroundColor: color }]}>
+      <View style={[styles.card, { backgroundColor: color }, selected && styles.selected]}>
         <View style={styles.characterIcon}>
           <Image source={require("@/assets/Vector.png")} style={styles.baseImage} />
           <Image source={characterIcon} style={styles.overlayImage} />
