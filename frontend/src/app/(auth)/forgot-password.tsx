@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import Header from "@/components/Header";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
+import { forgotPassword } from "@/lib/auth";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -34,11 +35,16 @@ export default function ForgotPassword() {
         <View style={styles.bottomContainer}>
           <Button
             onPress={() => {
-              console.log("Reset password");
-              router.push({
-                pathname: "/enter-code",
-                params: { email },
-              });
+              forgotPassword(email)
+                .then(() => {
+                  router.push({
+                    pathname: "/email-sent",
+                    params: { email },
+                  });
+                })
+                .catch((error: unknown) => {
+                  console.error(error);
+                });
             }}
             disabled={!isValidEmail}
             style={{

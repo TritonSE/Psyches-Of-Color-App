@@ -12,13 +12,13 @@ type BaseHeaderProps = {
 };
 
 type BackHrefHeaderProps = {
-  showBackButton: true;
+  showBackButton?: true;
   backHref: string;
   onBackButtonPressed?: never;
 };
 
 type OnBackButtonPressedHeaderProps = {
-  showBackButton: true;
+  showBackButton?: true;
   backHref?: never;
   onBackButtonPressed: () => void;
 };
