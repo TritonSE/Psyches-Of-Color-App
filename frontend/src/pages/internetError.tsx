@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import OrangeMascot from "@/assets/orange-mascot.svg";
-import { Button } from "@/components/Button";
+import Button from "@/components/Button";
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const buttonStyles = StyleSheet.create({
   buttonStyle: {
     width: 218,
@@ -58,10 +59,10 @@ export default function InternetError() {
         </Text>
       </View>
       <Button
-        onClick={() => {
+        onPress={() => {
           setIsConnected(!isConnected);
         }}
-        additionalStyle={buttonStyles.buttonStyle}
+        // style={buttonStyles.buttonStyle}
       >
         Try Again
       </Button>
