@@ -56,8 +56,8 @@ export function CharacterCard(props: { color: string; character: string; charact
         </View>
         <Text style={styles.characterName}>{character}</Text>
         <Text style={styles.characterDescription}>
-          “Hi! I’m Fire. I represent the power of transformation, motivation, and finding passion
-          for growth and learning. Let’s find your spark together!”
+          “Hi! I’m {character}. I represent the power of transformation, motivation, and finding
+          passion for growth and learning. Let’s find your spark together!”
         </Text>
       </View>
     </View>
