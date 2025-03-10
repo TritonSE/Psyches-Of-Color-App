@@ -107,6 +107,7 @@ const sendTokenToBackend = async (idToken: string) => {
       },
     });
     if (response.ok) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userInfo = await response.json();
       console.log(userInfo);
     } else {
