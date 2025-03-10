@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Button } from "../components/Button";
-// import QuestionAsker from "../../assets/questionAsker";
 
 const styles = StyleSheet.create({
   title: {
@@ -12,7 +11,7 @@ const styles = StyleSheet.create({
     lineHeight: 27,
     letterSpacing: 0,
     paddingTop: 25,
-    left: 25,
+    left: 0,
   },
   questionSection: {
     alignItems: "center",
@@ -27,12 +26,12 @@ const styles = StyleSheet.create({
     width: 215,
   },
   question: {
-    textAlign: "center", // ✅ Centers text horizontally
-    fontFamily: "Figtree", // ✅ Corrected camelCase
+    textAlign: "center",
+    fontFamily: "Figtree",
     fontWeight: "500",
     fontSize: 16,
-    lineHeight: 24, // ✅ Converted to pixels (16px * 1.5 = 24)
-    letterSpacing: 0, // ✅ Converted to number
+    lineHeight: 24,
+    letterSpacing: 0,
   },
   inputContainer: {
     position: "relative",
@@ -77,7 +76,11 @@ const styles = StyleSheet.create({
   },
   page: {
     gap: 50,
-    alignItems: "center",
+  },
+  icon: {
+    width: 37,
+    height: 37,
+    resizeMode: "contain",
   },
 });
 
@@ -87,7 +90,7 @@ export function ResponseBox() {
     <SafeAreaView style={styles.page}>
       <Text style={styles.title}>Time To Reflect</Text>
       <View style={styles.questionSection}>
-        {/* <img src={QuestionAsker} alt="Question Asker" /> */}
+        <Image source={require("@/assets/questionDude.svg")} style={styles.icon} />
         <View style={styles.questionBox}>
           <Text style={styles.question}>
             What is one way you can create a sense of &apos;sunshine&apos; in your space today?
@@ -104,7 +107,12 @@ export function ResponseBox() {
           multiline={true}
         />
       </View>
-      <Button onClick={() => console.log("Button clicked!")} additionalStyle={styles.buttonColor}>
+      <Button
+        onClick={() => {
+          console.log("Button clicked!");
+        }}
+        additionalStyle={styles.buttonColor}
+      >
         CONTINUE
       </Button>
     </SafeAreaView>
