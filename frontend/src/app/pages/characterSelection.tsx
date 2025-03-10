@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View, Dimensions, Animated } from "react-
 import { CharacterCard } from "@/components/CharacterCard";
 import { Button } from "../../components/Button";
 import { useRef, useState } from "react";
+import ProgressBar from "@/components/Onboarding/ProgressBar";
 
 const { width } = Dimensions.get("window");
 const WIDTH = 273;
@@ -39,6 +40,8 @@ export default function CharacterSelection() {
 
   return (
     <View style={styles.container}>
+      <Text>Onboarding</Text>
+      <ProgressBar progress={0.1} />
       <Text style={styles.directions}>Choose your character</Text>
       <Animated.ScrollView
         horizontal
@@ -85,6 +88,7 @@ export default function CharacterSelection() {
           );
         })}
       </Animated.ScrollView>
+
       <Button
         onClick={() => {
           console.log("test");
@@ -100,9 +104,10 @@ export default function CharacterSelection() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingVertical: 40,
     alignItems: "center",
     justifyContent: "center",
-    gap: 16,
+    gap: 30,
   },
   characterCard: {
     width: WIDTH,
@@ -134,4 +139,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D35144",
   },
+  // progress: {
+  //   flex: 1,
+  //   height: 157,
+  //   width: 390,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   gap: 60,
+  //   marginVertical: 0,
+  //   paddingVertical: 0,
+  // },
 });
