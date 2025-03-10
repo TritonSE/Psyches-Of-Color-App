@@ -1,4 +1,4 @@
-import InternetError from "../pages/internetError";
+import InternetError from "@/pages/internetError";
 
 export default function Home() {
   return <InternetError />;

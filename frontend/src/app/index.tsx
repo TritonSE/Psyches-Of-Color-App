@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Link } from "expo-router";
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
@@ -20,6 +19,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Old Home</Text>
+      <Link href={"/home"}>Login</Link>
       <StatusBar />
     </View>
   );

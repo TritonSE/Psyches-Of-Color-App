@@ -1,9 +1,9 @@
 import { Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
-import HomeIcon from "../../assets/home-icon.svg";
-import ProfileIcon from "../../assets/profile-icon.svg";
-import ResourcesIcon from "../../assets/resources-icon.svg";
+import HomeIcon from "@/assets/home-icon.svg";
+import ProfileIcon from "@/assets/profile-icon.svg";
+import ResourcesIcon from "@/assets/resources-icon.svg";
 
 const styles = StyleSheet.create({
   tabBar: {
