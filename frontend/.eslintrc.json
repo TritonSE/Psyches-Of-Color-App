@@ -28,6 +28,7 @@
     "import/ignore": ["node_modules/react-native/index\\.js$"]
   },
   "plugins": ["@typescript-eslint", "react"],
+  "ignorePatterns": ["babel.config.js"],
   "rules": {
     "import/no-unresolved": "off",
 
