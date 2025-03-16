@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
-import SectionButton from "@/components/sectionButton"; // Import the SectionButton component
+// import { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+
 import ActivityOptions from "@/components/activityOptions"; // Import ActivityOptions component
+import SectionButton from "@/components/sectionButton"; // Import the SectionButton component
 
 export default function ActivitiesScreen() {
   // State to manage the visibility of dropdowns for each section
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+  // const [activeSection, setActiveSection] = useState<string | null>(null);
 
   // Function to handle section button press and toggle dropdown
   const handleSectionPress = (header: string) => {

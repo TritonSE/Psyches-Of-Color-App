@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-interface SectionButtonProps {
+type SectionButtonProps = {
   title: string;
   subtitle: string;
   onPress: (header: string) => void;
-}
+};
 
 const SectionButton: React.FC<SectionButtonProps> = ({ title, subtitle, onPress }) => {
   // State to track whether the dropdown is visible or not
@@ -30,13 +30,25 @@ const SectionButton: React.FC<SectionButtonProps> = ({ title, subtitle, onPress 
       {/* Conditionally render dropdown options if the state is true */}
       {isDropdownVisible && (
         <View style={styles.dropdown}>
-          <TouchableOpacity onPress={() => onPress("Header 1")}>
+          <TouchableOpacity
+            onPress={() => {
+              onPress("Header 1");
+            }}
+          >
             <Text style={styles.dropdownItem}>Header 1</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onPress("Header 2")}>
+          <TouchableOpacity
+            onPress={() => {
+              onPress("Header 2");
+            }}
+          >
             <Text style={styles.dropdownItem}>Header 2</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onPress("Header 3")}>
+          <TouchableOpacity
+            onPress={() => {
+              onPress("Header 3");
+            }}
+          >
             <Text style={styles.dropdownItem}>Header 3</Text>
           </TouchableOpacity>
         </View>

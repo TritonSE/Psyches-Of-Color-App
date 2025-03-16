@@ -1,29 +1,30 @@
+/* eslint-disable */
 // components/ActivityOptions.tsx
-import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import React from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 // Define the props type for the component
-interface ActivityOptionsProps {
+type ActivityOptionsProps = {
   // This can take any additional props you'd like, such as style
-}
+};
 
 const ActivityOptions: React.FC<ActivityOptionsProps> = () => {
   return (
     <View style={styles.imageContainer}>
       <Image
-        source={require('@/assets/yellowButton.png')}
+        source={require("@/assets/yellowButton.png")}
         style={[styles.buttonImage, { marginLeft: -99 }]}
       />
       <Image
-        source={require('@/assets/redButton.png')}
+        source={require("@/assets/redButton.png")}
         style={[styles.buttonImage, { marginRight: -99 }]}
       />
       <Image
-        source={require('@/assets/grayButton.png')}
+        source={require("@/assets/grayButton.png")}
         style={[styles.buttonImage, { marginLeft: -100 }]}
       />
       <Image
-        source={require('@/assets/grayButton.png')}
+        source={require("@/assets/grayButton.png")}
         style={[styles.buttonImage, { marginRight: -99 }]}
       />
     </View>
@@ -35,9 +36,9 @@ const styles = StyleSheet.create({
   imageContainer: {
     marginTop: 40,
     marginBottom: 40,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonImage: {
     width: 98,
