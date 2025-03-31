@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Redirect } from "expo-router";
 import { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -14,14 +15,15 @@ export default function Loading() {
     return <Redirect href="/login" />;
   }
 
-  return (
-    <View style={styles.container}>
-      <Mascots style={styles.logo} />
-      <Text style={styles.title}>Psyches of Color</Text>
-      <Text style={styles.text}>slogan/mindful tip goes here</Text>
-      <Button onPress={() => void logout()}>Logout</Button>
-    </View>
-  );
+  // return (
+  //   <View style={styles.container}>
+  //     <Mascots style={styles.logo} />
+  //     <Text style={styles.title}>Psyches of Color</Text>
+  //     <Text style={styles.text}>slogan/mindful tip goes here</Text>
+  //     <Button onPress={() => void logout()}>Logout</Button>
+  //   </View>
+  // );
+  return <Redirect href="/home" />;
 }
 
 const styles = StyleSheet.create({

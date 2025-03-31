@@ -1,23 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { StatusBar, StyleSheet, Text, View } from "react-native";
+
+import { lightModeColors } from "@/constants/colors";
+import ProfilePage from "@/pages/profilePage";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "green",
+    backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
-    color: "#ffffff",
-    fontSize: 24,
-    fontWeight: "bold",
+    color: lightModeColors.darkFont,
   },
 });
 
 export default function Profile() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Profile</Text>
-    </View>
-  );
+  return <ProfilePage />;
 }

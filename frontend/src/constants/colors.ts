@@ -12,6 +12,7 @@ type Colors = {
   tabsIcon: string;
   error: string;
   success: string;
+  profileBackground: string;
 };
 
 export const lightModeColors: Colors = {
@@ -28,6 +29,7 @@ export const lightModeColors: Colors = {
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",
+  profileBackground: "#c13d2f",
 };
 
 // export default lightModeColors;
