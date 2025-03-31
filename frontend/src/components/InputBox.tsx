@@ -7,7 +7,7 @@ import IconPassShow from "@/assets/icon-pass-show.svg";
 import { lightModeColors } from "@/constants/colors";
 
 type BaseInputBoxProps = {
-  label: string;
+  label?: string;
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
@@ -15,20 +15,21 @@ type BaseInputBoxProps = {
   containerStyle?: React.ComponentProps<typeof View>["style"];
   labelStyle?: React.ComponentProps<typeof Text>["style"];
   errorMessage?: string;
+  hidden?: boolean;
 } & React.ComponentProps<typeof TextInput>;
 
-type PasswordInputBoxProps = {
-  isPassword: true;
-  onForgotPassword?: () => void;
+// For type checking, so that `onForgotPassword` can't been passed in when `showForgotPassword` is false
+type WithForgotPasswordInputBoxProps = {
+  showForgotPassword: true;
+  onForgotPassword: () => void;
 } & BaseInputBoxProps;
 
-// For type checking, so that `onForgotPassword` can't been passed in when `isPassword` is false
-type NonPasswordInputBoxProps = {
-  isPassword?: false;
+type WithoutForgotPasswordInputBoxProps = {
+  showForgotPassword?: false;
   onForgotPassword?: never;
 } & BaseInputBoxProps;
 
-type InputBoxProps = PasswordInputBoxProps | NonPasswordInputBoxProps;
+type InputBoxProps = WithForgotPasswordInputBoxProps | WithoutForgotPasswordInputBoxProps;
 
 /**
  * Form input component containing the label, input box, and error messages.
@@ -42,7 +43,8 @@ type InputBoxProps = PasswordInputBoxProps | NonPasswordInputBoxProps;
  * @param {string} props.placeholder - Optional laceholder text for the input box
  * @param {string} props.value - stateful value of the input
  * @param {function} props.onChangeText - function called when the input text changes with the new text as an argument
- * @param {boolean} props.isPassword - whether the input is a password field, determines if the password visibility toggle is shown - defaults to false
+ * @param {boolean} props.hidden - whether the user input is hidden, determines if the password visibility toggle is shown - defaults to false
+ * @param {boolean} props.showForgotPassword - whether the 'Forgot Password' link is shown - defaults to false
  * @param {function} props.onForgotPassword - optional function to call when the forgot password link is pressed, forgot password link is only shown when this is present AND isPassword is true
  * @param {object} props.style - optional style to apply to the input box
  * @param {object} props.containerStyle - optional style to apply to the container of the label and input box
@@ -56,7 +58,8 @@ const InputBox: React.FC<InputBoxProps> = ({
   placeholder,
   value,
   onChangeText,
-  isPassword = false,
+  hidden = false,
+  showForgotPassword = false,
   onForgotPassword,
   style,
   containerStyle,
@@ -64,11 +67,11 @@ const InputBox: React.FC<InputBoxProps> = ({
   errorMessage,
   ...props
 }) => {
-  const [isPasswordVisible, setPasswordVisible] = useState(!isPassword);
+  const [isPasswordVisible, setPasswordVisible] = useState(!hidden);
 
   return (
     <View style={containerStyle}>
-      <Text style={[styles.text, labelStyle]}>{label}</Text>
+      {label && <Text style={[styles.text, labelStyle]}>{label}</Text>}
       <View style={[styles.inputWrapper, errorMessage && styles.inputError]}>
         <TextInput
           style={[styles.input, style]}
@@ -82,7 +85,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           secureTextEntry={!isPasswordVisible}
           {...props}
         />
-        {isPassword ? (
+        {hidden ? (
           <TouchableOpacity
             onPress={() => {
               setPasswordVisible(!isPasswordVisible);
@@ -108,7 +111,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       </View>
       <View style={styles.errorRow}>
         <Text style={styles.errorText}>{errorMessage}</Text>
-        {isPassword && onForgotPassword && (
+        {showForgotPassword && (
           <TouchableOpacity onPress={onForgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -133,14 +136,15 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: lightModeColors.darkFont,
+    fontFamily: "Archivo",
   },
   iconWrapper: {
     marginLeft: 10,
   },
   text: {
     color: lightModeColors.darkFont,
-    fontFamily: "Open Sans",
-    fontSize: 17,
+    fontFamily: "Archivo",
+    fontSize: 16,
     fontWeight: "600",
     lineHeight: 25.5,
     marginBottom: 4,
@@ -155,6 +159,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   errorText: {
+    fontFamily: "Archivo",
     color: lightModeColors.error,
     fontSize: 12,
     flex: 1,
@@ -163,6 +168,7 @@ const styles = StyleSheet.create({
     color: lightModeColors.secondaryLightFont,
     fontSize: 12,
     marginLeft: 10,
+    fontFamily: "Archivo",
   },
 });
 

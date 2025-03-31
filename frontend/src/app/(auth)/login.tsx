@@ -1,9 +1,10 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
+import AppleLogo from "@/assets/logo-apple.svg";
 import GoogleLogo from "@/assets/logo-google.svg";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
@@ -128,58 +129,80 @@ export default function Login() {
         placeholder="Enter Password"
         value={password}
         onChangeText={setPassword}
-        isPassword={true}
+        hidden={true}
+        showForgotPassword={true}
         onForgotPassword={() => {
-          // TODO: redirect to forgot password page where they can fill in an email
-          console.log("Forgot Password pressed");
+          router.navigate("/forgot-password");
         }}
         containerStyle={{ marginBottom: 16 }}
         errorMessage={passwordError}
       />
-
-      <Button
-        style={styles.loginButton}
-        onPress={() => {
-          void handleLogin();
-        }}
-      >
-        Login
-      </Button>
-      <View style={styles.continueWithTextContainer}>
-        <View style={styles.line}></View>
-        <Text style={styles.continueWithText}>Or continue with</Text>
-        <View style={styles.line}></View>
-      </View>
-      <Button
-        onPress={() => {
-          void handleGoogleLogin();
-        }}
-        style={{ gap: 16 }}
-      >
-        <GoogleLogo width={24} height={24} />
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: 600,
-            color: lightModeColors.lightFont,
+      <View style={styles.bottomHalfContainer}>
+        <Button
+          style={styles.loginButton}
+          onPress={() => {
+            void handleLogin();
           }}
+          textStyle={{ fontFamily: "SG-DemiBold" }}
         >
-          Continue with Google
-        </Text>
-      </Button>
-      <Text style={styles.signupText}>
-        {"Don't have an account? "}
-        <Link href="/signup" style={styles.signupLink}>
-          Sign Up
-        </Link>
-      </Text>
+          Login
+        </Button>
+        <View style={styles.continueWithTextContainer}>
+          <View style={styles.line}></View>
+          <Text style={styles.continueWithText}>Or continue with</Text>
+          <View style={styles.line}></View>
+        </View>
+        <Button
+          onPress={() => {
+            void handleGoogleLogin();
+          }}
+          style={{ gap: 16 }}
+        >
+          <GoogleLogo width={24} height={24} />
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: 600,
+              color: lightModeColors.lightFont,
+              fontFamily: "SG-DemiBold",
+            }}
+          >
+            Continue with Google
+          </Text>
+        </Button>
+        <Button
+          onPress={() => {
+            // TODO: implement Apple login
+            console.log("Apple login!");
+          }}
+          style={{ gap: 16 }}
+        >
+          <AppleLogo width={24} height={24} />
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: 600,
+              color: lightModeColors.lightFont,
+              fontFamily: "SG-DemiBold",
+            }}
+          >
+            Continue with Apple
+          </Text>
+        </Button>
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don&apos;t have an account? </Text>
+          <Link href="/signup" style={styles.signupLink}>
+            Sign Up
+          </Link>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    flexGrow: 0.4,
+    flexGrow: 0.3,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -188,7 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
-    // justifyContent: "space-between",
   },
   logo: {
     width: 253,
@@ -197,10 +219,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: lightModeColors.darkFont,
-    fontFamily: "Inter",
+    fontFamily: "SG-DemiBold",
     fontSize: 32,
-    fontStyle: "normal",
-    fontWeight: "bold",
     lineHeight: 38.4,
     letterSpacing: -0.64,
     marginBottom: 16,
@@ -208,29 +228,40 @@ const styles = StyleSheet.create({
   loginButton: {
     marginTop: 16,
   },
+  bottomHalfContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+  },
   continueWithTextContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     width: "70%",
-    marginVertical: 16,
   },
   continueWithText: {
     color: lightModeColors.mutedFont,
     fontSize: 14,
     marginHorizontal: 10,
+    fontFamily: "Archivo",
   },
   line: {
     flex: 1, // Ensures the lines take up equal width
     height: 1,
     backgroundColor: lightModeColors.overlayBackground,
   },
-  signupText: {
-    marginTop: 20,
-    fontSize: 17,
+  signupContainer: {
+    flexDirection: "row",
+    fontFamily: "Archivo",
     color: lightModeColors.darkFont,
   },
+  signupText: {
+    fontFamily: "Archivo",
+    fontSize: 17,
+  },
   signupLink: {
+    fontSize: 17,
     textDecorationLine: "underline",
+    fontFamily: "Archivo",
   },
 });

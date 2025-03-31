@@ -1,9 +1,9 @@
+import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import Button from "@/components/Button";
 import { logout } from "@/lib/auth";
-import { router } from "expo-router";
 
 // const styles = StyleSheet.create({
 //   container: {
