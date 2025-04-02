@@ -52,8 +52,13 @@ export default function ProfilePage() {
   const navigateToRandomPage = () => {
     router.push("/home/randomPage");
   };
+
   const navigateToSettingsPage = () => {
     router.push("/home/settings");
+  };
+
+  const navigateToEditProfilePage = () => {
+    router.push("/home/editProfile");
   };
 
   return (
@@ -76,7 +81,7 @@ export default function ProfilePage() {
 
           {/* Edit Section */}
           <View style={styles.editContainer}>
-            <TouchableOpacity onPress={navigateToRandomPage}>
+            <TouchableOpacity onPress={navigateToEditProfilePage}>
               <View style={styles.editButton}>
                 <Text style={styles.editButtonText}>Edit Profile</Text>
               </View>

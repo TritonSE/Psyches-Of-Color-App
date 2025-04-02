@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 
 import env from "../src/util/validateEnv";
 
-import { userRouter } from "./routes/users";
+import { userRouter } from "../src/routes/users";
 
 //dotenv.config();
 

@@ -23,13 +23,18 @@ export default function SettingsScreen() {
   const [_errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Navigation functions
-  const navigateToProfilePage = () => {
-    router.push("/home/profile");
-  };
+  // const navigateToProfilePage = () => {
+  //   router.push("/home/profile");
+  // };
 
   const navigateToRandomPage = () => {
     router.push("/home/randomPage");
   };
+
+  const navigateBack = () => {
+    router.back();
+  };
+
   const handleLocationToggle = async () => {
     if (!locationTracking) {
       // Request location permissions
@@ -69,7 +74,7 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={navigateToProfilePage}>
+          <TouchableOpacity onPress={navigateBack}>
             <Ionicons name="arrow-back-outline" size={24} color="#B4B4B4" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Settings</Text>
