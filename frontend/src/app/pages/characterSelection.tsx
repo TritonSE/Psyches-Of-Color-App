@@ -28,14 +28,33 @@ const characters = [
   },
 ];
 
+const infiniteCharacters = [...characters, ...characters, ...characters];
+
 export default function CharacterSelection() {
   const [selectedIndex, setSelectedIndex] = useState(1);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = useRef(null);
+  const [charactersState, setCharactersState] = useState(infiniteCharacters);
 
   const handleScrollEnd = (e) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     const newIndex = Math.round(offsetX / CARD_TOTAL_WIDTH);
-    setSelectedIndex(newIndex);
+    const actualIndex = newIndex % characters.length;
+
+    setSelectedIndex(actualIndex);
+
+    if (offsetX === 0) {
+      setCharactersState((prevState) => [...characters, ...prevState]);
+
+      scrollViewRef.current.scrollTo({
+        x: CARD_TOTAL_WIDTH * characters.length,
+        animated: false,
+      });
+    }
+
+    if (offsetX === CARD_TOTAL_WIDTH * (charactersState.length - 1)) {
+      setCharactersState((prevState) => [...prevState, ...characters]);
+    }
   };
 
   return (
@@ -44,9 +63,10 @@ export default function CharacterSelection() {
       <ProgressBar progress={0.1} />
       <Text style={styles.directions}>Choose your character</Text>
       <Animated.ScrollView
+        ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentOffset={{ x: CARD_TOTAL_WIDTH * selectedIndex, y: 0 }}
+        contentOffset={{ x: CARD_TOTAL_WIDTH * characters.length, y: 0 }}
         pagingEnabled={true}
         snapToInterval={CARD_TOTAL_WIDTH}
         decelerationRate="fast"
@@ -58,11 +78,11 @@ export default function CharacterSelection() {
         })}
         scrollEventThrottle={16}
       >
-        {characters.map((item, index) => {
+        {charactersState.map((item, index) => {
           const inputRange = [
-            (index - 1) * CARD_TOTAL_WIDTH, // center of previous card
-            index * CARD_TOTAL_WIDTH, // center of current card
-            (index + 1) * CARD_TOTAL_WIDTH, // center of next card
+            (index - 1) * CARD_TOTAL_WIDTH,
+            index * CARD_TOTAL_WIDTH,
+            (index + 1) * CARD_TOTAL_WIDTH,
           ];
 
           const scale = scrollX.interpolate({
@@ -71,11 +91,10 @@ export default function CharacterSelection() {
             extrapolate: "clamp",
           });
 
-          const isSelected = index === selectedIndex;
+          const isSelected = index % characters.length === selectedIndex;
 
           return (
             <View key={index} style={{ width: CARD_TOTAL_WIDTH, alignItems: "center" }}>
-              {/* This Animated.View is what grows/shrinks in the middle */}
               <Animated.View style={[styles.characterCard, { transform: [{ scale }] }]}>
                 <CharacterCard
                   color={item.color}
@@ -121,15 +140,14 @@ const styles = StyleSheet.create({
     width: 358,
     height: 48,
     borderRadius: 100,
-    backgroundColor: "#D35144",
+    backgroundColor: "#2E563C",
     paddingVertical: 10,
     paddingHorizontal: 24,
   },
   directions: {
     width: 226,
     height: 24,
-    fontFamily: "Poppins",
-    fontWeight: 600,
+    fontFamily: "archivo",
     fontSize: 20,
     lineHeight: 24,
     letterSpacing: -2,
@@ -139,14 +157,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D35144",
   },
-  // progress: {
-  //   flex: 1,
-  //   height: 157,
-  //   width: 390,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   gap: 60,
-  //   marginVertical: 0,
-  //   paddingVertical: 0,
-  // },
 });
