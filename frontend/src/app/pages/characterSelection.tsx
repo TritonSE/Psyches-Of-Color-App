@@ -36,6 +36,8 @@ export default function CharacterSelection() {
   const scrollViewRef = useRef(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
 
+  const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
+
   const handleScrollEnd = (e) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     const newIndex = Math.round(offsetX / CARD_TOTAL_WIDTH);
@@ -66,7 +68,7 @@ export default function CharacterSelection() {
         ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentOffset={{ x: CARD_TOTAL_WIDTH * characters.length, y: 0 }}
+        contentOffset={{ x: initialScrollPosition, y: 0 }}
         pagingEnabled={true}
         snapToInterval={CARD_TOTAL_WIDTH}
         decelerationRate="fast"
@@ -127,6 +129,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 30,
+    backgroundColor: "#F6F6EA",
   },
   characterCard: {
     width: WIDTH,
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
   directions: {
     width: 226,
     height: 24,
-    fontFamily: "archivo",
+    fontFamily: "Social-Gothic",
     fontSize: 20,
     lineHeight: 24,
     letterSpacing: -2,
