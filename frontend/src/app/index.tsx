@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
-import { lightModeColors } from "@/constants/colors";
 import Onboarding from "@/components/Onboarding/Onboarding";
+import { lightModeColors } from "@/constants/colors";
 
 export default function App() {
   return (
-    <Onboarding/>
+    <Onboarding />
     // <View style={styles.container}>
     //   <Text style={styles.text}>New Home</Text>
     //   <StatusBar />
