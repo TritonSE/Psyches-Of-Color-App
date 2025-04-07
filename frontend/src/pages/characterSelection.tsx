@@ -1,8 +1,9 @@
 import { ScrollView, StyleSheet, Text, View, Dimensions, Animated } from "react-native";
 import { CharacterCard } from "@/components/CharacterCard";
-import { Button } from "../../components/Button";
+import Button from "@/components/Button";
 import { useRef, useState } from "react";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import Archivo from "@/assets/fonts/Archivo.ttf";
 
 const { width } = Dimensions.get("window");
 const WIDTH = 273;
@@ -37,6 +38,18 @@ export default function CharacterSelection() {
   const scrollViewRef = useRef(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
 
+  const handleScroll = (e) => {
+    const offsetX = e.nativeEvent.contentOffset.x;
+
+    if (offsetX > CARD_TOTAL_WIDTH * (charactersState.length - 4)) {
+      setCharactersState((prevState) => [...prevState, ...characters]);
+    }
+
+    if (offsetX < CARD_TOTAL_WIDTH * 3) {
+      setCharactersState((prevState) => [...characters, ...prevState]);
+    }
+  };
+
   const handleScrollEnd = (e) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     const newIndex = Math.round(offsetX / CARD_TOTAL_WIDTH);
@@ -44,24 +57,27 @@ export default function CharacterSelection() {
 
     setSelectedIndex(actualIndex);
 
-    if (offsetX === 0) {
+    if (offsetX > CARD_TOTAL_WIDTH * (charactersState.length - 4)) {
       setCharactersState((prevState) => [...characters, ...prevState]);
-
-      scrollViewRef.current.scrollTo({
-        x: CARD_TOTAL_WIDTH * characters.length,
-        animated: false,
-      });
     }
 
-    if (offsetX === CARD_TOTAL_WIDTH * (charactersState.length - 1)) {
+    if (offsetX < CARD_TOTAL_WIDTH * 3) {
       setCharactersState((prevState) => [...prevState, ...characters]);
+
+      if (offsetX === 0) {
+        scrollViewRef.current.scrollTo({
+          x: CARD_TOTAL_WIDTH * characters.length,
+          animated: false,
+        });
+      }
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text>Onboarding</Text>
+      <Text style={styles.onboardingText}>Onboarding</Text>
       <ProgressBar progress={0.1} />
+
       <Text style={styles.directions}>Choose your character</Text>
       <Animated.ScrollView
         ref={scrollViewRef}
@@ -73,10 +89,14 @@ export default function CharacterSelection() {
         decelerationRate="fast"
         snapToAlignment="start"
         contentContainerStyle={{ paddingHorizontal: CENTER_OFFSET }}
-        onMomentumScrollEnd={handleScrollEnd}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
           useNativeDriver: true,
+          listener: handleScroll, // Add this listener
         })}
+        onMomentumScrollEnd={handleScrollEnd}
+        // onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+        //   useNativeDriver: true,
+        // })}
         scrollEventThrottle={16}
       >
         {charactersState.map((item, index) => {
@@ -113,7 +133,8 @@ export default function CharacterSelection() {
         onClick={() => {
           console.log("test");
         }}
-        additionalStyle={styles.nextButton}
+        style={styles.nextButton}
+        textStyle={styles.buttonText}
       >
         NEXT
       </Button>
@@ -127,8 +148,17 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     alignItems: "center",
     justifyContent: "center",
-    gap: 30,
+    gap: 50,
     backgroundColor: "#F6F6EA",
+    flexDirection: "column",
+    marginTop: 50,
+  },
+  onboardingText: {
+    fontFamily: "Social Gothic",
+    fontWeight: 600,
+    fontSize: 18,
+    color: "#6C6C6C",
+    marginBottom: -20,
   },
   characterCard: {
     width: WIDTH,
@@ -137,6 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: SPACING,
+    marginBottom: -50,
   },
   nextButton: {
     width: 358,
@@ -145,18 +176,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E563C",
     paddingVertical: 10,
     paddingHorizontal: 24,
+    fontFamily: "Social Gothic",
+    fontStyle: "normal",
+    marginBottom: 25,
+    marginTop: 0,
+  },
+  buttonText: {
+    fontFamily: "Social Gothic",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: 16,
   },
   directions: {
-    width: 226,
-    height: 24,
-    fontFamily: "Social-Gothic",
+    fontFamily: "Archivo",
     fontSize: 20,
+    fontStyle: "normal",
+    fontWeight: "600",
     lineHeight: 24,
-    letterSpacing: -2,
-    textAlign: "center",
+    letterSpacing: 0.15,
+    marginBottom: -20,
   },
   selected: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#D35144",
   },
 });

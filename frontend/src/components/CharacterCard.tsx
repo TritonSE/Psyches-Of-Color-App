@@ -16,9 +16,11 @@ const styles = StyleSheet.create({
   },
   characterName: {
     fontSize: 20,
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 24,
     textAlign: "center",
+    fontFamily: "Social Gothic",
+    fontStyle: "normal",
   },
   characterDescription: {
     width: 230,
@@ -27,6 +29,8 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     lineHeight: 14.52,
     textAlign: "center",
+    fontFamily: "Archivo",
+    fontStyle: "normal",
   },
   characterIcon: {
     width: 180,
