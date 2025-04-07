@@ -1,7 +1,7 @@
 // Onboarding.tsx
 
 import React, { useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import NextButton from "../NextButton";
 
