@@ -31,12 +31,11 @@ const characters = [
 const infiniteCharacters = [...characters, ...characters, ...characters];
 
 export default function CharacterSelection() {
+  const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
   const [selectedIndex, setSelectedIndex] = useState(1);
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
   const scrollViewRef = useRef(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
-
-  const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
 
   const handleScrollEnd = (e) => {
     const offsetX = e.nativeEvent.contentOffset.x;
