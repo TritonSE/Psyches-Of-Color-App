@@ -1,20 +1,21 @@
-/* eslint-disable */
+// /* eslint-disable */
 
-import dotenv from "dotenv";
+import "dotenv/config";
 import express, { Express, Request, Response } from "express";
 import mongoose from "mongoose";
 
-import { userProfileRouter } from "./routes/userProfile";
+import env from "../src/util/validateEnv";
 
-dotenv.config();
+import { userRouter } from "../src/routes/users";
+
+//dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
-
+const port = env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
 app.use(express.json());
-app.use(userProfileRouter);
+app.use(userRouter);
 
 mongoose
   .connect(MONGODB_URI)
@@ -31,5 +32,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Server is running at http://localhost:${String(port)}`);
 });
+
+module.exports = app;

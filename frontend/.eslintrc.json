@@ -28,6 +28,7 @@
     "import/ignore": ["node_modules/react-native/index\\.js$"]
   },
   "plugins": ["@typescript-eslint", "react"],
+  "ignorePatterns": ["babel.config.js"],
   "rules": {
     "import/no-unresolved": "off",
 
@@ -66,7 +67,7 @@
 
     // Stylistic.
     "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
-    "@typescript-eslint/no-use-before-define": "warn",
+    "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/prefer-readonly": "warn",
     "@typescript-eslint/prefer-regexp-exec": "warn",
     "object-shorthand": ["warn", "properties"],
