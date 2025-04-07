@@ -2,10 +2,9 @@
 
 import { useFonts } from "expo-font";
 import { Redirect, SplashScreen } from "expo-router";
-import { useContext, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect } from "react";
+import { StyleSheet } from "react-native";
 
-import Mascots from "@/assets/Poc_Mascots.svg";
 import ArchivoItalic from "@/assets/fonts/Archivo-Italic.ttf";
 import Archivo from "@/assets/fonts/Archivo.ttf";
 import FigtreeItalic from "@/assets/fonts/Figtree-Italic.ttf";
@@ -17,12 +16,10 @@ import SGRegular from "@/assets/fonts/Social-Gothic-Regular.otf";
 import SGRough from "@/assets/fonts/Social-Gothic-Rough.otf";
 import SGSoft from "@/assets/fonts/Social-Gothic-Soft.otf";
 import SGStencil from "@/assets/fonts/Social-Gothic-Stencil.otf";
-import Button from "@/components/Button";
-import { UserContext } from "@/contexts/userContext";
-import { logout } from "@/lib/auth";
+import { useAuth } from "@/contexts/userContext";
 
 export default function Loading() {
-  const { firebaseUser } = useContext(UserContext);
+  const { firebaseUser } = useAuth();
 
   const [loaded, error] = useFonts({
     // Social Gothic fonts are static, so can't change the font weight with styles
