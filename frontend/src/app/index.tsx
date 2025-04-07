@@ -20,6 +20,7 @@ import SGStencil from "@/assets/fonts/Social-Gothic-Stencil.otf";
 import Button from "@/components/Button";
 import { UserContext } from "@/contexts/userContext";
 import { logout } from "@/lib/auth";
+import CharacterSelection from "@/pages/characterSelection";
 
 export default function Loading() {
   const { firebaseUser } = useContext(UserContext);
@@ -42,19 +43,19 @@ export default function Loading() {
     Archivo,
   });
 
-  useEffect(() => {
-    if (loaded || error) {
-      void SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
+  // useEffect(() => {
+  //   if (loaded || error) {
+  //     void SplashScreen.hideAsync();
+  //   }
+  // }, [loaded, error]);
 
-  if (!loaded && !error) {
-    return null;
-  }
+  // if (!loaded && !error) {
+  //   return null;
+  // }
 
-  if (!firebaseUser) {
-    return <Redirect href="/login" />;
-  }
+  // if (!firebaseUser) {
+  //   return <Redirect href="/login" />;
+  // }
 
   // return (
   //   <View style={styles.container}>
@@ -64,7 +65,7 @@ export default function Loading() {
   //     <Button onPress={() => void logout()}>Logout</Button>
   //   </View>
   // );
-  return <Redirect href="/home" />;
+  return <CharacterSelection />;
 }
 
 const styles = StyleSheet.create({

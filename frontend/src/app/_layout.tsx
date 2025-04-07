@@ -6,7 +6,7 @@ const RootLayout = () => {
   return (
     <UserContextProvider>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
+        <Stack.Screen name="characterSelection" />
       </Stack>
     </UserContextProvider>
   );

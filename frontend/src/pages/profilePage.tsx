@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 
-import ButtonItem from "@/components/ProfileButton";
+import ButtonItem from "@/components/profileButton";
 import { lightModeColors } from "@/constants/colors";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
