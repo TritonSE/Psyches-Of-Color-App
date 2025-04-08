@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   questionSection: {
     alignItems: "center",
-    flexDirection: "column",
+    flexDirection: "row",
   },
   questionBox: {
     borderWidth: 1,
@@ -78,23 +78,24 @@ const styles = StyleSheet.create({
     gap: 50,
   },
   icon: {
-    width: 37,
-    height: 37,
     resizeMode: "contain",
   },
 });
 
-export function ResponseBox() {
+const questions: Record<number, string> = {
+  1: "What is one way you can create a sense of 'sunshine' in your space today?",
+};
+
+export function ResponseBox(props: { activityNumber: number }) {
   const [text, setText] = useState("");
   return (
     <SafeAreaView style={styles.page}>
       <Text style={styles.title}>Time To Reflect</Text>
       <View style={styles.questionSection}>
-        <Image source={require("@/assets/questionDude.svg")} style={styles.icon} />
+        <Image source={require("@/assets/questionDude.png")} style={styles.icon} />
+
         <View style={styles.questionBox}>
-          <Text style={styles.question}>
-            What is one way you can create a sense of &apos;sunshine&apos; in your space today?
-          </Text>
+          <Text style={styles.question}>{questions[props.activityNumber]}</Text>
         </View>
       </View>
       <View style={styles.inputContainer}>
