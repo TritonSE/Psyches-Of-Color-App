@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 
-import ButtonItem from "@/components/ProfileButton";
+import ButtonItem from "@/components/profileButton";
 import { lightModeColors } from "@/constants/colors";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
@@ -50,15 +50,15 @@ export default function ProfilePage() {
 
   // Navigate to randomPage when the button is pressed
   const navigateToRandomPage = () => {
-    router.push("/home/randomPage");
+    router.push("/randomPage");
   };
 
   const navigateToSettingsPage = () => {
-    router.push("/home/settings");
+    router.push("/settings");
   };
 
   const navigateToEditProfilePage = () => {
-    router.push("/home/editProfile");
+    router.push("/editProfile");
   };
 
   return (

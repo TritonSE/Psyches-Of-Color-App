@@ -1,9 +1,10 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import HomeIcon from "@/assets/home-icon.svg";
 import ProfileIcon from "@/assets/profile-icon.svg";
 import ResourcesIcon from "@/assets/resources-icon.svg";
+import { useAuth } from "@/contexts/userContext";
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -31,6 +32,12 @@ const styles = StyleSheet.create({
 });
 
 export default function TabLayout() {
+  const { firebaseUser } = useAuth();
+
+  if (!firebaseUser) {
+    return <Redirect href="/login" />;
+  }
+
   return (
     <Tabs
       screenOptions={{
@@ -44,7 +51,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View style={styles.iconContainer}>
               <HomeIcon width={24} height={24} />
               {focused ? <View style={styles.underline} /> : null}
@@ -58,7 +65,7 @@ export default function TabLayout() {
         name="resources"
         options={{
           title: "Resources",
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View style={styles.iconContainer}>
               <ResourcesIcon width={24} height={24} />
               {focused ? <View style={styles.underline} /> : null}
@@ -72,7 +79,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View style={styles.iconContainer}>
               <ProfileIcon width={24} height={24} />
               {focused ? <View style={styles.underline} /> : null}

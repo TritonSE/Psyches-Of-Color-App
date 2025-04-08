@@ -2,8 +2,26 @@
  * Provides functions used for user authentication
  */
 
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { getApp } from "@react-native-firebase/app";
+import {
+  createUserWithEmailAndPassword,
+  FirebaseAuthTypes,
+  getAuth,
+  GoogleAuthProvider,
+  sendPasswordResetEmail,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+  signOut,
+} from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+// Removes warnings from react native firebase
+// We're already using their modular SDK but still getting warnings for some reason
+(globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
+(globalThis as any).RNFB_MODULAR_DEPRECATION_STRICT_MODE === true;
+
+const app = getApp();
+const auth = getAuth(app);
 
 GoogleSignin.configure({
   webClientId: "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
@@ -48,7 +66,7 @@ export const signUpEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await auth().createUserWithEmailAndPassword(email, password);
+    const userCreds = await createUserWithEmailAndPassword(auth, email, password);
 
     return {
       success: true,
@@ -74,7 +92,7 @@ export const loginEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await auth().signInWithEmailAndPassword(email, password);
+    const userCreds = await signInWithEmailAndPassword(auth, email, password);
     const idToken = await userCreds.user?.getIdToken();
     // REMOVE CONSOLE.LOG BELOW AFTER TESTING
     console.log(idToken);
@@ -107,8 +125,8 @@ const sendTokenToBackend = async (idToken: string) => {
       },
     });
     if (response.ok) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userInfo = await response.json();
+
       console.log(userInfo);
     } else {
       console.error("Failed to get user info from JWT Token");
@@ -145,11 +163,10 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
       throw new Error("No ID token found");
     }
 
-    // eslint-disable-next-line import/no-named-as-default-member
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    const googleCredential = GoogleAuthProvider.credential(idToken);
 
     // Sign-in the user with the credential
-    const userCreds = await auth().signInWithCredential(googleCredential);
+    const userCreds = await signInWithCredential(auth, googleCredential);
 
     return {
       success: true,
@@ -174,7 +191,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  * @returns {Promise<void>}
  */
 export const logout = async (): Promise<void> => {
-  await auth().signOut();
+  await signOut(auth);
 };
 
 /**
@@ -185,7 +202,7 @@ export const logout = async (): Promise<void> => {
  */
 export const forgotPassword = async (email: string): Promise<EmailSendResponse> => {
   try {
-    await auth().sendPasswordResetEmail(email);
+    await sendPasswordResetEmail(auth, email);
 
     return {
       success: true,

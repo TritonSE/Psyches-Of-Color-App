@@ -16,7 +16,7 @@ export default function ButtonItem({ icon, title, subtitle, position, isSaved }:
 
   // Navigate to randomPage when the button is pressed
   const navigateToRandomPage = () => {
-    router.push("/home/randomPage"); // This will navigate to randomPage.tsx
+    router.push("/randomPage"); // This will navigate to randomPage.tsx
   };
 
   const styles = StyleSheet.create({

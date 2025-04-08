@@ -1,5 +1,5 @@
 import auth, { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth";
-import { ReactNode, createContext, useState } from "react";
+import { ReactNode, createContext, useContext, useState } from "react";
 
 type UserContext = {
   firebaseUser: FirebaseAuthTypes.User | null;
@@ -24,4 +24,17 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   return <UserContext.Provider value={{ firebaseUser }}>{children}</UserContext.Provider>;
+};
+
+/**
+ * A custom hook to access the UserContext
+ */
+export const useAuth = (): UserContext => {
+  const context = useContext(UserContext);
+
+  if (!context) {
+    throw new Error("useUserContext must be used within a UserContextProvider");
+  }
+
+  return context;
 };
