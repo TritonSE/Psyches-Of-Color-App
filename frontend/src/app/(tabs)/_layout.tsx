@@ -1,9 +1,10 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import HomeIcon from "@/assets/home-icon.svg";
 import ProfileIcon from "@/assets/profile-icon.svg";
 import ResourcesIcon from "@/assets/resources-icon.svg";
+import { useAuth } from "@/contexts/userContext";
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -31,6 +32,12 @@ const styles = StyleSheet.create({
 });
 
 export default function TabLayout() {
+  const { firebaseUser } = useAuth();
+
+  if (!firebaseUser) {
+    return <Redirect href="/login" />;
+  }
+
   return (
     <Tabs
       screenOptions={{

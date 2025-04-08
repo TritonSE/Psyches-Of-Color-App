@@ -10,7 +10,7 @@ export default function RandomPage() {
       <Button
         title="Back to Profile"
         onPress={() => {
-          router.push("/home/profile");
+          router.push("/profile");
         }}
       />
     </View>
