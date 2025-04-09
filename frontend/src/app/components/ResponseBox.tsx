@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     paddingTop: 25,
     left: 0,
+    color: "#2E563C",
   },
   questionSection: {
     alignItems: "center",
@@ -24,20 +25,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
     width: 215,
+    height: 110,
+    backgroundColor: "white",
   },
   question: {
     textAlign: "center",
     fontFamily: "Figtree",
     fontWeight: "500",
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     letterSpacing: 0,
+    color: "#2E563C",
   },
   inputContainer: {
     position: "relative",
     width: 358,
     borderWidth: 1,
-    borderColor: "#D9D9D9",
+    borderColor: "#2E563C",
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 12,
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   buttonColor: {
-    backgroundColor: "#C13D2F",
+    backgroundColor: "#2E563C",
     fontFamily: "Social Gothic",
     fontWeight: "600",
     fontSize: 16,
@@ -79,6 +83,19 @@ const styles = StyleSheet.create({
   },
   icon: {
     resizeMode: "contain",
+  },
+  vector: {
+    width: 0,
+    height: 0,
+    borderLeftWidth: 17,
+    borderRightWidth: 19,
+    borderBottomWidth: 15,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "white",
+    transform: [{ rotate: "135deg" }],
+    right: 20,
+    bottom: 15,
   },
 });
 
@@ -96,6 +113,7 @@ export function ResponseBox(props: { activityNumber: number }) {
 
         <View style={styles.questionBox}>
           <Text style={styles.question}>{questions[props.activityNumber]}</Text>
+          <View style={styles.vector}></View>
         </View>
       </View>
       <View style={styles.inputContainer}>
