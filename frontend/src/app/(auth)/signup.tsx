@@ -5,19 +5,18 @@ import Mascots from "@/assets/Poc_Mascots.svg";
 import { lightModeColors } from "@/constants/colors";
 import { z } from "zod";
 import Button from "@/components/Button";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
+import { signUpEmailPassword } from "@/lib/auth";
+import BackButton from "@/components/BackButton";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   // input validators
   const emailValidator = z
     .string()
@@ -27,7 +26,6 @@ export default function Signup() {
     .string()
     .trim()
     .min(8, { message: "Password must be 8 characters long." });
-
   useEffect(() => {
     // Clear errors when the user starts typing again
     setEmailError("");
@@ -38,24 +36,53 @@ export default function Signup() {
   const validateInputs = () => {
     const emailValidation = emailValidator.safeParse(email);
     const passwordValidation = passwordValidator.safeParse(password);
-
     if (!emailValidation.success) {
       setEmailError(emailValidation.error.errors[0].message);
     } else {
       setEmailError("");
     }
-
     if (!passwordValidation.success) {
       setPasswordError(passwordValidation.error.errors[0].message);
     } else {
       setPasswordError("");
     }
-
     return emailValidation.success && passwordValidation.success;
   };
 
+  const handleSignup = async () => {
+    // Prevent spam clicking
+    if (loading) {
+      return;
+    }
+    if (!validateInputs()) {
+      return;
+    }
+    // clear errors
+    setEmailError("");
+    setPasswordError("");
+    setLoading(true);
+    const res = await signUpEmailPassword(email, password);
+    setLoading(false);
+    // If signup was successful, we don't need to do anything
+    // redirection happens in auth context
+    if (res.success) {
+      return;
+    }
+    // If signup was unsuccessful, set the appropriate error message
+    if (res.error.field === "email") {
+      setEmailError(res.error.message);
+    } else if (res.error.field === "password") {
+      setPasswordError(res.error.message);
+    } else {
+      // Unknown error
+      // TODO: maybe have a general error message at the top of the form
+      setPasswordError(res.error.message);
+      setEmailError(res.error.message);
+    }
+  };
   return (
     <View style={styles.container}>
+      <BackButton path="./login" />
       <View style={styles.header}>
         <Mascots style={styles.logo} />
         <Text style={styles.title}>Psyches of Color</Text>
@@ -94,7 +121,7 @@ export default function Signup() {
       <Button
         style={styles.loginButton}
         onPress={() => {
-          router.navigate("/login");
+          void handleSignup();
         }}
         textStyle={{ fontFamily: "SG-DemiBold" }}
       >
@@ -103,7 +130,6 @@ export default function Signup() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   header: {
     flexGrow: 0.3,
