@@ -82,7 +82,7 @@ export default function Signup() {
   };
   return (
     <View style={styles.container}>
-      <BackButton path="./login" />
+      <BackButton path="./confirmBackToLogin" />
       <View style={styles.header}>
         <Mascots style={styles.logo} />
         <Text style={styles.title}>Psyches of Color</Text>
