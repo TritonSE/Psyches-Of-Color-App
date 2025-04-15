@@ -94,9 +94,6 @@ export default function CharacterSelection() {
           listener: handleScroll, // Add this listener
         })}
         onMomentumScrollEnd={handleScrollEnd}
-        // onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
-        //   useNativeDriver: true,
-        // })}
         scrollEventThrottle={16}
       >
         {charactersState.map((item, index) => {
@@ -130,7 +127,7 @@ export default function CharacterSelection() {
       </Animated.ScrollView>
 
       <Button
-        onClick={() => {
+        onPress={() => {
           console.log("test");
         }}
         style={styles.nextButton}
