@@ -15,10 +15,11 @@ type Colors = {
   success: string;
   profileBackground: string;
   primary: string;
+  inputBoxBackground: string;
 };
 
 export const lightModeColors: Colors = {
-  buttonFill: "#D35144",
+  buttonFill: "#2E563C",
   darkFont: "#000000",
   secondaryDarkFont: "#1D1B20",
   neutralFont: "#484848",
@@ -34,4 +35,5 @@ export const lightModeColors: Colors = {
   success: "#3BB966",
   profileBackground: "#c13d2f",
   primary: "#D35144",
+  inputBoxBackground: "#FFFFFF",
 };
