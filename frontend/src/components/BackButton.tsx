@@ -1,7 +1,9 @@
-import Back from "@/assets/back.svg";
-import Button from "./Button";
 import { router } from "expo-router";
 import { StyleSheet } from "react-native";
+
+import Button from "./Button";
+
+import Back from "@/assets/back.svg";
 
 type BackButtonProps = {
   path: string;

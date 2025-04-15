@@ -1,8 +1,8 @@
-import { View, StyleSheet, Text } from "react-native";
-import Button from "@/components/Button";
+import { StyleSheet, Text, View } from "react-native";
+
 import Mascots from "@/assets/Poc_Mascots.svg";
+import Button from "@/components/Button";
 import { lightModeColors } from "@/constants/colors";
-import { router } from "expo-router";
 
 export default function confirmBack() {
   return (

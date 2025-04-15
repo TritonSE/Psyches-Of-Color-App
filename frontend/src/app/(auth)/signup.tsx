@@ -1,13 +1,13 @@
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useState, useEffect } from "react";
-import InputBox from "@/components/InputBox";
-import Mascots from "@/assets/Poc_Mascots.svg";
-import { lightModeColors } from "@/constants/colors";
 import { z } from "zod";
-import Button from "@/components/Button";
-import { router } from "expo-router";
-import { signUpEmailPassword } from "@/lib/auth";
+
+import Mascots from "@/assets/Poc_Mascots.svg";
 import BackButton from "@/components/BackButton";
+import Button from "@/components/Button";
+import InputBox from "@/components/InputBox";
+import { lightModeColors } from "@/constants/colors";
+import { signUpEmailPassword } from "@/lib/auth";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
