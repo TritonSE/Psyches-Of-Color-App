@@ -1,19 +1,15 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Pressable } from "react-native";
+// eslint-disable-next-line import/namespace
+import { Pressable, StyleSheet, Text, View } from "react-native";
+
 import NextButton from "../../components/NextButton";
+
 import ProgressBar from "./ProgressBar";
 import { Question } from "./Question";
+
 import Mascots from "@/assets/Poc_Mascots.svg";
-import { useRouter } from "expo-router";
-
-// Use this if you're using a .d.ts file for pngs
-// import BackArrow from "../../assets/back-arrow.png";
-
-// Fallback for strict ESLint if import fails
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const BackArrow =
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require("../../assets/back-arrow.png") as import("react-native").ImageSourcePropType;
+import BackArrow from "@/assets/back.svg";
 
 type QuestionData = {
   type: "multipleChoice" | "shortAnswer";
@@ -90,7 +86,6 @@ const CheckIn: React.FC = () => {
 
   const isNextDisabled = !currentAnswer;
 
-  // Guard: prevent crash if index goes out of bounds
   if (currentIndex < 0 || currentIndex >= questions.length) {
     return null;
   }
@@ -100,14 +95,14 @@ const CheckIn: React.FC = () => {
       <View style={styles.header}>
         {currentIndex > 0 && (
           <Pressable onPress={handleBack} style={styles.backButton}>
-            <Image source={BackArrow} style={styles.backArrow} resizeMode="contain" />
+            <BackArrow width={20} height={20} />
           </Pressable>
         )}
         <Text style={styles.headerTitle}>Check In</Text>
       </View>
 
       <View style={styles.container}>
-        <ProgressBar progress={(currentIndex + 1) / questions.length} />
+        <ProgressBar progress={currentIndex / questions.length} />
         <Mascots style={styles.logo} />
 
         <Question
@@ -157,7 +152,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // center the title
+    justifyContent: "center",
     position: "relative",
     paddingHorizontal: 20,
     paddingTop: 40,

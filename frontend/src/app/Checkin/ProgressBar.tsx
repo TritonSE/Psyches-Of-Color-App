@@ -1,4 +1,5 @@
 import React from "react";
+// eslint-disable-next-line import/namespace
 import { StyleSheet, View, ViewStyle } from "react-native";
 
 type ProgressBarProps = {
