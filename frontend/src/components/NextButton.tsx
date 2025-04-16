@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { lightModeColors } from "@/constants/colors";
+
 type NextButtonProps = {
   onPress: () => void;
   disabled?: boolean;
@@ -29,8 +31,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     letterSpacing: 0.2,
     lineHeight: 24,
-    fontFamily: "Social Gothic",
-    color: "#fff",
+    fontFamily: "SG-Medium",
+    color: lightModeColors.lightFont,
     textAlign: "center",
   },
   stateLayer: {
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 100,
-    backgroundColor: "#d35144",
+    backgroundColor: lightModeColors.onboardingGreen,
     width: "100%",
     height: 48,
     overflow: "hidden",

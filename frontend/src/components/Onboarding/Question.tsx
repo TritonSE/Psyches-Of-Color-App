@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
+import DownVector from "@/assets/down_vector.svg";
+import UpVector from "@/assets/up_vector.svg";
+import { lightModeColors } from "@/constants/colors";
+
 type QuestionProps = {
   type: "multipleChoice" | "shortAnswer";
   question: string;
@@ -8,6 +12,7 @@ type QuestionProps = {
   onAnswer: (answer: string) => void;
   placeholder?: string;
   otherOptions?: string[];
+  currentAnswer?: string;
 };
 
 export const Question = ({
@@ -17,14 +22,15 @@ export const Question = ({
   onAnswer,
   placeholder,
   otherOptions = [],
+  currentAnswer,
 }: QuestionProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showOtherDropdown, setShowOtherDropdown] = useState<boolean>(false);
 
   useEffect(() => {
-    setSelectedAnswer("");
+    setSelectedAnswer(currentAnswer ?? "");
     setShowOtherDropdown(false);
-  }, [question]);
+  }, [question, currentAnswer]);
 
   const handleSelectOption = (option: string) => {
     setSelectedAnswer(option);
@@ -38,24 +44,33 @@ export const Question = ({
   return (
     <View style={styles.container}>
       <Text style={styles.questionText}>{question}</Text>
-
       {type === "multipleChoice" && (
         <View style={styles.optionsContainer}>
           {options.map((option) => {
             if (option === "Other") {
+              const displayText =
+                selectedAnswer && otherOptions.includes(selectedAnswer) ? selectedAnswer : "Other";
               return (
                 <View key="other-wrapper">
                   <TouchableOpacity
                     style={[
                       styles.optionButton,
-                      selectedAnswer === "Other" && styles.optionButtonSelected,
+                      selectedAnswer &&
+                        otherOptions.includes(selectedAnswer) &&
+                        styles.optionButtonSelected,
                     ]}
                     onPress={() => {
-                      // Toggle dropdown when "Other" is pressed
                       setShowOtherDropdown((prev) => !prev);
                     }}
                   >
-                    <Text style={[styles.optionText]}>Other</Text>
+                    <View style={styles.otherRow}>
+                      <Text style={styles.optionText}>{displayText}</Text>
+                      {showOtherDropdown ? (
+                        <UpVector style={styles.vector} />
+                      ) : (
+                        <DownVector style={styles.vector} />
+                      )}
+                    </View>
                   </TouchableOpacity>
                   {showOtherDropdown && otherOptions.length > 0 && (
                     <View style={styles.dropdownContainer}>
@@ -68,7 +83,7 @@ export const Question = ({
                             handleSelectOption(otherOption);
                           }}
                         >
-                          <Text style={styles.dropdownOptionText}>{otherOption}</Text>
+                          <Text style={styles.optionText}>{otherOption}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -88,7 +103,7 @@ export const Question = ({
                     handleSelectOption(option);
                   }}
                 >
-                  <Text style={[styles.optionText]}>{option}</Text>
+                  <Text style={styles.optionText}>{option}</Text>
                 </TouchableOpacity>
               );
             }
@@ -115,10 +130,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   questionText: {
-    color: "#000",
+    color: "#1e1e1e",
     fontWeight: "600",
     fontSize: 20,
-    fontFamily: "Poppins",
+    fontFamily: "SG-Bold",
     marginBottom: 16,
     textAlign: "center",
   },
@@ -129,45 +144,57 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     display: "flex",
-    height: 48,
+    minHeight: 48,
     paddingVertical: 12,
     paddingHorizontal: 44,
     alignItems: "center",
-    gap: 10,
-    alignSelf: "stretch",
     borderRadius: 100,
     borderWidth: 1,
-    borderColor: "#EBEBEB",
+    borderColor: lightModeColors.progressBarBackground,
+    backgroundColor: "#fff",
+    width: 358,
+    alignSelf: "center",
   },
   optionButtonSelected: {
-    backgroundColor: "#B4EFFB",
-    borderColor: "#5ECBFF",
+    backgroundColor: lightModeColors.optionButtonSelected,
+    borderColor: lightModeColors.selectedBorder,
   },
   optionText: {
     fontSize: 16,
     textAlign: "center",
+    flexWrap: "wrap",
+    width: "100%",
   },
   textInput: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: lightModeColors.questionBorder,
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
     fontSize: 16,
   },
   dropdownContainer: {
-    marginTop: 4,
-    marginLeft: 16,
+    marginTop: 8,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: lightModeColors.questionBorder,
     borderRadius: 8,
     backgroundColor: "#fff",
+    width: 358,
+    alignSelf: "center",
   },
   dropdownOption: {
     paddingVertical: 8,
     paddingHorizontal: 12,
+    width: "100%",
   },
-  dropdownOptionText: {
-    fontSize: 16,
+  otherRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  vector: {
+    position: "absolute",
+    right: -24,
   },
 });

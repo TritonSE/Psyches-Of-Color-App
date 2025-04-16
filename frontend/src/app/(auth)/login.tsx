@@ -191,7 +191,10 @@ export default function Login() {
         </Button>
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don&apos;t have an account? </Text>
-          <Link href="/signup" style={styles.signupLink}>
+
+          {/* <Link href="/signup" style={styles.signupLink}> */}
+          {/* THE SIGN UP LINK CURRENTLY JUST ROUTES TO ONBOARDING. REPLACE WITH SIGN UP ROUTE.*/}
+          <Link href="/onboarding" style={styles.signupLink}>
             Sign Up
           </Link>
         </View>

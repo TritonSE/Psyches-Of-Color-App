@@ -1,53 +1,20 @@
 // Onboarding.tsx
 
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import NextButton from "../NextButton";
 
 import ProgressBar from "./ProgressBar";
 import { Question } from "./Question";
 
-type QuestionData = {
-  type: "multipleChoice" | "shortAnswer";
-  question: string;
-  options?: string[];
-  placeholder?: string;
-  otherOptions?: string[];
-};
+import Mascots from "@/assets/Poc_Mascots.svg";
+import Back from "@/assets/back.svg";
+import { lightModeColors } from "@/constants/colors";
+import { QuestionData, onboardingQuestions } from "@/constants/onboardingQuestions";
 
 const Onboarding: React.FC = () => {
-  const questions: QuestionData[] = [
-    {
-      type: "multipleChoice",
-      question: "How old are you?",
-      options: ["Under 18", "18–24", "25–34", "35–44", "45 and over"],
-    },
-    {
-      type: "multipleChoice",
-      question: "What gender do you identify with?",
-      options: ["Male", "Female", "Non-binary", "Other"],
-      otherOptions: ["Trans-Male", "Trans-Female", "Gender Non-Conforming"],
-    },
-    {
-      type: "multipleChoice",
-      question: "What is your highest level of education?",
-      options: [
-        "Current Middle Schooler",
-        "Middle School Graduate",
-        "Current High Schooler",
-        "High School Graduate",
-        "GED or Secondary School Certification",
-        "Current College Student",
-        "College Graduate",
-      ],
-    },
-    {
-      type: "shortAnswer",
-      question: "Where do you reside in?",
-      placeholder: "Enter City, State",
-    },
-  ];
+  const questions: QuestionData[] = onboardingQuestions;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>(
@@ -71,20 +38,39 @@ const Onboarding: React.FC = () => {
     }
   };
 
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
   const isNextDisabled = !currentAnswer;
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        {currentIndex > 0 && (
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Back />
+            {/* <Text style={styles.backText}>{`<--`}</Text> */}
+          </TouchableOpacity>
+        )}
+        <Text style={styles.titleText}>Onboarding</Text>
+      </View>
+
       <ProgressBar progress={(currentIndex + 1) / questions.length} />
-      <View style={styles.rectangleView} />
-      <Question
-        type={currentQuestion.type}
-        question={currentQuestion.question}
-        options={currentQuestion.options}
-        placeholder={currentQuestion.placeholder}
-        otherOptions={currentQuestion.otherOptions}
-        onAnswer={handleAnswer}
-      />
+      <View style={styles.main}>
+        <Mascots style={styles.logo} />
+        <Question
+          type={currentQuestion.type}
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          placeholder={currentQuestion.placeholder}
+          otherOptions={currentQuestion.otherOptions}
+          onAnswer={handleAnswer}
+          currentAnswer={currentAnswer}
+        />
+      </View>
 
       <View style={styles.nextButtonContainer}>
         <NextButton onPress={handleNext} disabled={!!isNextDisabled} />
@@ -100,24 +86,43 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    backgroundColor: "#FFF",
+    backgroundColor: lightModeColors.background,
     justifyContent: "flex-start",
   },
-  progressText: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "500",
+  main: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  logo: {
+    width: 253,
+    height: 114,
   },
   nextButtonContainer: {
     marginTop: 16,
     alignSelf: "center",
     width: "100%",
   },
-  rectangleView: {
-    borderRadius: 12,
-    marginTop: 27,
-    backgroundColor: "#d9d9d9",
-    height: 116,
-    width: "100%",
+  titleText: {
+    fontSize: 18,
+    textAlign: "center",
+    color: lightModeColors.title,
+    fontFamily: "SG-Medium",
+  },
+  header: {
+    marginBottom: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  backButton: {
+    position: "absolute",
+    left: 5,
+  },
+  backText: {
+    fontSize: 24,
+    color: lightModeColors.backArrow,
+    fontWeight: "600",
+    lineHeight: 27,
   },
 });

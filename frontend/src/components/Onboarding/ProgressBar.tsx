@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
+import { lightModeColors } from "@/constants/colors";
+
 type ProgressBarProps = {
   progress: number;
 };
@@ -20,7 +22,7 @@ const styles = StyleSheet.create({
   container: {
     height: 12,
     width: 300,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: lightModeColors.progressBarBackground,
     borderRadius: 12,
     overflow: "hidden",
     alignSelf: "center",
@@ -28,6 +30,6 @@ const styles = StyleSheet.create({
   fill: {
     borderRadius: 12,
     height: "100%",
-    backgroundColor: "#D35144",
+    backgroundColor: lightModeColors.onboardingGreen,
   },
 });

@@ -15,6 +15,13 @@ type Colors = {
   success: string;
   profileBackground: string;
   primary: string;
+  onboardingGreen: string;
+  progressBarBackground: string;
+  selectedBorder: string;
+  title: string;
+  backArrow: string;
+  questionBorder: string;
+  optionButtonSelected: string;
 };
 
 export const lightModeColors: Colors = {
@@ -34,4 +41,11 @@ export const lightModeColors: Colors = {
   success: "#3BB966",
   profileBackground: "#c13d2f",
   primary: "#D35144",
+  onboardingGreen: "#2e563c",
+  progressBarBackground: "#ebebeb",
+  selectedBorder: "#d38718",
+  title: "#6c6c6c",
+  backArrow: "#b4b4b4",
+  questionBorder: "#ccc",
+  optionButtonSelected: "rgba(239, 177, 22, 0.5)",
 };
