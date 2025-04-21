@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import ActivityOptions from "@/components/activityOptions"; // Import ActivityOptions component
 import SectionButton from "@/components/sectionButton"; // Import the SectionButton component
 
-export default function ActivitiesScreen() {
+export default function ActivitiesPage() {
   // State to manage the visibility of dropdowns for each section
   // const [activeSection, setActiveSection] = useState<string | null>(null);
 
