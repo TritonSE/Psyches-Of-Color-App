@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   loginLink: {
     fontSize: 16,
     textDecorationLine: "underline",
-    color: lightModeColors.primary,
+    color: lightModeColors.primaryRed,
   },
 });
