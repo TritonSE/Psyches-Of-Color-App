@@ -17,6 +17,13 @@ const SectionButton: React.FC<SectionButtonProps> = ({
   subtitle,
   onPress,
 }) => {
+  const primaryColor =
+    color === "red"
+      ? lightModeColors.primaryRed
+      : color === "yellow"
+        ? lightModeColors.primaryYellow
+        : lightModeColors.primaryGreen;
+
   // State to track whether the dropdown is visible or not
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -32,12 +39,9 @@ const SectionButton: React.FC<SectionButtonProps> = ({
         style={[
           styles.sectionCard,
           {
-            backgroundColor:
-              color === "red"
-                ? lightModeColors.primaryRed
-                : color === "yellow"
-                  ? lightModeColors.primaryYellow
-                  : lightModeColors.primaryGreen,
+            backgroundColor: primaryColor,
+            borderBottomLeftRadius: isDropdownVisible ? 0 : 12,
+            borderBottomRightRadius: isDropdownVisible ? 0 : 12,
           },
         ]}
         onPress={toggleDropdown}
@@ -46,12 +50,24 @@ const SectionButton: React.FC<SectionButtonProps> = ({
           <Text style={styles.sectionTitle}>{title}</Text>
           <Text style={styles.sectionSubtitle}>{subtitle}</Text>
         </View>
-        <Ionicons name="menu-outline" size={24} color="white" style={styles.menuIcon} />
+        <Ionicons
+          name="menu-outline"
+          size={24}
+          color={lightModeColors.background}
+          style={styles.menuIcon}
+        />
       </TouchableOpacity>
 
       {/* Conditionally render dropdown options if the state is true */}
       {isDropdownVisible && (
-        <View style={styles.dropdown}>
+        <View
+          style={[
+            styles.dropdown,
+            {
+              borderColor: primaryColor,
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => {
               onPress("Header 1");
@@ -82,53 +98,54 @@ const SectionButton: React.FC<SectionButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: "90%",
-    marginVertical: 10,
+    borderRadius: 12,
+    position: "relative",
   },
   sectionCard: {
     paddingVertical: 19.5,
-    paddingHorizontal: 26,
+    paddingHorizontal: 16,
     borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
   },
   sectionText: {
     flex: 1,
   },
   sectionTitle: {
     fontSize: 18,
-    color: "white",
+    color: lightModeColors.background,
     fontWeight: "700",
     lineHeight: 24,
     textTransform: "uppercase",
+    fontFamily: "Archivo",
   },
   sectionSubtitle: {
     fontSize: 16,
-    color: "white",
+    color: lightModeColors.background,
     fontWeight: "400",
     lineHeight: 24,
+    fontFamily: "Archivo",
   },
   menuIcon: {
     width: 24,
     height: 24,
   },
   dropdown: {
-    backgroundColor: "#FAFAFA",
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
+    position: "absolute",
+    top: "100%",
+    zIndex: 10,
+    width: "100%",
+    backgroundColor: "white",
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    borderWidth: 1,
+    borderTopWidth: 0, // Remove the top border to avoid double borders
   },
   dropdownItem: {
-    paddingVertical: 10,
+    padding: 16,
     fontSize: 16,
-    color: "#333",
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: lightModeColors.tertiaryLightFont,
   },
 });
 

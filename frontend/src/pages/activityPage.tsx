@@ -67,13 +67,6 @@ export default function ActivitiesPage() {
         <Text style={styles.jumpText}>
           ••• ••• ••• ••• Jump to the next section ••• ••• ••• •••
         </Text>
-
-        {/* Section 2 */}
-        <SectionButton
-          title="SECTION 2"
-          subtitle="Navigating Mental Health"
-          onPress={handleSectionPress}
-        />
       </ScrollView>
     </View>
   );
