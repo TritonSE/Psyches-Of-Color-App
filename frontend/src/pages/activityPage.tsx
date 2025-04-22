@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-// import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import ActivityOptions from "@/components/activityOptions"; // Import ActivityOptions component
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FAFAFA",
-    paddingTop: 50,
+    paddingVertical: 50,
   },
   header: {
     flexDirection: "row",
@@ -75,6 +74,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 24,
     color: "#6C6C6C",
+    textTransform: "uppercase",
+    fontFamily: "SG-DemiBold",
   },
   scrollContainer: {
     alignItems: "center",

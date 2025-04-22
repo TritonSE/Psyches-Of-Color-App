@@ -1,32 +1,14 @@
-/* eslint-disable */
-// components/ActivityOptions.tsx
-import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-// Define the props type for the component
-type ActivityOptionsProps = {
-  // This can take any additional props you'd like, such as style
-};
+import ActivityButton from "./activityButton";
 
-const ActivityOptions: React.FC<ActivityOptionsProps> = () => {
+const ActivityOptions = () => {
   return (
     <View style={styles.imageContainer}>
-      <Image
-        source={require("@/assets/yellowButton.png")}
-        style={[styles.buttonImage, { marginLeft: -99 }]}
-      />
-      <Image
-        source={require("@/assets/redButton.png")}
-        style={[styles.buttonImage, { marginRight: -99 }]}
-      />
-      <Image
-        source={require("@/assets/grayButton.png")}
-        style={[styles.buttonImage, { marginLeft: -100 }]}
-      />
-      <Image
-        source={require("@/assets/grayButton.png")}
-        style={[styles.buttonImage, { marginRight: -99 }]}
-      />
+      <ActivityButton color="green" status="completed" style={{ marginLeft: -99 }} />
+      <ActivityButton color="red" status="completed" style={{ marginRight: -99 }} />
+      <ActivityButton status="incomplete" style={{ marginLeft: -99 }} />
+      <ActivityButton color="yellow" status="completed" style={{ marginRight: -99 }} />
     </View>
   );
 };
@@ -39,11 +21,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-  },
-  buttonImage: {
-    width: 98,
-    height: 98,
-    marginVertical: 10,
   },
 });
 
