@@ -14,7 +14,7 @@ import Frog from "@/assets/frog.png";
 import Media from "@/assets/media.png";
 import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
-import ButtonItem from "@/components/profileButton";
+import ButtonItem from "@/components/ProfileButton";
 import { lightModeColors } from "@/constants/colors";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";

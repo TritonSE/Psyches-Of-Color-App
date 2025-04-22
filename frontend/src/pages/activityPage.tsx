@@ -1,12 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import ActivityOptions from "@/components/activityOptions"; // Import ActivityOptions component
-import SectionButton from "@/components/sectionButton"; // Import the SectionButton component
+import ActivityButton from "@/components/ActivityButton";
+import ActivityPopup from "@/components/ActivityPopup";
+import SectionButton from "@/components/SectionButton"; // Import the SectionButton component
+import { lightModeColors } from "@/constants/colors";
 
 export default function ActivitiesPage() {
-  // State to manage the visibility of dropdowns for each section
-  // const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to handle section button press and toggle dropdown
   const handleSectionPress = (header: string) => {
@@ -29,10 +31,37 @@ export default function ActivitiesPage() {
           title="SECTION 1"
           subtitle="Understanding yourself"
           onPress={handleSectionPress}
+          color="green"
         />
 
         {/* Circle Images - Use the ActivityOptions component here */}
-        <ActivityOptions />
+        <View style={styles.optionsContainer}>
+          <ActivityButton color="green" status="completed" style={{ marginLeft: -99 }} />
+          <ActivityButton color="green" status="completed" style={{ marginRight: -99 }} />
+          <ActivityButton
+            color="green"
+            status="inProgress"
+            style={{ marginLeft: -99 }}
+            onPress={() => {
+              setIsModalOpen(true);
+            }}
+          />
+          <ActivityButton status="incomplete" style={{ marginRight: -99 }} />
+          <ActivityButton status="incomplete" style={{ marginLeft: -99 }} />
+        </View>
+
+        <ActivityPopup
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+          color="green"
+          title="Anxiety: Part I"
+          description="Start this unit"
+          onStart={() => {
+            console.log("Starting activity...");
+          }}
+        />
 
         {/* Jump to Next Section */}
         <Text style={styles.jumpText}>
@@ -53,8 +82,15 @@ export default function ActivitiesPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: lightModeColors.background,
     paddingVertical: 50,
+  },
+  optionsContainer: {
+    marginTop: 40,
+    marginBottom: 40,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     flexDirection: "row",
