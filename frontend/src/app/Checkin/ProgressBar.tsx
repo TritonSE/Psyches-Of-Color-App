@@ -19,9 +19,10 @@ export default ProgressBar;
 
 const styles = StyleSheet.create({
   container: {
-    height: 12,
     width: 300,
-    backgroundColor: "#D9D9D9",
+    height: 12,
+    flexShrink: 0,
+    backgroundColor: "#EBEBEB",
     borderRadius: 12,
     overflow: "hidden",
     alignSelf: "center",
@@ -29,6 +30,6 @@ const styles = StyleSheet.create({
   fill: {
     borderRadius: 12,
     height: "100%",
-    backgroundColor: "#D35144",
+    backgroundColor: "#2E563C",
   },
 });

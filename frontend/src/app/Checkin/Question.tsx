@@ -111,17 +111,19 @@ export const Question = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: 358,
     paddingHorizontal: 20,
     marginTop: 20,
   },
   questionText: {
     color: "#000",
-    fontWeight: "600",
-    fontSize: 20,
-    fontFamily: "Poppins",
-    marginBottom: 16,
     textAlign: "center",
+    fontFamily: "Archivo",
+    fontSize: 20,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 24,
+    marginBottom: 16,
   },
   optionsContainer: {
     marginTop: 16,
@@ -131,14 +133,16 @@ const styles = StyleSheet.create({
   optionButton: {
     display: "flex",
     height: 48,
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 44,
+    justifyContent: "center",
     alignItems: "center",
     gap: 10,
     alignSelf: "stretch",
     borderRadius: 100,
     borderWidth: 1,
     borderColor: "#EBEBEB",
+    backgroundColor: "#FFF",
   },
   optionButtonSelected: {
     backgroundColor: "#B4EFFB",

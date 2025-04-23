@@ -10,7 +10,7 @@ import { Question } from "./Question";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
-
+import { lightModeColors } from "@/constants/colors";
 type QuestionData = {
   type: "multipleChoice" | "shortAnswer";
   question: string;
@@ -103,7 +103,9 @@ const CheckIn: React.FC = () => {
 
       <View style={styles.container}>
         <ProgressBar progress={currentIndex / questions.length} />
-        <Mascots style={styles.logo} />
+        <View style={styles.logoContainer}>
+          <Mascots style={styles.logo} />
+        </View>
 
         <Question
           type={currentQuestion.type}
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    backgroundColor: "#FFF",
+    backgroundColor: lightModeColors.background,
     justifyContent: "flex-start",
   },
   progressText: {
@@ -138,9 +140,16 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   nextButtonContainer: {
+    display: "flex",
+    width: 358,
+    height: 48,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    flexShrink: 0,
     marginTop: 16,
     alignSelf: "center",
-    width: "100%",
   },
   rectangleView: {
     borderRadius: 12,
@@ -159,9 +168,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginLeft: 10,
+    display: "flex",
+    width: 169,
+    height: 22,
+    flexDirection: "column",
+    justifyContent: "center",
+    color: "#6C6C6C",
+    textAlign: "center",
+    fontFamily: "Inter",
+    fontSize: 18,
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: 27,
   },
   backButton: {
     position: "absolute",
@@ -174,7 +192,13 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 253,
-    height: 116,
+    height: 115,
+    flexShrink: 0,
+  },
+  logoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
+    marginTop: 25,
   },
 });

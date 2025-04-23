@@ -13,7 +13,7 @@ export default function Start() {
         <Text style={styles.title}>Lets check in on you!</Text>
         <View style={styles.textLayout}>
           <Text style={styles.text}>
-            HI hi hi hi hi hiLorem ipsum odor amet, consectetuer adipiscing elit. Curae phasellus
+            hi hi hi hi hiLorem ipsum odor amet, consectetuer adipiscing elit. Curae phasellus
             laoreet nullam in bibendum ante nec. Blandit sit nunc luctus molestie, sed enim
             habitasse?{" "}
           </Text>
