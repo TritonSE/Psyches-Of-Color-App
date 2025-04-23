@@ -18,11 +18,7 @@
     "@fontsource/poppins": "^5.2.5",
     "@react-native-firebase/app": "^21.7.0",
     "@react-native-firebase/auth": "^21.7.0",
-<<<<<<< HEAD
     "@react-native-google-signin/google-signin": "^13.2.0",
-=======
-    "@react-native-google-signin/google-signin": "^13.1.0",
->>>>>>> fc81f7968c5ab4c556742cc64893d63c58e8dc3d
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
@@ -35,10 +31,7 @@
     "expo-font": "~13.0.4",
     "expo-linking": "~7.0.3",
     "expo-location": "~18.0.7",
-<<<<<<< HEAD
-=======
     "expo-modules-core": "^2.2.3",
->>>>>>> fc81f7968c5ab4c556742cc64893d63c58e8dc3d
     "expo-router": "^4.0.16",
     "expo-status-bar": "~2.0.0",
     "ngrok": "^5.0.0-beta.2",
