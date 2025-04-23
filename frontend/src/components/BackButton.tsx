@@ -29,6 +29,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     flex: 1,
     alignSelf: "flex-start",
-    marginLeft: 16,
+    marginLeft: -3,
   },
 });

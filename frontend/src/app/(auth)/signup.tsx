@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
@@ -81,63 +81,80 @@ export default function Signup() {
     }
   };
   return (
-    <View style={styles.container}>
-      <BackButton path="./confirmBackToLogin" />
-      <View style={styles.header}>
-        <Mascots style={styles.logo} />
-        <Text style={styles.title}>Psyches of Color</Text>
-      </View>
-      <InputBox
-        label="First Name"
-        placeholder="Enter First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        containerStyle={{ marginBottom: 16 }}
-      />
-      <InputBox
-        label="Last Name"
-        placeholder="Enter Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-        containerStyle={{ marginBottom: 16 }}
-      />
-      <InputBox
-        label="Email"
-        placeholder="Enter Email"
-        value={email}
-        onChangeText={setEmail}
-        containerStyle={{ marginBottom: 16 }}
-        errorMessage={emailError}
-      />
-      <InputBox
-        label="Password"
-        placeholder="Enter Password"
-        value={password}
-        onChangeText={setPassword}
-        containerStyle={{ marginBottom: 16 }}
-        errorMessage={passwordError}
-        hidden={true}
-      />
-      <Button
-        style={styles.loginButton}
-        onPress={() => {
-          void handleSignup();
-        }}
-        textStyle={{ fontFamily: "SG-DemiBold" }}
-      >
-        Next
-      </Button>
-    </View>
+    <SafeAreaView style={styles.safeContainer}>
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.container}>
+          <BackButton path="./confirmBackToLogin" />
+          <View style={styles.header}>
+            <Mascots style={styles.logo} />
+            <Text style={styles.title}>Psyches of Color</Text>
+          </View>
+          <InputBox
+            label="First Name"
+            placeholder="Enter First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+            containerStyle={{ marginBottom: 16 }}
+          />
+          <InputBox
+            label="Last Name"
+            placeholder="Enter Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            containerStyle={{ marginBottom: 16 }}
+          />
+          <InputBox
+            label="Email"
+            placeholder="Enter Email"
+            value={email}
+            onChangeText={setEmail}
+            containerStyle={{ marginBottom: 16 }}
+            errorMessage={emailError}
+          />
+          <InputBox
+            label="Password"
+            placeholder="Enter Password"
+            value={password}
+            onChangeText={setPassword}
+            containerStyle={{ marginBottom: 16 }}
+            errorMessage={passwordError}
+            hidden={true}
+          />
+          <Button
+            style={styles.loginButton}
+            onPress={() => {
+              void handleSignup();
+            }}
+            textStyle={{ fontFamily: "SG-DemiBold" }}
+          >
+            Next
+          </Button>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
+  safeContainer: {
+    backgroundColor: lightModeColors.background,
+    flex: 1,
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    backgroundColor: lightModeColors.background,
+    paddingTop: 32,
+    paddingBottom: 64,
+    paddingHorizontal: 24,
+    alignItems: "center",
+  },
   header: {
     flexGrow: 0.3,
     justifyContent: "center",
     alignItems: "center",
   },
   container: {
-    flex: 1,
     backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
