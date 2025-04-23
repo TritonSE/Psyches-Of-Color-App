@@ -20,7 +20,7 @@ import SGStencil from "@/assets/fonts/Social-Gothic-Stencil.otf";
 import Button from "@/components/Button";
 import { UserContext } from "@/contexts/userContext";
 import { logout } from "@/lib/auth";
-import CharacterSelection from "@/pages/characterSelection";
+import CharacterSelection from "./(auth)/characterSelection";
 
 export default function Loading() {
   const { firebaseUser } = useContext(UserContext);
@@ -43,24 +43,24 @@ export default function Loading() {
     Archivo,
   });
 
-  // useEffect(() => {
-  //   if (loaded || error) {
-  //     void SplashScreen.hideAsync();
-  //   }
-  // }, [loaded, error]);
+  useEffect(() => {
+    if (loaded || error) {
+      void SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
-  // if (!loaded && !error) {
-  //   return null;
-  // }
+  if (!loaded && !error) {
+    return null;
+  }
 
-  // if (!firebaseUser) {
-  //   return <Redirect href="/login" />;
-  // }
+  if (!firebaseUser) {
+    return <Redirect href="/login" />;
+  }
 
   // return (
   //   <View style={styles.container}>
   //     <Mascots style={styles.logo} />
-  //     <Text style={styles.title}>Psyches of Color</Text>
+  //     <Text style={styles.title}>TESTESTEST</Text>
   //     <Text style={styles.text}>slogan/mindful tip goes here</Text>
   //     <Button onPress={() => void logout()}>Logout</Button>
   //   </View>

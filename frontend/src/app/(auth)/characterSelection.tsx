@@ -37,6 +37,7 @@ export default function CharacterSelection() {
   const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
   const scrollViewRef = useRef(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
+  const [loading, setLoading] = useState(false);
 
   const handleScroll = (e) => {
     const offsetX = e.nativeEvent.contentOffset.x;
@@ -70,6 +71,53 @@ export default function CharacterSelection() {
           animated: false,
         });
       }
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      console.log(`Attempting to connect to: http://localhost:3000/api/whoami`);
+      // Retrieves uid of logged in user
+      const userResponse = await fetch(`http://localhost:3000/api/whoami`, {
+        credentials: "include",
+      });
+
+      if (!userResponse.ok) {
+        throw new Error(`Error: ${userResponse.status}`);
+      }
+
+      const userData = await userResponse.json();
+      const uid = userData.user.uid;
+
+      try {
+        const updateUserResponse = await fetch(`http://localhost:3000/users/${uid}`, {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            character: charactersState[selectedIndex].character,
+          }),
+        });
+
+        if (!updateUserResponse.ok) {
+          throw new Error(`Error: ${updateUserResponse.status}`);
+        }
+
+        const result = await updateUserResponse.json();
+        console.log("User updated successfully: ", result);
+      } catch (error) {
+        console.error("Failed to update user", error);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user: ", error);
     }
   };
 
@@ -128,7 +176,7 @@ export default function CharacterSelection() {
 
       <Button
         onPress={() => {
-          console.log("test");
+          handleSubmit();
         }}
         style={styles.nextButton}
         textStyle={styles.buttonText}
