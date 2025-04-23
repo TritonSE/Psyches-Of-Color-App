@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
-import HomePage from '@/pages/homePage';
+import HomePage from "@/pages/homePage";
 
 const AuthLayout = () => {
   const { firebaseUser } = useAuth();

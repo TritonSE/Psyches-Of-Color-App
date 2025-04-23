@@ -1,72 +1,231 @@
-// 
+// import { StyleSheet, SafeAreaView, View, Text, Image } from "react-native";
+// // import reddue from @/asset;
+// //import { Button } from
 
-import { StyleSheet, SafeAreaView, View, Text, Image, Button } from "react-native";
-import wateringCan from "@/assets/wateringcan.png"; // Update with your correct path
+// const styles = StyleSheet.create({
+//   page: {
+//     backgroundColor: "white",
+//     flex: 1,
+//   },
+//   titleSection: {
+//     backgroundColor: "green",
+//   },
+//   title: {
+//     fontFamily: "Poppins",
+//     fontWeight: 500,
+//     fontSize: 28,
+//     lineHeight: 120,
+//     letterSpacing: 0,
+//     textAlign: "center",
+//     verticalAlign: "middle",
+//   },
+//   textBox: {
+//     backgroundColor: "#FFC97E80",
+//   },
+//   subtitle: {
+//     color: "#6C6C6C",
+//     textAlign: "center",
+//     fontFamily: "Poppins",
+//     fontSize: 16,
+//     fontStyle: "normal",
+//     fontWeight: 400,
+//     lineHeight: 19.2,
+//   },
+//   textReg: {
+//     color: "#1D1B20",
+//     textAlign: "center",
+//     fontFamily: "Figtree",
+//     fontSize: 18,
+//     fontStyle: "normal",
+//     fontWeight: 500,
+//     lineHeight: 27,
+//     letterSpacing: 0.15,
+//   }
+// });
 
-const styles = StyleSheet.create({
-  page: {
-    backgroundColor: "white",
-    flex: 1,
-  },
-  titleSection: {
-    backgroundColor: "green",
-    padding: 16,
-  },
-  title: {
-    fontFamily: "Poppins",
-    fontWeight: "500",
-    fontSize: 28,
-    lineHeight: 34,
-    letterSpacing: 0,
-    textAlign: "center",
-  },
-  textBox: {
-    backgroundColor: "#FFC97E80",
-    padding: 16,
-    marginVertical: 10,
-    borderRadius: 12,
-  },
-  subtitle: {
-    color: "#6C6C6C",
-    textAlign: "center",
-    fontFamily: "Poppins",
-    fontSize: 16,
-    fontWeight: "400",
-    lineHeight: 19.2,
-  },
-  textReg: {
-    color: "#1D1B20",
-    textAlign: "center",
-    fontFamily: "Figtree",
-    fontSize: 18,
-    fontWeight: "500",
-    lineHeight: 27,
-    letterSpacing: 0.15,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    alignSelf: "center",
-    resizeMode: "contain",
-  }
-});
+// export default function InternetError() {
+//   return (
+//     <SafeAreaView style={styles.page}>
+//       <View style={styles.titleSection}>
+//         <Text style={styles.title}> Hey Michael!</Text>
+//         <Text style={styles.subtitle}> Welcome Back </Text>
+//         {/* <Button style={styles.button}></Button> */}
+//       </View>
+//       <View style={styles.textBox}>
+//         <Text style={styles.textReg}> "Just like the seasons change, so do my feelings. This moment is temporary, and I will feel light again."</Text>
+//         {/* <Image source={wateringcan.png}></Image> */}
+//       </View>
+//       <View style={styles.textBox}>{/* <Image source = {redDude} style ={styles.image} */}</View>
+//     </SafeAreaView>
+//   );
+// }
 
-export default function InternetError() {
+import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import * as Progress from "react-native-progress";
+
+import fireman from "@/assets/fireman.png";
+import plantman from "@/assets/plantman.png";
+import wateringCan from "@/assets/wateringcan.png";
+
+export default function HomePage() {
   return (
     <SafeAreaView style={styles.page}>
-      <View style={styles.titleSection}>
-        <Text style={styles.title}>Hey Michael!</Text>
-        <Text style={styles.subtitle}>Welcome Back</Text>
-        {/* You can add a button below if needed */}
-        {/* <Button title="Retry" onPress={() => {}} /> */}
+      {/* Header */}
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.title}>Hey Michael!</Text>
+          <Text style={styles.subtitle}>Welcome Back</Text>
+        </View>
+        <View style={styles.crisisButton}>
+          <Text style={styles.crisisText}>CRISIS</Text>
+        </View>
       </View>
 
-      <View style={styles.textBox}>
-        <Text style={styles.textReg}>
-          "Just like the seasons change, so do my feelings. This moment is temporary, and I will feel light again."
+      {/* Quote Box */}
+      <View style={styles.quoteBox}>
+        <Text style={styles.quote}>
+          “Just like the seasons change, so do my feelings. This moment is temporary, and I will
+          feel light again.”
         </Text>
-        <Image source={wateringCan} style={styles.image} />
+        <Image source={wateringCan} style={styles.quoteImage} />
+      </View>
+
+      {/* Progress Section */}
+      <Text style={styles.sectionTitle}>Today’s Progress</Text>
+
+      <View style={styles.progressCard}>
+        <Image source={fireman} style={styles.progressIcon} />
+        <View style={styles.progressTextWrapper}>
+          <Text style={styles.taskLabel}>Complete 3 Activities</Text>
+          {/* <Progress.Bar 
+          progress={1 / 3} 
+          width={null} 
+          color="#BF3B44" 
+          unfilledColor="#E5E5E5" 
+          borderWidth={0} 
+          height={10}
+          /> */}
+          <Text style={styles.taskCount}>1/3</Text>
+        </View>
+      </View>
+
+      <View style={styles.progressCard}>
+        <Image source={plantman} style={styles.progressIcon} />
+        <View style={styles.progressTextWrapper}>
+          <Text style={styles.taskLabel}>Complete Journal</Text>
+          {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
+          <Text style={styles.taskCount}>0/1</Text>
+        </View>
+      </View>
+
+      <View style={styles.progressCard}>
+        <Image source={wateringCan} style={styles.progressIcon} />
+        <View style={styles.progressTextWrapper}>
+          <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
+          {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
+          <Text style={styles.taskCount}>0/1</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
 }
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingTop: 30,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
+    fontFamily: "Poppins",
+    color: "#000",
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "400",
+    fontFamily: "Poppins",
+    color: "#6C6C6C",
+  },
+  crisisButton: {
+    backgroundColor: "#BF3B44",
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 999,
+    alignSelf: "flex-start",
+  },
+  crisisText: {
+    color: "white",
+    fontWeight: "600",
+    fontFamily: "Poppins",
+    fontSize: 14,
+  },
+  quoteBox: {
+    backgroundColor: "#FFE1AC",
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 24,
+    position: "relative",
+  },
+  quote: {
+    fontFamily: "Figtree",
+    fontSize: 16,
+    fontWeight: "500",
+    lineHeight: 24,
+    color: "#1D1B20",
+    textAlign: "center",
+  },
+  quoteImage: {
+    width: 40,
+    height: 40,
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    resizeMode: "contain",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 32,
+    marginBottom: 12,
+    color: "#4B4B4B",
+    fontFamily: "Poppins",
+  },
+  progressCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+  progressIcon: {
+    width: 30,
+    height: 32,
+    resizeMode: "contain",
+    marginRight: 12,
+  },
+  progressTextWrapper: {
+    flex: 1,
+  },
+  taskLabel: {
+    fontSize: 14,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    marginBottom: 6,
+  },
+  taskCount: {
+    fontSize: 12,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#888",
+    alignSelf: "flex-end",
+    marginTop: 4,
+  },
+});
