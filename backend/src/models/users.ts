@@ -4,12 +4,14 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
+  character: string;
 };
 
 type UserDoc = {
   name: string;
   email: string;
   uid: string;
+  character: string;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -27,6 +29,12 @@ const userSchema = new mongoose.Schema({
   },
   uid: {
     type: String,
+    required: true,
+  },
+  character: {
+    type: String,
+    enum: ["fire", "water", "earth"],
+    default: "fire",
     required: true,
   },
 });
