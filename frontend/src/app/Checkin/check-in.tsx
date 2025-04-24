@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     position: "relative",
     paddingHorizontal: 20,
     paddingTop: 40,
-    marginBottom: 10,
+    backgroundColor: lightModeColors.background,
   },
   headerTitle: {
     display: "flex",
