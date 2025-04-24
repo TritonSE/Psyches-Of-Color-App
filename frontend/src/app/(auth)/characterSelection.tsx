@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import { useRef, useState } from "react";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
 import Archivo from "@/assets/fonts/Archivo.ttf";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 const { width } = Dimensions.get("window");
 const WIDTH = 273;
@@ -83,9 +84,23 @@ export default function CharacterSelection() {
 
     try {
       console.log(`Attempting to connect to: http://localhost:3000/api/whoami`);
+
+      const currentUser = auth().currentUser;
+
+      if (!currentUser) {
+        console.log("User is not currently signed in");
+        setLoading(false);
+        return;
+      }
+
+      const idToken = await currentUser.getIdToken();
+
       // Retrieves uid of logged in user
       const userResponse = await fetch(`http://localhost:3000/api/whoami`, {
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!userResponse.ok) {
@@ -95,11 +110,13 @@ export default function CharacterSelection() {
       const userData = await userResponse.json();
       const uid = userData.user.uid;
 
+      console.log(`User uid: ${uid}`);
+
       try {
         const updateUserResponse = await fetch(`http://localhost:3000/users/${uid}`, {
           method: "PUT",
-          credentials: "include",
           headers: {
+            Authorization: "Bearer ${idToken}",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
