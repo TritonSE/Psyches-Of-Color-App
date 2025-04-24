@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     width: 358,
     paddingHorizontal: 20,
     marginTop: 20,
+    alignSelf: "center",
   },
   questionText: {
     color: "#000",
@@ -129,8 +130,10 @@ const styles = StyleSheet.create({
     marginTop: 16,
     gap: 24,
     marginBottom: 16,
+    alignItems: "center",
   },
   optionButton: {
+    width: 358,
     display: "flex",
     height: 48,
     paddingVertical: 8,
@@ -138,7 +141,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
-    alignSelf: "stretch",
     borderRadius: 100,
     borderWidth: 1,
     borderColor: "#EBEBEB",

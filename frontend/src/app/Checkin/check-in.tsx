@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 // eslint-disable-next-line import/namespace
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 import NextButton from "../../components/NextButton";
 
@@ -150,6 +150,17 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     marginTop: 16,
     alignSelf: "center",
+    backgroundColor: "#2E563C",
+    borderRadius: 100,
+  },
+  nextButtonText: {
+    color: "#FFFFFF",
+    textAlign: "center",
+    fontFamily: "Inter",
+    fontSize: 16,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 24,
   },
   rectangleView: {
     borderRadius: 12,
