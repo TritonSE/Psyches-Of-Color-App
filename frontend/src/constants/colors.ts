@@ -15,6 +15,8 @@ type Colors = {
   success: string;
   profileBackground: string;
   primary: string;
+  buttonBackground: string;
+  optionBackground: string;
 };
 
 export const lightModeColors: Colors = {
@@ -34,4 +36,6 @@ export const lightModeColors: Colors = {
   success: "#3BB966",
   profileBackground: "#c13d2f",
   primary: "#D35144",
+  buttonBackground: "#2E563C",
+  optionBackground: "#efb116",
 };

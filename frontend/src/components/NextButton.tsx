@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { lightModeColors } from "@/constants/colors";
 
 type NextButtonProps = {
   onPress: () => void;
@@ -27,9 +28,9 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontSize: 16,
-    letterSpacing: 0.2,
+    letterSpacing: 0.5,
     lineHeight: 24,
-    fontFamily: "Social Gothic",
+    fontFamily: "SG-Bold",
     color: "#fff",
     textAlign: "center",
   },
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 100,
-    backgroundColor: "#d35144",
+    backgroundColor: lightModeColors.buttonBackground,
     width: "100%",
     height: 48,
     overflow: "hidden",

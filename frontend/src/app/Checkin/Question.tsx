@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 // eslint-disable-next-line import/namespace
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
+import { lightModeColors } from "@/constants/colors";
+
 type QuestionProps = {
   type: "multipleChoice" | "shortAnswer";
   question: string;
@@ -142,13 +144,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderRadius: 100,
-    borderWidth: 1,
-    borderColor: "#EBEBEB",
+
     backgroundColor: "#FFF",
   },
   optionButtonSelected: {
-    backgroundColor: "#B4EFFB",
-    borderColor: "#5ECBFF",
+    backgroundColor: lightModeColors.optionBackground,
+    opacity: 0.5,
+    borderWidth: 0.5,
+    borderColor: "#D38718",
   },
   optionText: {
     fontSize: 16,
