@@ -59,9 +59,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomSection: {
-    marginBottom: 50,
+    marginBottom: 100,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 20,
   },
   logo: {
     width: 116,
@@ -100,6 +101,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignSelf: "center",
     width: "100%",
+    alignItems: "center",
   },
   buttonText: {
     color: "#FFF",
