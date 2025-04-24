@@ -1,7 +1,7 @@
-import { Redirect, Stack } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Redirect } from "expo-router";
+//import { SafeAreaView } from "react-native-safe-area-context";
 
-import { lightModeColors } from "@/constants/colors";
+//import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import HomePage from "@/pages/homePage";
 
