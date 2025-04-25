@@ -75,68 +75,68 @@ export default function CharacterSelection() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (loading) {
-      return;
-    }
+  // const handleSubmit = async () => {
+  //   if (loading) {
+  //     return;
+  //   }
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      console.log(`Attempting to connect to: http://localhost:3000/api/whoami`);
+  //   try {
+  //     console.log(`Attempting to connect to: http://localhost:3000/api/whoami`);
 
-      const currentUser = auth().currentUser;
+  //     const currentUser = auth().currentUser;
 
-      if (!currentUser) {
-        console.log("User is not currently signed in");
-        setLoading(false);
-        return;
-      }
+  //     if (!currentUser) {
+  //       console.log("User is not currently signed in");
+  //       setLoading(false);
+  //       return;
+  //     }
 
-      const idToken = await currentUser.getIdToken();
+  //     const idToken = await currentUser.getIdToken();
 
-      // Retrieves uid of logged in user
-      const userResponse = await fetch(`http://localhost:3000/api/whoami`, {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+  //     // Retrieves uid of logged in user
+  //     const userResponse = await fetch(`http://localhost:3000/api/whoami`, {
+  //       headers: {
+  //         Authorization: `Bearer ${idToken}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      if (!userResponse.ok) {
-        throw new Error(`Error: ${userResponse.status}`);
-      }
+  //     if (!userResponse.ok) {
+  //       throw new Error(`Error: ${userResponse.status}`);
+  //     }
 
-      const userData = await userResponse.json();
-      const uid = userData.user.uid;
+  //     const userData = await userResponse.json();
+  //     const uid = userData.user.uid;
 
-      console.log(`User uid: ${uid}`);
+  //     console.log(`User uid: ${uid}`);
 
-      try {
-        const updateUserResponse = await fetch(`http://localhost:3000/users/${uid}`, {
-          method: "PUT",
-          headers: {
-            Authorization: "Bearer ${idToken}",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            character: charactersState[selectedIndex].character,
-          }),
-        });
+  //     try {
+  //       const updateUserResponse = await fetch(`http://localhost:3000/users/${uid}`, {
+  //         method: "PUT",
+  //         headers: {
+  //           Authorization: "Bearer ${idToken}",
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           character: charactersState[selectedIndex].character,
+  //         }),
+  //       });
 
-        if (!updateUserResponse.ok) {
-          throw new Error(`Error: ${updateUserResponse.status}`);
-        }
+  //       if (!updateUserResponse.ok) {
+  //         throw new Error(`Error: ${updateUserResponse.status}`);
+  //       }
 
-        const result = await updateUserResponse.json();
-        console.log("User updated successfully: ", result);
-      } catch (error) {
-        console.error("Failed to update user", error);
-      }
-    } catch (error) {
-      console.error("Failed to fetch user: ", error);
-    }
-  };
+  //       const result = await updateUserResponse.json();
+  //       console.log("User updated successfully: ", result);
+  //     } catch (error) {
+  //       console.error("Failed to update user", error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to fetch user: ", error);
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
@@ -193,7 +193,7 @@ export default function CharacterSelection() {
 
       <Button
         onPress={() => {
-          handleSubmit();
+          console.log(charactersState[selectedIndex].character);
         }}
         style={styles.nextButton}
         textStyle={styles.buttonText}
