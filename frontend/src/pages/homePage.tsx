@@ -31,23 +31,23 @@ export default function HomePage() {
       {/* Progress Section */}
       <Text style={styles.sectionTitle}>Today’s Progress</Text>
 
-      <View style={styles.progressCard}>
+      <View style={styles.progressContainer}>
+        {/* Row 1: Complete 3 Activities */}
+        <View style={styles.progressRow}>
         <Image source={fireman} style={styles.progressIcon} />
         <View style={styles.progressTextWrapper}>
           <Text style={styles.taskLabel}>Complete 3 Activities</Text>
-          {/* <Progress.Bar 
-          progress={1 / 3} 
-          width={null} 
-          color="#BF3B44" 
-          unfilledColor="#E5E5E5" 
-          borderWidth={0} 
-          height={10}
-          /> */}
+          {/* <Progress.Bar*/}
           <Text style={styles.taskCount}>1/3</Text>
         </View>
       </View>
+      
+      {/* Divider 1 */}
+      <View style={styles.divider} />
 
-      <View style={styles.progressCard}>
+      
+      {/* Row 2: Complete Journal */}
+      <View style={styles.progressRow}>
         <Image source={plantman} style={styles.progressIcon} />
         <View style={styles.progressTextWrapper}>
           <Text style={styles.taskLabel}>Complete Journal</Text>
@@ -56,13 +56,17 @@ export default function HomePage() {
         </View>
       </View>
 
-      <View style={styles.progressCard}>
+      {/* Divider */}
+      <View style={styles.divider} />
+
+      <View style={styles.progressRow}>
         <Image source={wateringCan} style={styles.progressIcon} />
         <View style={styles.progressTextWrapper}>
           <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
           {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
           <Text style={styles.taskCount}>0/1</Text>
         </View>
+      </View>
       </View>
     </SafeAreaView>
   );
@@ -110,21 +114,23 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 24,
     position: "relative",
+    borderWidth: 1,
+    borderColor: "#D3D3D3",
   },
   quote: {
     fontFamily: "Figtree",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500", //og 500
     lineHeight: 24,
     color: "#1D1B20",
     textAlign: "center",
   },
   quoteImage: {
-    width: 40,
-    height: 40,
+    width: 72,
+    height: 72,
     position: "absolute",
-    bottom: 10,
-    right: 10,
+    bottom: -16, 
+    right: -16, 
     resizeMode: "contain",
   },
   sectionTitle: {
@@ -135,6 +141,7 @@ const styles = StyleSheet.create({
     color: "#4B4B4B",
     fontFamily: "Poppins",
   },
+  //dont know if we need this since ive been replacing with progress row (progressCard)
   progressCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -144,8 +151,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   progressIcon: {
-    width: 30,
-    height: 32,
+    width: 56,
+    height: 56,
     resizeMode: "contain",
     marginRight: 12,
   },
@@ -166,4 +173,25 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginTop: 4,
   },
+  // trying to put in new dividers like the figma with these styles down below
+  progressContainer: {
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#D3D3D3", // light gray border
+    borderRadius: 16,
+    padding: 1, //originally had at 8
+    marginBottom: 20,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#E0E0E0", // thinner lighter gray divider between rows
+    alignSelf: "stretch",
+  },
+  
 });
