@@ -53,9 +53,9 @@ export default function Loading() {
     return null;
   }
 
-  if (!firebaseUser) {
-    return <Redirect href="/login" />;
-  }
+  // if (!firebaseUser) {
+  //   return <Redirect href="/login" />;
+  // }
 
   // return (
   //   <View style={styles.container}>
