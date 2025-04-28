@@ -2,9 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import ActivityButton from "@/components/ActivityButton";
+import ActivityButton from "@/components/activityButton";
 import ActivityPopup from "@/components/ActivityPopup";
-import SectionButton from "@/components/SectionButton"; // Import the SectionButton component
+import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
 
 export default function ActivitiesPage() {
