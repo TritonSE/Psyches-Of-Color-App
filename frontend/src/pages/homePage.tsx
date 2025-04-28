@@ -4,6 +4,10 @@ import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import fireman from "@/assets/fireman.png";
 import plantman from "@/assets/plantman.png";
 import wateringCan from "@/assets/wateringcan.png";
+import lessonsIcon from "@/assets/lessonsIcon.png";
+// import journalIcon from "@/assets/journalIcon.png";
+// import pencilJournal from "@/assets/pencilJournal.png";
+// import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
 
 export default function HomePage() {
   return (
@@ -34,39 +38,55 @@ export default function HomePage() {
       <View style={styles.progressContainer}>
         {/* Row 1: Complete 3 Activities */}
         <View style={styles.progressRow}>
-        <Image source={fireman} style={styles.progressIcon} />
-        <View style={styles.progressTextWrapper}>
-          <Text style={styles.taskLabel}>Complete 3 Activities</Text>
-          {/* <Progress.Bar*/}
-          <Text style={styles.taskCount}>1/3</Text>
+          <Image source={fireman} style={styles.progressIcon} />
+          <View style={styles.progressTextWrapper}>
+            <Text style={styles.taskLabel}>Complete 3 Activities</Text>
+            {/* <Progress.Bar*/}
+            <Text style={styles.taskCount}>1/3</Text>
+          </View>
+        </View>
+
+        {/* Divider 1 */}
+        <View style={styles.divider} />
+
+        {/* Row 2: Complete Journal */}
+        <View style={styles.progressRow}>
+          <Image source={plantman} style={styles.progressIcon} />
+          <View style={styles.progressTextWrapper}>
+            <Text style={styles.taskLabel}>Complete Journal</Text>
+            {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
+            <Text style={styles.taskCount}>0/1</Text>
+          </View>
+        </View>
+
+        {/* Divider */}
+        <View style={styles.divider} />
+
+        <View style={styles.progressRow}>
+          <Image source={wateringCan} style={styles.progressIcon} />
+          <View style={styles.progressTextWrapper}>
+            <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
+            {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
+            <Text style={styles.taskCount}>0/1</Text>
+          </View>
         </View>
       </View>
-      
-      {/* Divider 1 */}
-      <View style={styles.divider} />
-
-      
-      {/* Row 2: Complete Journal */}
-      <View style={styles.progressRow}>
-        <Image source={plantman} style={styles.progressIcon} />
-        <View style={styles.progressTextWrapper}>
-          <Text style={styles.taskLabel}>Complete Journal</Text>
-          {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
-          <Text style={styles.taskCount}>0/1</Text>
+      <Text style={styles.sectionTitle}>Continue on Journey</Text>
+      <View style={styles.buttons}>
+        <View style={styles.lessons}>
+          <Text style={styles.lessonsTitle}>Lessons</Text>
+          <Image source={lessonsIcon} style={styles.lessonIcon}></Image>
         </View>
-      </View>
-
-      {/* Divider */}
-      <View style={styles.divider} />
-
-      <View style={styles.progressRow}>
-        <Image source={wateringCan} style={styles.progressIcon} />
-        <View style={styles.progressTextWrapper}>
-          <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
-          {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
-          <Text style={styles.taskCount}>0/1</Text>
+        <View style={styles.row}>
+          <View style={styles.journal}>
+            <Text style={styles.journalTitle}>Journal</Text>
+            {/* <Image source={journalIcon} style={styles.journalIcon}></Image>
+            <Image source={pencilJournal} style={styles.pencilJournal}></Image> */}
+          </View>
+          <View style={styles.checkin}>
+            <Text style={styles.checkinTitle}>Check-in</Text>
+          </View>
         </View>
-      </View>
       </View>
     </SafeAreaView>
   );
@@ -74,7 +94,7 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#F6F6EA",
     paddingHorizontal: 20,
     paddingTop: 30,
   },
@@ -86,14 +106,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "600",
-    fontFamily: "Poppins",
-    color: "#000",
+    fontFamily: "Social Gothic",
+    color: "#2E563C",
   },
   subtitle: {
     fontSize: 16,
     fontWeight: "400",
     fontFamily: "Poppins",
-    color: "#6C6C6C",
+    color: "#2E563C",
   },
   crisisButton: {
     backgroundColor: "#BF3B44",
@@ -129,8 +149,8 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     position: "absolute",
-    bottom: -16, 
-    right: -16, 
+    bottom: -16,
+    right: -16,
     resizeMode: "contain",
   },
   sectionTitle: {
@@ -138,7 +158,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 32,
     marginBottom: 12,
-    color: "#4B4B4B",
+    color: "#2E563C",
     fontFamily: "Poppins",
   },
   //dont know if we need this since ive been replacing with progress row (progressCard)
@@ -175,12 +195,11 @@ const styles = StyleSheet.create({
   },
   // trying to put in new dividers like the figma with these styles down below
   progressContainer: {
-    backgroundColor: "white",
+    backgroundColor: "#F6F6EA",
     borderWidth: 1,
     borderColor: "#D3D3D3", // light gray border
     borderRadius: 16,
     padding: 1, //originally had at 8
-    marginBottom: 20,
   },
   progressRow: {
     flexDirection: "row",
@@ -193,5 +212,67 @@ const styles = StyleSheet.create({
     backgroundColor: "#E0E0E0", // thinner lighter gray divider between rows
     alignSelf: "stretch",
   },
-  
+  row: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  buttons: {
+    gap: 15,
+  },
+  lessons: {
+    backgroundColor: "#2E563C",
+    width: 359,
+    height: 114,
+    borderRadius: 10,
+    justifyContent: "center",
+  },
+  lessonsTitle: {
+    fontFamily: "Social Gothic",
+    color: "#F6F6EA",
+    fontSize: 26,
+    marginLeft: 20,
+    fontWeight: 600,
+    top: 40,
+  },
+  lessonIcon: {
+    width: 100,
+    height: 100,
+    marginLeft: 200,
+    bottom: 12,
+  },
+  journal: {
+    backgroundColor: "#C13D2F",
+    width: 171,
+    height: 114,
+    borderRadius: 10,
+    justifyContent: "center",
+  },
+  journalTitle: {
+    fontFamily: "Social Gothic",
+    color: "#F6F6EA",
+    fontSize: 16,
+    marginLeft: 20,
+    fontWeight: 600,
+  },
+  // journalIcon: {
+  //   marginLeft: 30,
+  //   marginBottom: 5,
+  // },
+  // pencilJournal: {
+  //   marginLeft: 30,
+  // },
+  checkin: {
+    backgroundColor: "#EFB116",
+    width: 175,
+    height: 114,
+    borderRadius: 10,
+    justifyContent: "center",
+  },
+  checkinTitle: {
+    fontFamily: "Social Gothic",
+    color: "#F6F6EA",
+    fontSize: 16,
+    marginLeft: 20,
+    fontWeight: 600,
+  },
 });
