@@ -1,5 +1,6 @@
 import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import Button from "@/components/Button";
+import ProgressBar from "@/components/Onboarding/ProgressBar";
 //import * as Progress from "react-native-progress";
 
 import fireman from "@/assets/fireman.png";
@@ -9,6 +10,8 @@ import lessonsIcon from "@/assets/lessonsIcon.png";
 import journalIcon from "@/assets/journalIcon.png";
 import pencilJournal from "@/assets/pencilJournal.png";
 import checkinIcon from "@/assets/checkinIcon.png";
+import crisisBtn from "@/assets/crisisBtn.png";
+import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 // import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
 
 export default function HomePage() {
@@ -20,13 +23,14 @@ export default function HomePage() {
           <Text style={styles.title}>Hey Michael!</Text>
           <Text style={styles.subtitle}>Welcome Back</Text>
         </View>
-        <View style={styles.crisisButton}>
-          <Text style={styles.crisisText}>CRISIS</Text>
-        </View>
+        <Button style={styles.crisisButton}>
+          <Image source={crisisBtn}></Image>
+        </Button>
       </View>
 
       {/* Quote Box */}
       <View style={styles.quoteBox}>
+        <Image source={txtBoxHomePage}></Image>
         <Text style={styles.quote}>
           “Just like the seasons change, so do my feelings. This moment is temporary, and I will
           feel light again.”
@@ -44,6 +48,11 @@ export default function HomePage() {
           <View style={styles.progressTextWrapper}>
             <Text style={styles.taskLabel}>Complete 3 Activities</Text>
             {/* <Progress.Bar*/}
+            <ProgressBar
+              progress={1 / 3}
+              style={styles.progressBar}
+              fillColor={styles.progressBarColor}
+            ></ProgressBar>
             <Text style={styles.taskCount}>1/3</Text>
           </View>
         </View>
@@ -57,6 +66,11 @@ export default function HomePage() {
           <View style={styles.progressTextWrapper}>
             <Text style={styles.taskLabel}>Complete Journal</Text>
             {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
+            <ProgressBar
+              progress={0 / 1}
+              style={styles.progressBar}
+              fillColor={styles.progressBarColor}
+            ></ProgressBar>
             <Text style={styles.taskCount}>0/1</Text>
           </View>
         </View>
@@ -69,6 +83,11 @@ export default function HomePage() {
           <View style={styles.progressTextWrapper}>
             <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
             {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
+            <ProgressBar
+              progress={0 / 1}
+              style={styles.progressBar}
+              fillColor={styles.progressBarColor}
+            ></ProgressBar>
             <Text style={styles.taskCount}>0/1</Text>
           </View>
         </View>
@@ -119,40 +138,31 @@ const styles = StyleSheet.create({
     color: "#2E563C",
   },
   crisisButton: {
-    backgroundColor: "#BF3B44",
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 999,
-    alignSelf: "flex-start",
-  },
-  crisisText: {
-    color: "white",
-    fontWeight: "600",
-    fontFamily: "Poppins",
-    fontSize: 14,
+    backgroundColor: "white",
+    width: 50,
+    height: 50,
   },
   quoteBox: {
-    backgroundColor: "#FFE1AC",
-    borderRadius: 16,
-    padding: 20,
     marginTop: 24,
     position: "relative",
-    borderWidth: 1,
-    borderColor: "#D3D3D3",
   },
   quote: {
     fontFamily: "Figtree",
-    fontSize: 16,
-    fontWeight: "500", //og 500
+    fontSize: 18,
+    fontWeight: "500",
     lineHeight: 24,
-    color: "#1D1B20",
+    color: "#2E563C",
     textAlign: "center",
+    top: 60,
+    right: 50,
+    width: 275,
+    position: "absolute",
   },
   quoteImage: {
     width: 72,
     height: 72,
     position: "absolute",
-    bottom: -16,
+    bottom: 0,
     right: -16,
     resizeMode: "contain",
   },
@@ -172,6 +182,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
+  },
+  progressBar: {
+    width: 233,
+  },
+  progressBarColor: {
+    backgroundColor: "#C13D2F",
   },
   progressIcon: {
     width: 56,
@@ -200,7 +216,7 @@ const styles = StyleSheet.create({
   progressContainer: {
     backgroundColor: "#F6F6EA",
     borderWidth: 1,
-    borderColor: "#D3D3D3", // light gray border
+    borderColor: "#2E563C",
     borderRadius: 16,
     padding: 1, //originally had at 8
   },
@@ -212,7 +228,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#E0E0E0", // thinner lighter gray divider between rows
+    backgroundColor: "#2E563C", // thinner lighter gray divider between rows
     alignSelf: "stretch",
   },
   row: {
