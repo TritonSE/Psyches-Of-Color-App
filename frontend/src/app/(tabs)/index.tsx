@@ -1,17 +1,21 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import { BarChart } from "react-native-gifted-charts";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
 // import InternetError from "@/pages/internetError";
 
 // Import SVG icons
-import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
 import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
+import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
 
 // Import colors
 import { lightModeColors } from "@/constants/colors";
 
-export default function Home() {
+console.log("Home component is loaded");
+
+function Home() {
+  console.log("Home component is rendering");
+
   // Hardcoded data for the chart
   const barData = [
     {
@@ -133,8 +137,6 @@ export default function Home() {
             hideOrigin
             backgroundColor="#F6F6EA"
             noOfSections={3}
-            showGradient
-            gradientColor={"transparent"}
           />
         </View>
 
@@ -159,6 +161,8 @@ export default function Home() {
     </View>
   );
 }
+// Make sure to export the component as default
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
