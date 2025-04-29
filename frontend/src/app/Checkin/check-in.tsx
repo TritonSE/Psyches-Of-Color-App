@@ -1,7 +1,7 @@
+/* eslint-disable */
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-// eslint-disable-next-line import/namespace
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import NextButton from "../../components/NextButton";
 
@@ -11,6 +11,7 @@ import { Question } from "./Question";
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 import { lightModeColors } from "@/constants/colors";
+
 type QuestionData = {
   type: "multipleChoice" | "shortAnswer";
   question: string;
@@ -53,21 +54,24 @@ const CheckIn: React.FC = () => {
     },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const totalSteps = questions.length + 1; // +1 for intro mood screen
+
+  const [currentIndex, setCurrentIndex] = useState(-1); // Start at -1 (mood screen)
   const [answers, setAnswers] = useState<(string | undefined)[]>(
     Array(questions.length).fill(undefined),
   );
+  const router = useRouter();
 
-  const currentQuestion = questions[currentIndex];
-  const currentAnswer = answers[currentIndex] ?? "";
+  const currentQuestion = questions[currentIndex] || null;
+  const currentAnswer = currentIndex >= 0 ? (answers[currentIndex] ?? "") : "";
 
   const handleAnswer = (answer: string) => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[currentIndex] = answer;
-    setAnswers(updatedAnswers);
+    if (currentIndex >= 0) {
+      const updatedAnswers = [...answers];
+      updatedAnswers[currentIndex] = answer;
+      setAnswers(updatedAnswers);
+    }
   };
-
-  const router = useRouter();
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
@@ -79,42 +83,72 @@ const CheckIn: React.FC = () => {
   };
 
   const handleBack = () => {
-    if (currentIndex > 0) {
+    if (currentIndex === -1) {
+      router.back(); // Leave the check-in flow
+    } else {
       setCurrentIndex((prev) => prev - 1);
     }
   };
 
-  const isNextDisabled = !currentAnswer;
+  const isNextDisabled = currentIndex >= 0 && !currentAnswer;
 
-  if (currentIndex < 0 || currentIndex >= questions.length) {
-    return null;
+  if (currentIndex === -1) {
+    return (
+      <>
+        <View style={styles.header}>
+          <Pressable onPress={handleBack} style={styles.backButton}>
+            <BackArrow width={20} height={20} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Check In</Text>
+        </View>
+
+        <View style={styles.container}>
+          <ProgressBar progress={(currentIndex + 1) / totalSteps} />
+          <View style={styles.logoContainer}>
+            <Image source={require("@/assets/howyouddoing.png")} style={styles.moodImage} />
+          </View>
+          <View style={styles.moodOptionsContainer}>
+            {["Amazing", "Good", "Meh", "Bad", "Awful"].map((mood) => (
+              <Pressable
+                key={mood}
+                style={styles.moodOption}
+                onPress={() => setCurrentIndex(0)} // Move to first question
+              >
+                <Image source={require("@/assets/moodface.png")} style={styles.moodImageSelector} />
+                <Text style={styles.moodText}>{mood}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </>
+    );
   }
 
   return (
     <>
       <View style={styles.header}>
-        {currentIndex > 0 && (
-          <Pressable onPress={handleBack} style={styles.backButton}>
-            <BackArrow width={20} height={20} />
-          </Pressable>
-        )}
+        <Pressable onPress={handleBack} style={styles.backButton}>
+          <BackArrow width={20} height={20} />
+        </Pressable>
         <Text style={styles.headerTitle}>Check In</Text>
       </View>
 
       <View style={styles.container}>
-        <ProgressBar progress={currentIndex / questions.length} />
+        <ProgressBar progress={(currentIndex + 1) / totalSteps} />
         <View style={styles.logoContainer}>
           <Mascots style={styles.logo} />
         </View>
 
-        <Question
-          type={currentQuestion.type}
-          question={currentQuestion.question}
-          options={currentQuestion.options}
-          placeholder={currentQuestion.placeholder}
-          otherOptions={currentQuestion.otherOptions}
-          onAnswer={handleAnswer}
-        />
+        {currentQuestion && (
+          <Question
+            type={currentQuestion.type}
+            question={currentQuestion.question}
+            options={currentQuestion.options}
+            placeholder={currentQuestion.placeholder}
+            otherOptions={currentQuestion.otherOptions}
+            onAnswer={handleAnswer}
+          />
+        )}
 
         <View style={styles.nextButtonContainer}>
           <NextButton onPress={handleNext} disabled={!!isNextDisabled} />
@@ -134,10 +168,66 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     justifyContent: "flex-start",
   },
-  progressText: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "500",
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    backgroundColor: lightModeColors.background,
+  },
+  headerTitle: {
+    width: 169,
+    height: 22,
+    flexDirection: "column",
+    justifyContent: "center",
+    color: "#6C6C6C",
+    textAlign: "center",
+    fontFamily: "Inter",
+    fontSize: 18,
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: 27,
+  },
+  backButton: {
+    position: "absolute",
+    left: 20,
+    padding: 8,
+  },
+  logo: {
+    width: 253,
+    height: 115,
+    flexShrink: 0,
+  },
+  logoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: -20,
+    marginTop: 15,
+  },
+  moodOptionsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+  },
+  moodOption: {
+    alignItems: "center",
+    marginHorizontal: 6,
+    marginVertical: 6,
+    width: 60,
+  },
+  moodImageSelector: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#ccc",
+    borderRadius: 25,
+    marginBottom: 8,
+  },
+  moodText: {
+    fontSize: 14,
+    textAlign: "center",
+    fontWeight: "600",
   },
   nextButtonContainer: {
     display: "flex",
@@ -153,63 +243,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E563C",
     borderRadius: 100,
   },
-  nextButtonText: {
-    color: "#FFFFFF",
-    textAlign: "center",
-    fontFamily: "SG-DemiBold",
-    fontSize: 16,
-    fontStyle: "normal",
-    lineHeight: 24,
-    letterSpacing: 0.16,
-  },
-  rectangleView: {
-    borderRadius: 12,
-    marginTop: 27,
-    backgroundColor: "#d9d9d9",
-    height: 116,
-    width: "100%",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    backgroundColor: lightModeColors.background,
-  },
-  headerTitle: {
-    display: "flex",
-    width: 169,
-    height: 22,
-    flexDirection: "column",
-    justifyContent: "center",
-    color: "#6C6C6C",
-    textAlign: "center",
-    fontFamily: "Inter",
-    fontSize: 18,
-    fontStyle: "normal",
-    fontWeight: 600,
-    lineHeight: 27,
-  },
-  backButton: {
-    position: "absolute",
-    left: 20,
-    padding: 8,
-  },
-  backArrow: {
-    width: 20,
-    height: 20,
-  },
-  logo: {
-    width: 253,
-    height: 115,
-    flexShrink: 0,
-  },
-  logoContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-    marginTop: 25,
+  moodImage: {
+    width: 350,
+    height: 250,
+    resizeMode: "contain",
   },
 });
