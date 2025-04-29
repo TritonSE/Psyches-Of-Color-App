@@ -22,14 +22,14 @@ const CENTER_OFFSET = (width - CARD_TOTAL_WIDTH) / 2;
 type Character = {
   color: string;
   character: string;
-  characterIcon: NodeJS.Require;
+  characterIcon: any;
 };
 
-const characters: Character[] = [
+const characters = [
   {
     color: "#83B26D",
     character: "Nature",
-    characterIcon: require("@assets/nature.png"),
+    characterIcon: require("@/assets/nature.png"),
   },
   {
     color: "#FFC97E",
@@ -49,9 +49,8 @@ export default function CharacterSelection() {
   const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
   const [selectedIndex, setSelectedIndex] = useState(1);
   const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
-  const scrollViewRef = useRef<any>(null);
+  const scrollViewRef = useRef(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
-  const [loading, setLoading] = useState(false);
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = e.nativeEvent.contentOffset.x;
