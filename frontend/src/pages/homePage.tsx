@@ -1,17 +1,16 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import Button from "@/components/Button";
-import ProgressBar from "@/components/Onboarding/ProgressBar";
-//import * as Progress from "react-native-progress";
+import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import fireman from "@/assets/fireman.png";
-import plantman from "@/assets/plantman.png";
-import wateringCan from "@/assets/wateringcan.png";
-import lessonsIcon from "@/assets/lessonsIcon.png";
-import journalIcon from "@/assets/journalIcon.png";
-import pencilJournal from "@/assets/pencilJournal.png";
 import checkinIcon from "@/assets/checkinIcon.png";
 import crisisBtn from "@/assets/crisisBtn.png";
+import fireman from "@/assets/fireman.png";
+import journalIcon from "@/assets/journalIcon.png";
+import lessonsIcon from "@/assets/lessonsIcon.png";
+import pencilJournal from "@/assets/pencilJournal.png";
+import plantman from "@/assets/plantman.png";
 import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
+import wateringCan from "@/assets/wateringcan.png";
+import Button from "@/components/Button";
+import ProgressBar from "@/components/Onboarding/ProgressBar";
 // import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
 
 export default function HomePage() {
@@ -43,7 +42,7 @@ export default function HomePage() {
 
       <View style={styles.progressContainer}>
         {/* Row 1: Complete 3 Activities */}
-        <View style={styles.progressRow}>
+        <TouchableOpacity style={styles.progressRow}>
           <Image source={fireman} style={styles.progressIcon} />
           <View style={styles.progressTextWrapper}>
             <Text style={styles.taskLabel}>Complete 3 Activities</Text>
@@ -55,13 +54,13 @@ export default function HomePage() {
             ></ProgressBar>
             <Text style={styles.taskCount}>1/3</Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Divider 1 */}
         <View style={styles.divider} />
 
         {/* Row 2: Complete Journal */}
-        <View style={styles.progressRow}>
+        <TouchableOpacity style={styles.progressRow}>
           <Image source={plantman} style={styles.progressIcon} />
           <View style={styles.progressTextWrapper}>
             <Text style={styles.taskLabel}>Complete Journal</Text>
@@ -73,12 +72,12 @@ export default function HomePage() {
             ></ProgressBar>
             <Text style={styles.taskCount}>0/1</Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Divider */}
         <View style={styles.divider} />
 
-        <View style={styles.progressRow}>
+        <TouchableOpacity style={styles.progressRow}>
           <Image source={wateringCan} style={styles.progressIcon} />
           <View style={styles.progressTextWrapper}>
             <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
@@ -90,7 +89,7 @@ export default function HomePage() {
             ></ProgressBar>
             <Text style={styles.taskCount}>0/1</Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       <Text style={styles.sectionTitle}>Continue on Journey</Text>
       <View style={styles.buttons}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, ViewStyle, StyleProp } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
 
