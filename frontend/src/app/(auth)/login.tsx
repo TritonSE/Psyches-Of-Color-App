@@ -194,7 +194,7 @@ export default function Login() {
 
           {/* <Link href="/signup" style={styles.signupLink}> */}
           {/* THE SIGN UP LINK CURRENTLY JUST ROUTES TO ONBOARDING. REPLACE WITH SIGN UP ROUTE.*/}
-          <Link href="/onboarding" style={styles.signupLink}>
+          <Link href="/activityPage" style={styles.signupLink}>
             Sign Up
           </Link>
         </View>

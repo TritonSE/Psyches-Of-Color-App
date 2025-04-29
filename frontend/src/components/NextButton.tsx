@@ -6,9 +6,10 @@ import { lightModeColors } from "@/constants/colors";
 type NextButtonProps = {
   onPress: () => void;
   disabled?: boolean;
+  textOption?: string;
 };
 
-const NextButton: React.FC<NextButtonProps> = ({ onPress, disabled = false }) => {
+const NextButton: React.FC<NextButtonProps> = ({ onPress, disabled = false, textOption}) => {
   return (
     <Pressable
       style={[styles.button, styles.buttonFlexBox, disabled && { opacity: 0.5 }]}
@@ -16,7 +17,7 @@ const NextButton: React.FC<NextButtonProps> = ({ onPress, disabled = false }) =>
       disabled={disabled}
     >
       <View style={[styles.stateLayer, styles.buttonFlexBox]}>
-        <Text style={styles.labelText}>Next</Text>
+        <Text style={styles.labelText}>{textOption}</Text>
       </View>
     </Pressable>
   );

@@ -13,6 +13,7 @@ type QuestionProps = {
   placeholder?: string;
   otherOptions?: string[];
   currentAnswer?: string;
+  variant?: "onboarding" | "activity";
 };
 
 export const Question = ({
@@ -23,6 +24,7 @@ export const Question = ({
   placeholder,
   otherOptions = [],
   currentAnswer,
+  variant
 }: QuestionProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showOtherDropdown, setShowOtherDropdown] = useState<boolean>(false);
@@ -43,7 +45,15 @@ export const Question = ({
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.questionText}>{question}</Text>
+      <Text
+        style={[
+          styles.questionText,
+          variant === "onboarding" && styles.onboardingQuestionText,
+          variant === "activity" && styles.activityQuestionText,
+        ]}
+      >
+        {question}
+      </Text>
       {type === "multipleChoice" && (
         <View style={styles.optionsContainer}>
           {options.map((option) => {
@@ -129,12 +139,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
   },
-  questionText: {
+  onboardingQuestionText: {
     color: "#1e1e1e",
     fontWeight: "600",
     fontSize: 20,
     fontFamily: "SG-Bold",
     marginBottom: 16,
+    textAlign: "center",
+  },
+  activityQuestionText:{
+    color: lightModeColors.onboardingGreen,
+    fontWeight: "500",
+    fontSize: 18,
+    marginBottom: 64,
     textAlign: "center",
   },
   optionsContainer: {

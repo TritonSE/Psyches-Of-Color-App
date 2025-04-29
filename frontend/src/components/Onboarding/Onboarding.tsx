@@ -11,7 +11,7 @@ import { Question } from "./Question";
 import Mascots from "@/assets/Poc_Mascots.svg";
 import Back from "@/assets/back.svg";
 import { lightModeColors } from "@/constants/colors";
-import { QuestionData, onboardingQuestions } from "@/constants/onboardingQuestions";
+import { QuestionData, onboardingQuestions } from "@/constants/questionData";
 
 const Onboarding: React.FC = () => {
   const questions: QuestionData[] = onboardingQuestions;
@@ -69,11 +69,12 @@ const Onboarding: React.FC = () => {
           otherOptions={currentQuestion.otherOptions}
           onAnswer={handleAnswer}
           currentAnswer={currentAnswer}
+          variant="onboarding"
         />
       </View>
 
       <View style={styles.nextButtonContainer}>
-        <NextButton onPress={handleNext} disabled={!!isNextDisabled} />
+        <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next"/>
       </View>
     </View>
   );
