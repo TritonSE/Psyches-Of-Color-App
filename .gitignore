@@ -157,3 +157,6 @@ Pods/
 .idea
 .gradle
 local.properties
+
+# Cursor
+.cursor/
