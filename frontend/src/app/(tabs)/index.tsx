@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { BarChart } from "react-native-gifted-charts";
 // import InternetError from "@/pages/internetError";
 
@@ -57,11 +57,11 @@ function Home() {
 
   // Mood indicators with their colors
   const moodIndicators = [
-    { color: "#2E563C", label: "Happy" },
-    { color: "#7CAB4C", label: "Good" },
-    { color: "#EFB116", label: "Okay" },
-    { color: "#D38718", label: "Meh" },
-    { color: "#C13D2F", label: "Bad" },
+    { color: lightModeColors.moodAccent, label: "Happy" },
+    { color: lightModeColors.moodGood, label: "Good" },
+    { color: lightModeColors.moodOkay, label: "Okay" },
+    { color: lightModeColors.moodMeh, label: "Meh" },
+    { color: lightModeColors.moodBad, label: "Bad" },
   ];
 
   // Toggle state for Monthly/Weekly view
@@ -80,7 +80,9 @@ function Home() {
         <View style={styles.toggleContainer}>
           <TouchableOpacity
             style={[styles.toggleButton, viewMode === "monthly" && styles.activeToggleButton]}
-            onPress={() => setViewMode("monthly")}
+            onPress={() => {
+              setViewMode("monthly");
+            }}
           >
             <Text style={[styles.monthlyText, viewMode === "monthly" && styles.activeToggleText]}>
               Monthly
@@ -88,7 +90,9 @@ function Home() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.toggleButton, viewMode === "weekly" && styles.activeToggleButton]}
-            onPress={() => setViewMode("weekly")}
+            onPress={() => {
+              setViewMode("weekly");
+            }}
           >
             <Text style={[styles.weeklyText, viewMode === "weekly" && styles.activeToggleText]}>
               Weekly
@@ -134,7 +138,7 @@ function Home() {
               xAxisThickness={0}
               yAxisThickness={0}
               hideOrigin
-              backgroundColor="#F6F6EA"
+              backgroundColor={lightModeColors.background}
               noOfSections={3}
             />
           </View>
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#2E563C",
+    color: lightModeColors.moodAccent,
     fontFamily: "Archivo",
     marginBottom: 16,
   },
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     borderRadius: 15,
     borderWidth: 0.5,
-    borderColor: "#2E563C",
+    borderColor: lightModeColors.moodAccent,
     padding: 16,
     marginBottom: 20,
   },
@@ -177,7 +181,7 @@ const styles = StyleSheet.create({
   dateRangeText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#2E563C",
+    color: lightModeColors.moodAccent,
     fontFamily: "Archivo",
   },
   chartWithLegend: {
@@ -207,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: "#2E563C",
+    borderColor: lightModeColors.moodAccent,
     height: 40,
     alignItems: "center",
     alignSelf: "center",
@@ -220,21 +224,21 @@ const styles = StyleSheet.create({
     minWidth: 92,
   },
   activeToggleButton: {
-    backgroundColor: "#2E563C",
+    backgroundColor: lightModeColors.moodAccent,
   },
   monthlyText: {
     fontSize: 14,
-    color: "#2E563C",
+    color: lightModeColors.moodAccent,
     fontFamily: "Inter",
     textAlign: "center",
   },
   weeklyText: {
     fontSize: 14,
-    color: "#2E563C",
+    color: lightModeColors.moodAccent,
     fontFamily: "Figtree",
     textAlign: "center",
   },
   activeToggleText: {
-    color: "#F6F6EA",
+    color: lightModeColors.background,
   },
 });
