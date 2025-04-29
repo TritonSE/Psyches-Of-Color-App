@@ -21,37 +21,37 @@ function Home() {
     {
       value: 60,
       label: "12",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodAccent,
     },
     {
       value: 80,
       label: "13",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodBad,
     },
     {
       value: 40,
       label: "14",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodGood,
     },
     {
       value: 70,
       label: "15",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodMeh,
     },
     {
       value: 50,
       label: "16",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodMeh,
     },
     {
       value: 45,
       label: "17",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodOkay,
     },
     {
       value: 75,
       label: "18",
-      frontColor: lightModeColors.primary,
+      frontColor: lightModeColors.moodGood,
     },
   ];
 
@@ -202,9 +202,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   moodDot: {
-    width: 15,
-    height: 15,
-    borderRadius: 7.5,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
   },
   toggleContainer: {
     flexDirection: "row",
