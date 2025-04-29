@@ -5,8 +5,9 @@ import fireman from "@/assets/fireman.png";
 import plantman from "@/assets/plantman.png";
 import wateringCan from "@/assets/wateringcan.png";
 import lessonsIcon from "@/assets/lessonsIcon.png";
-// import journalIcon from "@/assets/journalIcon.png";
-// import pencilJournal from "@/assets/pencilJournal.png";
+import journalIcon from "@/assets/journalIcon.png";
+import pencilJournal from "@/assets/pencilJournal.png";
+import checkinIcon from "@/assets/checkinIcon.png";
 // import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
 
 export default function HomePage() {
@@ -80,11 +81,12 @@ export default function HomePage() {
         <View style={styles.row}>
           <View style={styles.journal}>
             <Text style={styles.journalTitle}>Journal</Text>
-            {/* <Image source={journalIcon} style={styles.journalIcon}></Image>
-            <Image source={pencilJournal} style={styles.pencilJournal}></Image> */}
+            <Image source={journalIcon} style={styles.journalIcon}></Image>
+            <Image source={pencilJournal} style={styles.pencilJournal}></Image>
           </View>
           <View style={styles.checkin}>
             <Text style={styles.checkinTitle}>Check-in</Text>
+            <Image source={checkinIcon} style={styles.checkinIcon}></Image>
           </View>
         </View>
       </View>
@@ -227,12 +229,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   lessonsTitle: {
-    fontFamily: "Social Gothic",
+    fontFamily: "Social-Gothic",
     color: "#F6F6EA",
     fontSize: 26,
     marginLeft: 20,
     fontWeight: 600,
-    top: 40,
+    top: 50,
   },
   lessonIcon: {
     width: 100,
@@ -246,6 +248,7 @@ const styles = StyleSheet.create({
     height: 114,
     borderRadius: 10,
     justifyContent: "center",
+    position: "relative",
   },
   journalTitle: {
     fontFamily: "Social Gothic",
@@ -253,14 +256,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 20,
     fontWeight: 600,
+    zIndex: 1,
   },
-  // journalIcon: {
-  //   marginLeft: 30,
-  //   marginBottom: 5,
-  // },
-  // pencilJournal: {
-  //   marginLeft: 30,
-  // },
+  journalIcon: {
+    marginLeft: 30,
+    top: 14,
+    position: "absolute", // makes the image fill the parent
+    opacity: 1,
+  },
+  pencilJournal: {
+    marginLeft: 100,
+    position: "absolute", // makes the image fill the parent
+    opacity: 1,
+  },
   checkin: {
     backgroundColor: "#EFB116",
     width: 175,
@@ -274,5 +282,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 20,
     fontWeight: 600,
+    zIndex: 1,
+  },
+  checkinIcon: {
+    position: "absolute",
+    width: 100,
+    top: 15,
+    left: 75,
+    color: "#F0A639",
   },
 });
