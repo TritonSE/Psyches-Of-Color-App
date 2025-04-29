@@ -1,4 +1,5 @@
 import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import Button from "@/components/Button";
 //import * as Progress from "react-native-progress";
 
 import fireman from "@/assets/fireman.png";
@@ -74,20 +75,20 @@ export default function HomePage() {
       </View>
       <Text style={styles.sectionTitle}>Continue on Journey</Text>
       <View style={styles.buttons}>
-        <View style={styles.lessons}>
+        <Button style={styles.lessons}>
           <Text style={styles.lessonsTitle}>Lessons</Text>
           <Image source={lessonsIcon} style={styles.lessonIcon}></Image>
-        </View>
+        </Button>
         <View style={styles.row}>
-          <View style={styles.journal}>
+          <Button style={styles.journal}>
             <Text style={styles.journalTitle}>Journal</Text>
             <Image source={journalIcon} style={styles.journalIcon}></Image>
             <Image source={pencilJournal} style={styles.pencilJournal}></Image>
-          </View>
-          <View style={styles.checkin}>
+          </Button>
+          <Button style={styles.checkin}>
             <Text style={styles.checkinTitle}>Check-in</Text>
             <Image source={checkinIcon} style={styles.checkinIcon}></Image>
-          </View>
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -232,15 +233,13 @@ const styles = StyleSheet.create({
     fontFamily: "Social-Gothic",
     color: "#F6F6EA",
     fontSize: 26,
-    marginLeft: 20,
+    marginRight: 200,
     fontWeight: 600,
-    top: 50,
   },
   lessonIcon: {
-    width: 100,
-    height: 100,
-    marginLeft: 200,
-    bottom: 12,
+    left: 175,
+    top: 14,
+    position: "absolute",
   },
   journal: {
     backgroundColor: "#C13D2F",
@@ -248,24 +247,23 @@ const styles = StyleSheet.create({
     height: 114,
     borderRadius: 10,
     justifyContent: "center",
-    position: "relative",
   },
   journalTitle: {
     fontFamily: "Social Gothic",
     color: "#F6F6EA",
     fontSize: 16,
-    marginLeft: 20,
+    marginRight: 75,
     fontWeight: 600,
     zIndex: 1,
   },
   journalIcon: {
-    marginLeft: 30,
+    left: 40,
     top: 14,
     position: "absolute", // makes the image fill the parent
     opacity: 1,
   },
   pencilJournal: {
-    marginLeft: 100,
+    left: 100,
     position: "absolute", // makes the image fill the parent
     opacity: 1,
   },
@@ -280,14 +278,14 @@ const styles = StyleSheet.create({
     fontFamily: "Social Gothic",
     color: "#F6F6EA",
     fontSize: 16,
-    marginLeft: 20,
+    marginRight: 75,
     fontWeight: 600,
     zIndex: 1,
   },
   checkinIcon: {
     position: "absolute",
     width: 100,
-    top: 15,
+    top: 10,
     left: 75,
     color: "#F0A639",
   },
