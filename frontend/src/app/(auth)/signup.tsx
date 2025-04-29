@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
@@ -63,7 +63,7 @@ export default function Signup() {
     setLoading(true);
     const res = await signUpEmailPassword(email, password);
     setLoading(false);
-    // If signup was successful, we don't need to do anything
+    // If signup was succesl, we don't need to do anything
     // redirection happens in auth context
     if (res.success) {
       return;
@@ -74,8 +74,6 @@ export default function Signup() {
     } else if (res.error.field === "password") {
       setPasswordError(res.error.message);
     } else {
-      // Unknown error
-      // TODO: maybe have a general error message at the top of the form
       setPasswordError(res.error.message);
       setEmailError(res.error.message);
     }
