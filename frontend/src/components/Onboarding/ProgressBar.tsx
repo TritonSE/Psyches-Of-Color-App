@@ -1,9 +1,9 @@
 import React from "react";
-import { View, StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 
-interface ProgressBarProps {
+type ProgressBarProps = {
   progress: number;
-}
+};
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
   const progressPercent = (progress * 100).toFixed(0);

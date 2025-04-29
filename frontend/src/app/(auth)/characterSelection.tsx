@@ -1,10 +1,17 @@
-import { ScrollView, StyleSheet, Text, View, Dimensions, Animated } from "react-native";
-import { CharacterCard } from "@/components/CharacterCard";
-import Button from "@/components/Button";
 import { useRef, useState } from "react";
+import {
+  Animated,
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+import Button from "@/components/Button";
+import { CharacterCard } from "@/components/CharacterCard";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
-import Archivo from "@/assets/fonts/Archivo.ttf";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 const { width } = Dimensions.get("window");
 const WIDTH = 273;
@@ -12,11 +19,17 @@ const SPACING = 2;
 const CARD_TOTAL_WIDTH = WIDTH + SPACING * 2;
 const CENTER_OFFSET = (width - CARD_TOTAL_WIDTH) / 2;
 
-const characters = [
+type Character = {
+  color: string;
+  character: string;
+  characterIcon: NodeJS.Require;
+};
+
+const characters: Character[] = [
   {
     color: "#83B26D",
     character: "Nature",
-    characterIcon: require("@/assets/nature.png"),
+    characterIcon: require("@assets/nature.png"),
   },
   {
     color: "#FFC97E",
@@ -36,11 +49,11 @@ export default function CharacterSelection() {
   const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
   const [selectedIndex, setSelectedIndex] = useState(1);
   const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<any>(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
   const [loading, setLoading] = useState(false);
 
-  const handleScroll = (e) => {
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = e.nativeEvent.contentOffset.x;
 
     if (offsetX > CARD_TOTAL_WIDTH * (charactersState.length - 4)) {
@@ -52,7 +65,7 @@ export default function CharacterSelection() {
     }
   };
 
-  const handleScrollEnd = (e) => {
+  const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     const newIndex = Math.round(offsetX / CARD_TOTAL_WIDTH);
     const actualIndex = newIndex % characters.length;
@@ -66,7 +79,7 @@ export default function CharacterSelection() {
     if (offsetX < CARD_TOTAL_WIDTH * 3) {
       setCharactersState((prevState) => [...prevState, ...characters]);
 
-      if (offsetX === 0) {
+      if (offsetX === 0 && scrollViewRef.current) {
         scrollViewRef.current.scrollTo({
           x: CARD_TOTAL_WIDTH * characters.length,
           animated: false,
@@ -74,69 +87,6 @@ export default function CharacterSelection() {
       }
     }
   };
-
-  // const handleSubmit = async () => {
-  //   if (loading) {
-  //     return;
-  //   }
-
-  //   setLoading(true);
-
-  //   try {
-  //     console.log(`Attempting to connect to: http://localhost:3000/api/whoami`);
-
-  //     const currentUser = auth().currentUser;
-
-  //     if (!currentUser) {
-  //       console.log("User is not currently signed in");
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     const idToken = await currentUser.getIdToken();
-
-  //     // Retrieves uid of logged in user
-  //     const userResponse = await fetch(`http://localhost:3000/api/whoami`, {
-  //       headers: {
-  //         Authorization: `Bearer ${idToken}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (!userResponse.ok) {
-  //       throw new Error(`Error: ${userResponse.status}`);
-  //     }
-
-  //     const userData = await userResponse.json();
-  //     const uid = userData.user.uid;
-
-  //     console.log(`User uid: ${uid}`);
-
-  //     try {
-  //       const updateUserResponse = await fetch(`http://localhost:3000/users/${uid}`, {
-  //         method: "PUT",
-  //         headers: {
-  //           Authorization: "Bearer ${idToken}",
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           character: charactersState[selectedIndex].character,
-  //         }),
-  //       });
-
-  //       if (!updateUserResponse.ok) {
-  //         throw new Error(`Error: ${updateUserResponse.status}`);
-  //       }
-
-  //       const result = await updateUserResponse.json();
-  //       console.log("User updated successfully: ", result);
-  //     } catch (error) {
-  //       console.error("Failed to update user", error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to fetch user: ", error);
-  //   }
-  // };
 
   return (
     <View style={styles.container}>

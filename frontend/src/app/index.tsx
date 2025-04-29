@@ -5,6 +5,8 @@ import { Redirect, SplashScreen } from "expo-router";
 import { useContext, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+import CharacterSelection from "./(auth)/characterSelection";
+
 import Mascots from "@/assets/Poc_Mascots.svg";
 import ArchivoItalic from "@/assets/fonts/Archivo-Italic.ttf";
 import Archivo from "@/assets/fonts/Archivo.ttf";
@@ -20,7 +22,6 @@ import SGStencil from "@/assets/fonts/Social-Gothic-Stencil.otf";
 import Button from "@/components/Button";
 import { UserContext } from "@/contexts/userContext";
 import { logout } from "@/lib/auth";
-import CharacterSelection from "./(auth)/characterSelection";
 
 export default function Loading() {
   const { firebaseUser } = useContext(UserContext);

@@ -1,8 +1,7 @@
-import { Link, router } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
-import { Redirect } from "expo-router";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import AppleLogo from "@/assets/logo-apple.svg";
