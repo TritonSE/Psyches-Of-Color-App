@@ -137,6 +137,6 @@ const styles = StyleSheet.create({
   blobContainer: {
     width: "100%",
     position: "relative",
-    marginTop: 24,
+    marginTop: 30,
   },
 });

@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -8,6 +9,7 @@ import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
 
 export default function ActivitiesPage() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to handle section button press and toggle dropdown
@@ -60,6 +62,8 @@ export default function ActivitiesPage() {
           description="Start this unit"
           onStart={() => {
             console.log("Starting activity...");
+            setIsModalOpen(false);
+            router.push("/activityPage");
           }}
         />
 

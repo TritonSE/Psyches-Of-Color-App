@@ -135,7 +135,7 @@ export const Question = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    alignItems: "center",
     paddingHorizontal: 20,
     marginTop: 20,
   },
@@ -149,10 +149,12 @@ const styles = StyleSheet.create({
   },
   activityQuestionText: {
     color: lightModeColors.onboardingGreen,
-    fontWeight: "500",
+    fontFamily: "Archivo",
     fontSize: 18,
     marginBottom: 64,
     textAlign: "center",
+    width: 302,
+    height: 81,
   },
   optionsContainer: {
     marginTop: 16,
