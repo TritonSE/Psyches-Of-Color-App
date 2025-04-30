@@ -11,11 +11,13 @@ import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
 // Import colors
 import { lightModeColors } from "@/constants/colors";
 
-console.log("Home component is loaded");
+// Type definitions
+interface DayInfo {
+  day: number;
+  moodColor: string;
+}
 
 function Home() {
-  console.log("Home component is rendering");
-
   // Hardcoded data for the chart
   const barData = [
     {
@@ -67,6 +69,52 @@ function Home() {
   // Toggle state for Monthly/Weekly view
   const [viewMode, setViewMode] = useState("weekly");
 
+  // Generate calendar data for the monthly view
+  const generateCalendarData = (): DayInfo[] => {
+    // In a real app, this would be dynamic based on the selected month
+    // For demo purposes, we're creating a static January 2025 calendar
+    const daysInMonth = 31;
+    const days: DayInfo[] = [];
+
+    // Create days array (1-31)
+    for (let i = 1; i <= daysInMonth; i++) {
+      // Randomly assign mood colors for demo
+      const moodColors = [
+        lightModeColors.moodAccent,
+        lightModeColors.moodGood,
+        lightModeColors.moodOkay,
+        lightModeColors.moodMeh,
+        lightModeColors.moodBad,
+      ];
+      const randomMoodColor = moodColors[Math.floor(Math.random() * moodColors.length)];
+
+      days.push({
+        day: i,
+        moodColor: randomMoodColor,
+      });
+    }
+
+    return days;
+  };
+
+  const calendarData = generateCalendarData();
+
+  // Split calendar data into weeks for rendering
+  const weeks: DayInfo[][] = [];
+  let week: DayInfo[] = [];
+
+  // For a real implementation, we'd need to handle the proper day of week start
+  // This is a simplified version
+  calendarData.forEach((day, index) => {
+    week.push(day);
+
+    // Start a new week after 7 days or at the end
+    if ((index + 1) % 7 === 0 || index === calendarData.length - 1) {
+      weeks.push([...week]);
+      week = [];
+    }
+  });
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -100,49 +148,96 @@ function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Date Navigation */}
-        <View style={styles.dateNavigation}>
-          <TouchableOpacity>
-            <ArrowLeftIcon width={24} height={24} />
-          </TouchableOpacity>
+        {viewMode === "weekly" ? (
+          <>
+            {/* Date Navigation for Weekly View */}
+            <View style={styles.dateNavigation}>
+              <TouchableOpacity>
+                <ArrowLeftIcon width={24} height={24} />
+              </TouchableOpacity>
 
-          <Text style={styles.dateRangeText}>Jan 12 — Jan 18, 2025</Text>
+              <Text style={styles.dateRangeText}>Jan 12 — Jan 18, 2025</Text>
 
-          <TouchableOpacity>
-            <ArrowRightIcon width={24} height={24} />
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity>
+                <ArrowRightIcon width={24} height={24} />
+              </TouchableOpacity>
+            </View>
 
-        {/* Chart Area with Mood Indicators on Left */}
-        <View style={styles.chartWithLegend}>
-          {/* Mood Indicators (Left Side) */}
-          <View style={styles.moodIndicatorsColumn}>
-            {moodIndicators.map((mood, index) => (
-              <View key={index} style={styles.moodIndicator}>
-                <View style={[styles.moodDot, { backgroundColor: mood.color }]} />
+            {/* Chart Area with Mood Indicators on Left */}
+            <View style={styles.chartWithLegend}>
+              {/* Mood Indicators (Left Side) */}
+              <View style={styles.moodIndicatorsColumn}>
+                {moodIndicators.map((mood, index) => (
+                  <View key={index} style={styles.moodIndicator}>
+                    <View style={[styles.moodDot, { backgroundColor: mood.color }]} />
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
 
-          {/* Charts (Right Side) */}
-          <View style={styles.chartsArea}>
-            <BarChart
-              data={barData}
-              width={270}
-              height={200}
-              barWidth={20}
-              spacing={18}
-              barBorderRadius={4}
-              hideRules
-              hideYAxisText
-              xAxisThickness={0}
-              yAxisThickness={0}
-              hideOrigin
-              backgroundColor={lightModeColors.background}
-              noOfSections={3}
-            />
-          </View>
-        </View>
+              {/* Charts (Right Side) */}
+              <View style={styles.chartsArea}>
+                <BarChart
+                  data={barData}
+                  width={270}
+                  height={200}
+                  barWidth={20}
+                  spacing={18}
+                  barBorderRadius={4}
+                  hideRules
+                  hideYAxisText
+                  xAxisThickness={0}
+                  yAxisThickness={0}
+                  hideOrigin
+                  backgroundColor={lightModeColors.background}
+                  noOfSections={3}
+                />
+              </View>
+            </View>
+          </>
+        ) : (
+          <>
+            {/* Monthly Calendar View */}
+            <View style={styles.monthlyContainer}>
+              {/* Month Navigation */}
+              <View style={styles.monthNavigation}>
+                <TouchableOpacity>
+                  <ArrowLeftIcon width={24} height={24} />
+                </TouchableOpacity>
+
+                <Text style={styles.monthText}>January, 2025</Text>
+
+                <TouchableOpacity>
+                  <ArrowRightIcon width={24} height={24} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Calendar Grid */}
+              <View style={styles.calendarGrid}>
+                {weeks.map((week, weekIndex) => (
+                  <View key={`week-${weekIndex}`} style={styles.weekRow}>
+                    {week.map((day: DayInfo) => (
+                      <View key={`day-${day.day}`} style={styles.dayContainer}>
+                        <View style={[styles.dayCircle, { backgroundColor: day.moodColor }]}>
+                          <Text style={styles.dayText}>{day.day}</Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                ))}
+              </View>
+
+              {/* Legend for Monthly View */}
+              <View style={styles.monthlyLegend}>
+                {moodIndicators.map((mood, index) => (
+                  <View key={index} style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: mood.color }]} />
+                    <Text style={styles.legendText}>{mood.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </>
+        )}
       </View>
     </View>
   );
@@ -155,6 +250,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: lightModeColors.background,
     padding: 20,
+    marginTop: 20,
   },
   title: {
     fontSize: 20,
@@ -240,5 +336,71 @@ const styles = StyleSheet.create({
   },
   activeToggleText: {
     color: lightModeColors.background,
+  },
+  monthlyContainer: {
+    paddingVertical: 10,
+  },
+  monthNavigation: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 10,
+    gap: 64,
+  },
+  monthText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: lightModeColors.moodAccent,
+    fontFamily: "Inter",
+  },
+  calendarGrid: {
+    marginTop: 10,
+  },
+  weekRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
+    gap: 20,
+  },
+  dayContainer: {
+    alignItems: "center",
+    width: 26,
+  },
+  dayCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dayText: {
+    fontSize: 8,
+    fontWeight: "600",
+    color: lightModeColors.background,
+    fontFamily: "Inter",
+  },
+  monthlyLegend: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginTop: 16,
+    gap: 10,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  legendDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 4,
+  },
+  legendText: {
+    fontSize: 12,
+    color: lightModeColors.moodAccent,
+    fontFamily: "Inter",
   },
 });
