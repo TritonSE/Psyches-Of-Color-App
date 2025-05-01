@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { BarChart } from "react-native-gifted-charts";
+import { StatusBar } from "expo-status-bar";
 // import InternetError from "@/pages/internetError";
 
 // Import SVG icons
@@ -12,10 +12,10 @@ import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
 import { lightModeColors } from "@/constants/colors";
 
 // Type definitions
-interface DayInfo {
+type DayInfo = {
   day: number;
   moodColor: string;
-}
+};
 
 function Home() {
   // Hardcoded data for the chart
@@ -101,17 +101,17 @@ function Home() {
 
   // Split calendar data into weeks for rendering
   const weeks: DayInfo[][] = [];
-  let week: DayInfo[] = [];
+  let currentWeek: DayInfo[] = [];
 
   // For a real implementation, we'd need to handle the proper day of week start
   // This is a simplified version
   calendarData.forEach((day, index) => {
-    week.push(day);
+    currentWeek.push(day);
 
     // Start a new week after 7 days or at the end
     if ((index + 1) % 7 === 0 || index === calendarData.length - 1) {
-      weeks.push([...week]);
-      week = [];
+      weeks.push([...currentWeek]);
+      currentWeek = [];
     }
   });
 
@@ -182,7 +182,12 @@ function Home() {
                   height={200}
                   barWidth={20}
                   spacing={18}
-                  barBorderRadius={4}
+                  roundedTop
+                  barBorderTopLeftRadius={8}
+                  barBorderTopRightRadius={8}
+                  barBorderBottomLeftRadius={0}
+                  barBorderBottomRightRadius={0}
+                  roundedBottom={false}
                   hideRules
                   hideYAxisText
                   xAxisThickness={0}
@@ -213,10 +218,10 @@ function Home() {
 
               {/* Calendar Grid */}
               <View style={styles.calendarGrid}>
-                {weeks.map((week, weekIndex) => (
-                  <View key={`week-${weekIndex}`} style={styles.weekRow}>
-                    {week.map((day: DayInfo) => (
-                      <View key={`day-${day.day}`} style={styles.dayContainer}>
+                {weeks.map((weekDays, weekIndex) => (
+                  <View key={`week-${weekIndex.toString()}`} style={styles.weekRow}>
+                    {weekDays.map((day: DayInfo) => (
+                      <View key={`day-${day.day.toString()}`} style={styles.dayContainer}>
                         <View style={[styles.dayCircle, { backgroundColor: day.moodColor }]}>
                           <Text style={styles.dayText}>{day.day}</Text>
                         </View>
