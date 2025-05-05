@@ -38,3 +38,7 @@ yarn-error.*
 # android and ios directories
 android/
 ios/
+
+# firebase info
+GoogleService-Info.plist
+google-services.json
