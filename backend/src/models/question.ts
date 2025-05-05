@@ -2,14 +2,19 @@ import mongoose from "mongoose";
 
 type QuestionType = "text" | "mcq";
 
+type OptionDoc = {
+  content: string;
+  affirmation: string;
+};
+
 type QuestionDoc = {
   type: QuestionType;
   content: string;
-  options?: string[];
-  affirmation: string;
+  options?: OptionDoc[];
+  affirmation?: string;
 } & mongoose.Document;
 
-const questionSchem = new mongoose.Schema(
+const questionSchema = new mongoose.Schema(
   {
     type: {
       type: String,
@@ -21,7 +26,18 @@ const questionSchem = new mongoose.Schema(
       required: true,
     },
     options: {
-      type: [String],
+      type: [
+        {
+          content: {
+            type: String,
+            required: true,
+          },
+          affirmation: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
       // eslint-disable-next-line no-unused-vars
       required: function (this: QuestionDoc) {
         return this.type === "mcq";
@@ -29,7 +45,10 @@ const questionSchem = new mongoose.Schema(
     },
     affirmation: {
       type: String,
-      required: true,
+      // eslint-disable-next-line no-unused-vars
+      required: function (this: QuestionDoc) {
+        return this.type === "text";
+      },
     },
   },
   {
@@ -37,6 +56,6 @@ const questionSchem = new mongoose.Schema(
   },
 );
 
-const Question = mongoose.model<QuestionDoc>("Question", questionSchem);
+const Question = mongoose.model<QuestionDoc>("Question", questionSchema);
 
 export { Question };
