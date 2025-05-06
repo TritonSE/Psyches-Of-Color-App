@@ -103,4 +103,37 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
   }
 });
 
+// PUT: Mark an activity as completed by a user
+router.put(
+  "/users/:uid/completed/:activityId",
+  async (req: PsychesRequest, res: Response): Promise<void> => {
+    const { uid, activityId } = req.params;
+
+    try {
+      const user = await User.findOne({ uid });
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      if (!user.completedActivities) user.completedActivities = [];
+
+      const activityExists = user.completedActivities.some((id) => id.toString() === activityId);
+
+      if (activityExists) {
+        res.status(200).json({ message: "Activity already marked as completed", user });
+        return;
+      }
+
+      user.completedActivities.push(activityId);
+      await user.save();
+
+      res.status(200).json({ message: "Activity marked as completed", user });
+    } catch (error) {
+      console.error("Error updating completed activities:", error);
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
+    }
+  },
+);
+
 export { router as userRouter };

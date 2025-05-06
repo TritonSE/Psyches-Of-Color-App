@@ -4,12 +4,14 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
+  completedActivities: string[];
 };
 
 type UserDoc = {
   name: string;
   email: string;
   uid: string;
+  completedActivities: string[];
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -28,6 +30,11 @@ const userSchema = new mongoose.Schema({
   uid: {
     type: String,
     required: true,
+  },
+  completedActivities: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Activity",
+    default: [],
   },
 });
 

@@ -7,9 +7,9 @@ import mongoose from "mongoose";
 import env from "../src/util/validateEnv";
 
 import { userRouter } from "../src/routes/users";
-import { sectionRouter } from "./routes/section";
-import { questionRouter } from "./routes/question";
-import { activityRouter } from "./routes/activity";
+import { sectionRouter } from "../src/routes/section";
+import { questionRouter } from "../src/routes/question";
+import { activityRouter } from "../src/routes/activity";
 
 const app: Express = express();
 const port = env.PORT || 3000;
