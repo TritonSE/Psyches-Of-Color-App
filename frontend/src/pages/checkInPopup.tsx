@@ -1,7 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Modal, View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
+
 import FaceIcon from "@/assets/mood-illustration.svg";
+import { lightModeColors } from "@/constants/colors";
+
+const moodColorMap = {
+  Amazing: lightModeColors.moodAccent,
+  Good: lightModeColors.moodGood,
+  Meh: lightModeColors.moodOkay,
+  Bad: lightModeColors.moodMeh,
+  Awful: lightModeColors.moodBad,
+};
 
 const moods = [
   { label: "Amazing", value: "amazing" },
@@ -41,37 +51,54 @@ export default function CheckInPopup({ userId }) {
   };
 
   return (
-    <Modal visible={showPopup} transparent animationType="slide">
-      <View style={styles.overlay}>
-        <View style={styles.bottomSheet}>
-          <Text style={styles.heading}>How are you today?</Text>
+    <>
+      <Modal visible={showPopup} transparent animationType="slide">
+        <View style={styles.overlay}>
+          <View style={styles.bottomSheet}>
+            <Text style={styles.heading}>How are you today?</Text>
 
-          <View style={styles.moodRow}>
-            {moods.map((mood) => (
-              <Pressable
-                key={mood.value}
-                onPress={() => setSelectedMood(mood.value)}
-                style={styles.faceContainer}
-              >
-                <FaceIcon
-                  width={50}
-                  height={50}
-                  color={selectedMood === mood.value ? "#90ee90" : "#ccc"}
-                />
-                <Text style={styles.label}>{mood.label}</Text>
-              </Pressable>
-            ))}
+            <View style={styles.moodRow}>
+              {moods.map((mood) => (
+                <Pressable
+                  key={mood.value}
+                  onPress={() => setSelectedMood(mood.value)}
+                  style={styles.faceContainer}
+                >
+                  <FaceIcon
+                    width={50}
+                    height={50}
+                    color={selectedMood === mood.value ? moodColorMap[mood.label] : "#ccc"}
+                  />
+                  <Text style={styles.label}>{mood.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Pressable
+              onPress={handleCheckIn}
+              style={[styles.logButton, !selectedMood && { opacity: 0.5 }]}
+            >
+              <Text style={styles.logButtonText}>LOG MOOD</Text>
+            </Pressable>
           </View>
-
-          <Pressable
-            onPress={handleCheckIn}
-            style={[styles.logButton, !selectedMood && { opacity: 0.5 }]}
-          >
-            <Text style={styles.logButtonText}>LOG MOOD</Text>
-          </Pressable>
         </View>
-      </View>
-    </Modal>
+      </Modal>
+
+      {/* Note: using this for testing purposes */}
+      {__DEV__ && (
+        <Pressable
+          onPress={async () => {
+            const today = new Date().toISOString().split("T")[0];
+            const key = `moodCheckin-${userId}-${today}`;
+            await AsyncStorage.removeItem(key);
+            setShowPopup(true);
+          }}
+          style={styles.resetButton}
+        >
+          <Text style={styles.resetButtonText}>Reset Check-In (Test)</Text>
+        </Pressable>
+      )}
+    </>
   );
 }
 
@@ -116,10 +143,23 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
     width: "90%",
+    marginTop: 10,
   },
   logButtonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  resetButton: {
+    backgroundColor: "#6c757d",
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginTop: 10,
+  },
+  resetButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
   },
 });
