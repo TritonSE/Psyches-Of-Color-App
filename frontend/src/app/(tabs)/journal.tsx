@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Image, StyleSheet, Text, View } from "react-native";
 
-import { lightModeColors } from "@/constants/colors";
-import BackButton from "@/components/BackButton";
-import Button from "@/components/Button";
 import LeftIcon from "@/assets/left.svg";
 import RightIcon from "@/assets/right.svg";
-import { Ionicons } from "@expo/vector-icons";
+import Button from "@/components/Button";
+import JournalCard from "@/components/JournalCard";
+import { lightModeColors } from "@/constants/colors";
+
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -15,18 +16,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  //   header: {
-  //     display: "flex",
-  //     flexDirection: "row",
-  //     justifyContent: "center",
-  //     width: 390,
-  //     height: 106,
-  //     marginBottom: 0,
-  //     marginTop: 70,
-  //     gap: 150,
-  //     // marginRight: 125,
-  //     paddingBottom: 0,
-  //   },
   body: {
     display: "flex",
     justifyContent: "center",
@@ -111,13 +100,22 @@ export default function Journal() {
         <Text style={styles.headerTitle}>Journal</Text>
       </View>
       <View style={styles.time}>
-        <Button style={styles.timeButton} children={<LeftIcon />} />
+        <Button style={styles.timeButton}> <LeftIcon /> </Button>
+
         <Text style={styles.timeText}>MAR 2025</Text>
-        <Button style={styles.timeButton} children={<RightIcon />} />
+        <Button style={styles.timeButton}> <RightIcon /> </Button>
       </View>
       <View style={styles.body}>
+        {/* Example call for card component */}
+          {/* <JournalCard
+            title="HAPPY DAY"
+            preview="Today I woke up feeling energetic..."
+            time="08:30 AM"
+            date="March 01, 2025"
+            imageSource={require("@/assets/temp.png")}
+          /> */}
         <Image source={require("@/assets/journalIcon.png")} style={styles.mascot} />
-        <Text style={styles.noEntryMessage}>Looks like you haven't wrote an entry this month.</Text>
+        <Text style={styles.noEntryMessage}>Looks like you haven&apos;t wrote an entry this month.</Text>
       </View>
     </View>
   );
