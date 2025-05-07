@@ -2,6 +2,7 @@
  * Provides functions used for user authentication
  */
 
+import { User } from "@/types";
 import { getApp } from "@react-native-firebase/app";
 import {
   createUserWithEmailAndPassword,
@@ -93,10 +94,7 @@ export const loginEmailPassword = async (
 ): Promise<AuthResponse> => {
   try {
     const userCreds = await signInWithEmailAndPassword(auth, email, password);
-    const idToken = await userCreds.user?.getIdToken();
-    // REMOVE CONSOLE.LOG BELOW AFTER TESTING
-    console.log(idToken);
-    await sendTokenToBackend(idToken);
+
     return {
       success: true,
       user: userCreds.user,
@@ -112,12 +110,9 @@ export const loginEmailPassword = async (
 /*
  * Sends the Firebase ID token to the backend on the whoami route
  */
-const sendTokenToBackend = async (idToken: string) => {
+export const getMongoUser = async (idToken: string): Promise<User | null> => {
   try {
-    // 10.0.2.2:3000 for android emulators
-    // localhost:3000 for ios
-    // Or just use "http://192.168.x.x:3000/api/whoami" (ip address)
-    const response = await fetch("http://10.0.2.2:3000/api/whoami", {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${idToken}`,
@@ -125,14 +120,22 @@ const sendTokenToBackend = async (idToken: string) => {
       },
     });
     if (response.ok) {
-      const userInfo = await response.json();
+      const user = (await response.json()) as User;
 
-      console.log(userInfo);
+      return user;
     } else {
+      if (response.status === 404) {
+        console.error("User not found");
+      }
+
       console.error("Failed to get user info from JWT Token");
+
+      return null;
     }
   } catch (error) {
     console.error("Error sending token to backend: ", error);
+
+    return null;
   }
 };
 

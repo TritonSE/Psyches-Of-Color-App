@@ -1,8 +1,12 @@
 import auth, { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth";
 import { ReactNode, createContext, useContext, useState } from "react";
 
+import { getMongoUser } from "@/lib/auth";
+import { User } from "@/types";
+
 type UserContext = {
   firebaseUser: FirebaseAuthTypes.User | null;
+  mongoUser: User | null;
 };
 
 /**
@@ -10,6 +14,7 @@ type UserContext = {
  */
 export const UserContext = createContext<UserContext>({
   firebaseUser: null,
+  mongoUser: null,
 });
 
 /**
@@ -18,12 +23,27 @@ export const UserContext = createContext<UserContext>({
  */
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [mongoUser, setMongoUser] = useState<User | null>(null);
 
-  onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User) => {
+  const updateMongoUser = async () => {
+    if (firebaseUser) {
+      const token = await firebaseUser.getIdToken();
+      const user = await getMongoUser(token);
+
+      setMongoUser(user);
+    } else {
+      setMongoUser(null);
+    }
+  };
+
+  onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User | null) => {
     setFirebaseUser(user);
+    void updateMongoUser();
   });
 
-  return <UserContext.Provider value={{ firebaseUser }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ firebaseUser, mongoUser }}>{children}</UserContext.Provider>
+  );
 };
 
 /**
