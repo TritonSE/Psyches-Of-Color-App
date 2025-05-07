@@ -15,6 +15,7 @@ type UserDoc = {
 } & mongoose.Document;
 
 type UserModelInterface = {
+  // eslint-disable-next-line no-unused-vars
   build(attr: UserInterface): UserDoc;
 } & mongoose.Model<UserDoc>;
 

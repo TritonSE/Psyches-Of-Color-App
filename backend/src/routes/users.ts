@@ -20,7 +20,8 @@ router.get(
   async (req: PsychesRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { userUid } = req;
-      const user = await User.findOne({ uid: userUid });
+      const user = await User.findOne({ uid: userUid }).populate("completedActivities");
+
       if (!user) {
         res.status(404).json({ error: "User not Found" });
         return;
