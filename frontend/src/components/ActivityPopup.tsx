@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "rgba(0, 0, 0, 0.3)",
-    zIndex: 1, // Ensure it appears behind the modal content
+    zIndex: 10, // Ensure it appears behind the modal content
   },
   container: {
     flex: 1,

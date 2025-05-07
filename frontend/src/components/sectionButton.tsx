@@ -8,15 +8,9 @@ type SectionButtonProps = {
   title: string;
   subtitle: string;
   color?: "red" | "yellow" | "green";
-  onPress: (header: string) => void;
 };
 
-const SectionButton: React.FC<SectionButtonProps> = ({
-  color = "red",
-  title,
-  subtitle,
-  onPress,
-}) => {
+const SectionButton: React.FC<SectionButtonProps> = ({ color = "red", title, subtitle }) => {
   const primaryColor =
     color === "red"
       ? lightModeColors.primaryRed
@@ -68,25 +62,13 @@ const SectionButton: React.FC<SectionButtonProps> = ({
             },
           ]}
         >
-          <TouchableOpacity
-            onPress={() => {
-              onPress("Header 1");
-            }}
-          >
+          <TouchableOpacity>
             <Text style={styles.dropdownItem}>Header 1</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              onPress("Header 2");
-            }}
-          >
+          <TouchableOpacity>
             <Text style={styles.dropdownItem}>Header 2</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              onPress("Header 3");
-            }}
-          >
+          <TouchableOpacity>
             <Text style={styles.dropdownItem}>Header 3</Text>
           </TouchableOpacity>
         </View>

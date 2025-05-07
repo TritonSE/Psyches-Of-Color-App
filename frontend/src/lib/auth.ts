@@ -3,6 +3,7 @@
  */
 
 import { User } from "@/types";
+import env from "@/util/validateEnv";
 import { getApp } from "@react-native-firebase/app";
 import {
   createUserWithEmailAndPassword,
@@ -112,7 +113,7 @@ export const loginEmailPassword = async (
  */
 export const getMongoUser = async (idToken: string): Promise<User | null> => {
   try {
-    const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
+    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${idToken}`,
