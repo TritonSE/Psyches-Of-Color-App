@@ -5,6 +5,7 @@ import crisisBtn from "@/assets/crisisBtn.png";
 import fireman from "@/assets/fireman.png";
 import journalIcon from "@/assets/journalIcon.png";
 import lessonsIcon from "@/assets/lessonsIcon.png";
+import moodIcon from "@/assets/moodIcon.png";
 import pencilJournal from "@/assets/pencilJournal.png";
 import plantman from "@/assets/plantman.png";
 import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
@@ -36,6 +37,28 @@ export default function HomePage() {
         </Text>
         <Image source={wateringCan} style={styles.quoteImage} />
       </View>
+
+      {/* Mood Check-in Section */}
+      <Text style={styles.sectionTitle}>Mood Check-In</Text>
+      <View style={styles.moodCheckinContainer}>
+        <View style={styles.moodCheckinBox}>
+        <View style={styles.moodContent}>
+          <Image source={moodIcon} style={styles.moodIcon} />
+          <Text style={styles.moodText}>
+           You’re feeling <Text style={styles.moodHighlight}>good</Text> today - nice!
+          </Text>
+          </View>
+
+          {/*Button container */}
+          <View style={{ width: "100%", alignItems: "center" }}>
+          <Button style={styles.changeMoodButton}>
+            <Text style={styles.changeMoodButtonText}>CHANGE MOOD</Text>
+          </Button>
+      </View>
+      </View>
+      </View>
+
+
 
       {/* Progress Section */}
       <Text style={styles.sectionTitle}>Today’s Progress</Text>
@@ -167,7 +190,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "800", // og 600
     marginTop: 32,
     marginBottom: 12,
     color: "#2E563C",
@@ -304,4 +327,64 @@ const styles = StyleSheet.create({
     left: 75,
     color: "#F0A639",
   },
+
+  //mood check-in styling
+  moodCheckinContainer: {
+    alignItems: "center",
+    marginTop: 16,
+    marginBottom: 5,
+  },
+  moodCheckinBox: {
+    backgroundColor: "#F6F6EA",
+    borderWidth: 1,
+    borderColor: "#2E563C",
+    borderRadius: 16,
+    padding: 19,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  moodContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  moodIcon: {
+    width: 43.496,
+    height: 43.672,
+    marginLeft: 8,
+    marginRight: 16,
+  },
+  moodText: {
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    textAlign: "center",
+    color: "black",
+    // color: "#2E563C",
+    marginBottom: 12,
+    flexShrink: 1,
+  },
+  moodHighlight: {
+    fontWeight: "700",
+    color: "#2E563C",
+  },
+  changeMoodButton: {
+    backgroundColor: "#2E563C",
+    height: 36,
+    paddingVertical: 0, //og 8
+    paddingHorizontal: 20,
+    borderRadius: 160,
+    alignSelf: "center",
+    width: "53%",
+    marginTop: 1, // og 2
+  },
+  changeMoodButtonText: {
+    color: "#F6F6EA",
+    fontFamily: "Poppins",
+    fontSize: 14, //16
+    fontWeight: "600",
+  },
+  
 });
