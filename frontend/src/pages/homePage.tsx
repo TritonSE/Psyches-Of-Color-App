@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import checkinIcon from "@/assets/checkinIcon.png";
@@ -13,6 +15,66 @@ import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
 // import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
+
+const NewDayComponent: React.FC = () => {
+  const [isNewDay, setIsNewDay] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkNewDay = async () => {
+      const now = new Date();
+      const today = now.toLocaleDateString();
+      try {
+        const lastVisit = await AsyncStorage.getItem("lastVisitDate");
+
+        if (lastVisit !== today) {
+          await AsyncStorage.setItem("lastVisitDate", today);
+          setIsNewDay(true);
+        }
+      } catch (error) {
+        console.error("Error checking new day:", error);
+      }
+    };
+
+    checkNewDay();
+  }, []);
+
+  return (
+    <>
+      {isNewDay ? (
+        <Text>Welcome to a new day! 🌞</Text>
+      ) : (
+        <>
+          <Text style={styles.sectionTitle}>Mood Check-In</Text>
+          <View style={styles.moodCheckinContainer}>
+            <View style={styles.moodCheckinBox}>
+              <View style={styles.moodContent}>
+                <Image source={moodIcon} style={styles.moodIcon} />
+                <Text style={styles.moodText}>
+                  You’re feeling <Text style={styles.moodHighlight}>good</Text> today - nice!
+                </Text>
+              </View>
+
+              {/* Button container */}
+              <View style={{ width: "100%", alignItems: "center" }}>
+                <Button
+                  style={styles.changeMoodButton}
+                  onPress={() => {
+                    void (async () => {
+                      await AsyncStorage.removeItem("lastVisitDate");
+                      console.log("Date reset");
+                    })();
+                  }}
+                >
+                  <Text style={styles.changeMoodButtonText}>CHANGE MOOD</Text>
+                </Button>
+              </View>
+            </View>
+          </View>
+        </>
+      )}
+    </>
+  );
+};
 
 export default function HomePage() {
   return (
@@ -39,27 +101,7 @@ export default function HomePage() {
       </View>
 
       {/* Mood Check-in Section */}
-      <Text style={styles.sectionTitle}>Mood Check-In</Text>
-      <View style={styles.moodCheckinContainer}>
-        <View style={styles.moodCheckinBox}>
-        <View style={styles.moodContent}>
-          <Image source={moodIcon} style={styles.moodIcon} />
-          <Text style={styles.moodText}>
-           You’re feeling <Text style={styles.moodHighlight}>good</Text> today - nice!
-          </Text>
-          </View>
-
-          {/*Button container */}
-          <View style={{ width: "100%", alignItems: "center" }}>
-          <Button style={styles.changeMoodButton}>
-            <Text style={styles.changeMoodButtonText}>CHANGE MOOD</Text>
-          </Button>
-      </View>
-      </View>
-      </View>
-
-
-
+      <NewDayComponent />
       {/* Progress Section */}
       <Text style={styles.sectionTitle}>Today’s Progress</Text>
 
@@ -386,5 +428,4 @@ const styles = StyleSheet.create({
     fontSize: 14, //16
     fontWeight: "600",
   },
-  
 });
