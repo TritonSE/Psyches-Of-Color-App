@@ -25,14 +25,8 @@ router.get(
         res.status(404).json({ error: "User not Found" });
         return;
       }
-      const { _id: mongoId, uid } = user;
-      res.status(200).send({
-        message: "Current user information",
-        user: {
-          mongoId,
-          uid,
-        },
-      });
+
+      res.status(200).send(user);
       return;
     } catch (e) {
       next();

@@ -37,8 +37,6 @@ app.get("/", (req: Request, res: Response) => {
 
 app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${String(port)}`);
-
-  console.log(mongoose.models);
 });
 
 module.exports = app;
