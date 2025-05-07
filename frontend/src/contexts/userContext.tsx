@@ -1,5 +1,5 @@
 import auth, { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth";
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 import { getMongoUser } from "@/lib/auth";
 import { User } from "@/types";
@@ -36,10 +36,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User | null) => {
-    setFirebaseUser(user);
-    void updateMongoUser();
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User | null) => {
+      setFirebaseUser(user);
+      void updateMongoUser();
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <UserContext.Provider value={{ firebaseUser, mongoUser }}>{children}</UserContext.Provider>
