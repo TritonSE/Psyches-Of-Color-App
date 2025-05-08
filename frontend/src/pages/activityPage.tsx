@@ -3,9 +3,9 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
+import ActivityButton from "@/components/ActivityButton";
 import ActivityPopup from "@/components/ActivityPopup";
-import ActivityButton from "@/components/activityButton";
-import SectionButton from "@/components/sectionButton";
+import SectionButton from "@/components/SectionButton";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import { Activity, Section } from "@/types";
