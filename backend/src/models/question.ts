@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-type QuestionType = "text" | "mcq";
+type QuestionType = "text" | "mcq" | "wwyd";
 
 type OptionDoc = {
   content: string;
@@ -40,7 +40,7 @@ const questionSchema = new mongoose.Schema(
       ],
       // eslint-disable-next-line no-unused-vars
       required: function (this: QuestionDoc) {
-        return this.type === "mcq";
+        return this.type === "mcq" || this.type === "wwyd";
       },
     },
     affirmation: {
