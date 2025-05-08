@@ -26,6 +26,7 @@ const { width: screenWidth } = Dimensions.get("window");
 export default function CheckInPopup({ userId }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedMood, setSelectedMood] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const checkMoodStatus = async () => {
@@ -47,41 +48,68 @@ export default function CheckInPopup({ userId }) {
     const key = `moodCheckin-${userId}-${today}`;
 
     await AsyncStorage.setItem(key, selectedMood);
-    setShowPopup(false);
+    setShowConfirmation(true);
   };
+
+  const selectedMoodLabel = moods.find((m) => m.value === selectedMood)?.label;
 
   return (
     <>
       <Modal visible={showPopup} transparent animationType="slide">
-        <View style={styles.overlay}>
+        <Pressable
+          style={styles.overlay}
+          onPress={() => {
+            if (showConfirmation) {
+              setShowPopup(false);
+              setShowConfirmation(false);
+              setSelectedMood(null);
+            }
+          }}
+        >
           <View style={styles.bottomSheet}>
-            <Text style={styles.heading}>How are you today?</Text>
+            {!showConfirmation ? (
+              <>
+                <Text style={styles.heading}>How are you today?</Text>
 
-            <View style={styles.moodRow}>
-              {moods.map((mood) => (
+                <View style={styles.moodRow}>
+                  {moods.map((mood) => (
+                    <Pressable
+                      key={mood.value}
+                      onPress={() => setSelectedMood(mood.value)}
+                      style={styles.faceContainer}
+                    >
+                      <FaceIcon
+                        width={50}
+                        height={50}
+                        color={selectedMood === mood.value ? moodColorMap[mood.label] : "#ccc"}
+                      />
+                      <Text style={styles.label}>{mood.label}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+
                 <Pressable
-                  key={mood.value}
-                  onPress={() => setSelectedMood(mood.value)}
-                  style={styles.faceContainer}
+                  onPress={handleCheckIn}
+                  style={[styles.logButton, !selectedMood && { opacity: 0.5 }]}
                 >
-                  <FaceIcon
-                    width={50}
-                    height={50}
-                    color={selectedMood === mood.value ? moodColorMap[mood.label] : "#ccc"}
-                  />
-                  <Text style={styles.label}>{mood.label}</Text>
+                  <Text style={styles.logButtonText}>LOG MOOD</Text>
                 </Pressable>
-              ))}
-            </View>
-
-            <Pressable
-              onPress={handleCheckIn}
-              style={[styles.logButton, !selectedMood && { opacity: 0.5 }]}
-            >
-              <Text style={styles.logButtonText}>LOG MOOD</Text>
-            </Pressable>
+              </>
+            ) : (
+              <>
+                <FaceIcon
+                  width={80}
+                  height={80}
+                  color={moodColorMap[selectedMoodLabel] || "#ccc"}
+                />
+                <Text style={styles.subtext}>
+                  {`Glad you're feeling ${selectedMoodLabel?.toLowerCase()}!`}
+                </Text>
+                <Text style={styles.subtext}>Remember to log your mood every day.</Text>
+              </>
+            )}
           </View>
-        </View>
+        </Pressable>
       </Modal>
 
       {/* Note: using this for testing purposes */}
@@ -92,6 +120,8 @@ export default function CheckInPopup({ userId }) {
             const key = `moodCheckin-${userId}-${today}`;
             await AsyncStorage.removeItem(key);
             setShowPopup(true);
+            setShowConfirmation(false);
+            setSelectedMood(null);
           }}
           style={styles.resetButton}
         >
@@ -120,6 +150,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     fontWeight: "600",
+    textAlign: "center",
+  },
+  subtext: {
+    fontSize: 18,
+    color: "black",
+    textAlign: "center",
+    marginTop: 10,
+    marginHorizontal: 10,
   },
   moodRow: {
     flexDirection: "row",
@@ -156,6 +194,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     marginTop: 10,
+    alignSelf: "center",
   },
   resetButtonText: {
     color: "white",
