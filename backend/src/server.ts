@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import env from "../src/util/validateEnv";
 
 import { userRouter } from "../src/routes/users";
+import { moodRouter } from "../src/routes/mood";
 
 //dotenv.config();
 
@@ -16,6 +17,7 @@ const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
 app.use(express.json());
 app.use(userRouter);
+app.use(moodRouter);
 
 mongoose
   .connect(MONGODB_URI)
