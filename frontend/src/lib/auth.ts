@@ -20,7 +20,6 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // Removes warnings from react native firebase
 // We're already using their modular SDK but still getting warnings for some reason
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
-(globalThis as any).RNFB_MODULAR_DEPRECATION_STRICT_MODE === true;
 
 const app = getApp();
 const auth = getAuth(app);
