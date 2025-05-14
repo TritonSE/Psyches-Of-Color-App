@@ -1,8 +1,9 @@
-import { Redirect, Stack } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Redirect } from "expo-router";
+//import { SafeAreaView } from "react-native-safe-area-context";
 
-import { lightModeColors } from "@/constants/colors";
+//import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
+import HomePage from "@/pages/homePage";
 
 const AuthLayout = () => {
   const { firebaseUser } = useAuth();
@@ -12,13 +13,14 @@ const AuthLayout = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: lightModeColors.background }}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="login" />
-        <Stack.Screen name="email-sent" />
-        <Stack.Screen name="forgot-password" />
-      </Stack>
-    </SafeAreaView>
+    // <SafeAreaView style={{ flex: 1, backgroundColor: lightModeColors.background }}>
+    //   <Stack screenOptions={{ headerShown: false }}>
+    //     <Stack.Screen name="login" />
+    //     <Stack.Screen name="email-sent" />
+    //     <Stack.Screen name="forgot-password" />
+    //   </Stack>
+    // </SafeAreaView>
+    <HomePage />
   );
 };
 
