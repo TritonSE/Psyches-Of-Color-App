@@ -1,6 +1,7 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
 // import InternetError from "@/pages/internetError";
@@ -11,6 +12,7 @@ import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
 // Import colors
 import { lightModeColors } from "@/constants/colors";
 import MoodCheckinPopup from "@/pages/checkInPopup";
+import { getUserMoods, Mood } from "@/lib/api";
 
 // Type definitions
 type DayInfo = {
@@ -18,45 +20,59 @@ type DayInfo = {
   moodColor: string;
 };
 
+// Map mood strings to numeric values for the chart
+const moodToValue = {
+  Happy: 100,
+  Good: 80,
+  Okay: 60,
+  Meh: 40,
+  Bad: 20,
+};
+
+// Map mood strings to colors
+const moodToColor = {
+  Happy: lightModeColors.moodAccent,
+  Good: lightModeColors.moodGood,
+  Okay: lightModeColors.moodOkay,
+  Meh: lightModeColors.moodMeh,
+  Bad: lightModeColors.moodBad,
+};
+
 function Home() {
-  // Hardcoded data for the chart
-  const barData = [
-    {
-      value: 60,
-      label: "12",
-      frontColor: lightModeColors.moodAccent,
-    },
-    {
-      value: 80,
-      label: "13",
-      frontColor: lightModeColors.moodBad,
-    },
-    {
-      value: 40,
-      label: "14",
-      frontColor: lightModeColors.moodGood,
-    },
-    {
-      value: 70,
-      label: "15",
-      frontColor: lightModeColors.moodMeh,
-    },
-    {
-      value: 50,
-      label: "16",
-      frontColor: lightModeColors.moodMeh,
-    },
-    {
-      value: 45,
-      label: "17",
-      frontColor: lightModeColors.moodOkay,
-    },
-    {
-      value: 75,
-      label: "18",
-      frontColor: lightModeColors.moodGood,
-    },
-  ];
+  const [viewMode, setViewMode] = useState("weekly");
+  const [moods, setMoods] = useState<Mood[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch moods on component mount
+  useEffect(() => {
+    const fetchMoods = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const fetchedMoods = await getUserMoods("demo-user"); // Replace with actual user ID
+        setMoods(fetchedMoods);
+      } catch (err) {
+        setError("Failed to fetch moods");
+        console.error("Error fetching moods:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMoods();
+  }, []);
+
+  // Transform mood data for the bar chart
+  const barData = moods
+    .slice(0, 7) // Get last 7 days
+    .map((mood) => ({
+      value: moodToValue[mood.moodreported as keyof typeof moodToValue] || 0,
+      label: new Date(mood.createdAt).getDate().toString(),
+      frontColor:
+        moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh,
+    }))
+    .reverse(); // Show oldest to newest
 
   // Mood indicators with their colors
   const moodIndicators = [
@@ -67,31 +83,24 @@ function Home() {
     { color: lightModeColors.moodBad, label: "Bad" },
   ];
 
-  // Toggle state for Monthly/Weekly view
-  const [viewMode, setViewMode] = useState("weekly");
-
   // Generate calendar data for the monthly view
   const generateCalendarData = (): DayInfo[] => {
-    // In a real app, this would be dynamic based on the selected month
-    // For demo purposes, we're creating a static January 2025 calendar
     const daysInMonth = 31;
     const days: DayInfo[] = [];
 
+    // Create a map of day to mood for quick lookup
+    const moodsByDay = new Map(
+      moods.map((mood) => [
+        new Date(mood.createdAt).getDate(),
+        moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh,
+      ]),
+    );
+
     // Create days array (1-31)
     for (let i = 1; i <= daysInMonth; i++) {
-      // Randomly assign mood colors for demo
-      const moodColors = [
-        lightModeColors.moodAccent,
-        lightModeColors.moodGood,
-        lightModeColors.moodOkay,
-        lightModeColors.moodMeh,
-        lightModeColors.moodBad,
-      ];
-      const randomMoodColor = moodColors[Math.floor(Math.random() * moodColors.length)];
-
       days.push({
         day: i,
-        moodColor: randomMoodColor,
+        moodColor: moodsByDay.get(i) || lightModeColors.background, // Use background color if no mood
       });
     }
 
@@ -104,17 +113,30 @@ function Home() {
   const weeks: DayInfo[][] = [];
   let currentWeek: DayInfo[] = [];
 
-  // For a real implementation, we'd need to handle the proper day of week start
-  // This is a simplified version
   calendarData.forEach((day, index) => {
     currentWeek.push(day);
 
-    // Start a new week after 7 days or at the end
     if ((index + 1) % 7 === 0 || index === calendarData.length - 1) {
       weeks.push([...currentWeek]);
       currentWeek = [];
     }
   });
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color={lightModeColors.moodAccent} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -129,9 +151,7 @@ function Home() {
         <View style={styles.toggleContainer}>
           <TouchableOpacity
             style={[styles.toggleButton, viewMode === "monthly" && styles.activeToggleButton]}
-            onPress={() => {
-              setViewMode("monthly");
-            }}
+            onPress={() => setViewMode("monthly")}
           >
             <Text style={[styles.monthlyText, viewMode === "monthly" && styles.activeToggleText]}>
               Monthly
@@ -139,9 +159,7 @@ function Home() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.toggleButton, viewMode === "weekly" && styles.activeToggleButton]}
-            onPress={() => {
-              setViewMode("weekly");
-            }}
+            onPress={() => setViewMode("weekly")}
           >
             <Text style={[styles.weeklyText, viewMode === "weekly" && styles.activeToggleText]}>
               Weekly
@@ -157,7 +175,11 @@ function Home() {
                 <ArrowLeftIcon width={24} height={24} />
               </TouchableOpacity>
 
-              <Text style={styles.dateRangeText}>Jan 12 — Jan 18, 2025</Text>
+              <Text style={styles.dateRangeText}>
+                {barData.length > 0
+                  ? `${barData[0].label} — ${barData[barData.length - 1].label}, ${new Date().getFullYear()}`
+                  : "No data available"}
+              </Text>
 
               <TouchableOpacity>
                 <ArrowRightIcon width={24} height={24} />
@@ -210,7 +232,9 @@ function Home() {
                   <ArrowLeftIcon width={24} height={24} />
                 </TouchableOpacity>
 
-                <Text style={styles.monthText}>January, 2025</Text>
+                <Text style={styles.monthText}>
+                  {new Date().toLocaleString("default", { month: "long", year: "numeric" })}
+                </Text>
 
                 <TouchableOpacity>
                   <ArrowRightIcon width={24} height={24} />
@@ -220,9 +244,9 @@ function Home() {
               {/* Calendar Grid */}
               <View style={styles.calendarGrid}>
                 {weeks.map((weekDays, weekIndex) => (
-                  <View key={`week-${weekIndex.toString()}`} style={styles.weekRow}>
-                    {weekDays.map((day: DayInfo) => (
-                      <View key={`day-${day.day.toString()}`} style={styles.dayContainer}>
+                  <View key={`week-${weekIndex}`} style={styles.weekRow}>
+                    {weekDays.map((day) => (
+                      <View key={`day-${day.day}`} style={styles.dayContainer}>
                         <View style={[styles.dayCircle, { backgroundColor: day.moodColor }]}>
                           <Text style={styles.dayText}>{day.day}</Text>
                         </View>
@@ -258,6 +282,15 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     padding: 20,
     marginTop: 20,
+  },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: lightModeColors.moodBad,
+    fontSize: 16,
+    textAlign: "center",
   },
   title: {
     fontSize: 20,
