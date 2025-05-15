@@ -4,6 +4,7 @@ type MoodInterface = {
   moodreported: string;
   // note: we don't ask user to input creation time
   uid: string;
+  createdAt?: Date; // Optional date parameter for testing
 };
 
 type MoodDoc = {
@@ -27,6 +28,7 @@ const moodSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
+    unique: true, // Ensure only one mood per timestamp
   },
   year: {
     type: Number,
@@ -46,8 +48,11 @@ const moodSchema = new mongoose.Schema({
   },
 });
 
+// Create a compound index on uid and day to ensure one mood per user per day
+moodSchema.index({ uid: 1, year: 1, month: 1, day: 1 }, { unique: true });
+
 moodSchema.statics.build = (attr: MoodInterface) => {
-  const date = new Date();
+  const date = attr.createdAt || new Date();
   return new Mood({
     ...attr,
     createdAt: date,

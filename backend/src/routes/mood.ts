@@ -1,12 +1,18 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import { Mood } from "../models/mood";
 
-const router = express.Router();
+const router: Router = express.Router();
+
+interface MoodRequestBody {
+  moodreported: string;
+  uid: string;
+  date?: string;
+}
 
 // POST route to log a new mood
-router.post("/api/logmood", async (req: Request, res: Response) => {
+router.post("/api/logmood", async (req: Request, res: Response): Promise<void> => {
   try {
-    const { moodreported, uid } = req.body;
+    const { moodreported, uid, date } = req.body as MoodRequestBody;
 
     // Validate required fields
     if (!moodreported || !uid) {
@@ -14,8 +20,28 @@ router.post("/api/logmood", async (req: Request, res: Response) => {
       return;
     }
 
+    // Check if a mood already exists for this user on this date
+    const createdAt = date ? new Date(date) : new Date();
+    const existingMood = await Mood.findOne({
+      uid,
+      year: createdAt.getFullYear(),
+      month: createdAt.getMonth() + 1,
+      day: createdAt.getDate(),
+    });
+
+    if (existingMood) {
+      res.status(400).json({
+        message: "A mood has already been logged for this date",
+      });
+      return;
+    }
+
     // Create and save new mood
-    const newMood = Mood.build({ moodreported, uid });
+    const newMood = Mood.build({
+      moodreported,
+      uid,
+      createdAt: date ? new Date(date) : undefined,
+    });
     await newMood.save();
 
     res.status(201).json({ message: "Mood logged successfully", mood: newMood });
@@ -25,7 +51,7 @@ router.post("/api/logmood", async (req: Request, res: Response) => {
 });
 
 // GET route to fetch moods for a specific user
-router.get("/api/user/:uid/moods", async (req: Request, res: Response) => {
+router.get("/api/user/:uid/moods", async (req: Request, res: Response): Promise<void> => {
   try {
     const { uid } = req.params;
 
