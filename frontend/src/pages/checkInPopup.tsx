@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
-import { Modal, View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
+import { useEffect, useState } from "react";
+import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import FaceIcon from "@/assets/mood-illustration.svg";
 import { lightModeColors } from "@/constants/colors";
@@ -47,7 +47,7 @@ export default function CheckInPopup({ userId }: CheckInPopupProps) {
       }
     };
 
-    checkMoodStatus();
+    void checkMoodStatus();
   }, [userId]);
 
   const handleCheckIn = async () => {
@@ -93,7 +93,9 @@ export default function CheckInPopup({ userId }: CheckInPopupProps) {
                   {moods.map((mood) => (
                     <Pressable
                       key={mood.value}
-                      onPress={() => setSelectedMood(mood.value)}
+                      onPress={() => {
+                        setSelectedMood(mood.value);
+                      }}
                       style={styles.faceContainer}
                     >
                       <FaceIcon
@@ -107,7 +109,7 @@ export default function CheckInPopup({ userId }: CheckInPopupProps) {
                 </View>
 
                 <Pressable
-                  onPress={handleCheckIn}
+                  onPress={() => void handleCheckIn()}
                   style={[styles.logButton, !selectedMood && { opacity: 0.5 }]}
                 >
                   <Text style={styles.logButtonText}>LOG MOOD</Text>
@@ -133,17 +135,19 @@ export default function CheckInPopup({ userId }: CheckInPopupProps) {
       {/* Note: using this for testing purposes */}
       {__DEV__ && (
         <Pressable
-          onPress={async () => {
-            const today = new Date().toISOString().split("T")[0];
-            const key = `moodCheckin-${userId}-${today}`;
-            await AsyncStorage.removeItem(key);
-            setShowPopup(true);
-            setShowConfirmation(false);
-            setSelectedMood(null);
+          onPress={() => {
+            void (async () => {
+              const today = new Date().toISOString().split("T")[0];
+              const key = `moodCheckin-${userId}-${today}`;
+              await AsyncStorage.removeItem(key);
+              setShowPopup(true);
+              setShowConfirmation(false);
+              setSelectedMood(null);
+            })();
           }}
           style={styles.resetButton}
         >
-          <Text style={styles.resetButtonText}>Reset Check-In (Test)</Text>
+          <Text style={styles.resetButtonText}>Reset Today&apos;s Mood</Text>
         </Pressable>
       )}
     </>

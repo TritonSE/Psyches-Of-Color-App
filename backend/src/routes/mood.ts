@@ -30,9 +30,10 @@ router.post("/api/logmood", async (req: Request, res: Response): Promise<void> =
     });
 
     if (existingMood) {
-      res.status(400).json({
-        message: "A mood has already been logged for this date",
-      });
+      // Update the existing mood
+      existingMood.moodreported = moodreported;
+      await existingMood.save();
+      res.status(200).json({ message: "Mood updated successfully", mood: existingMood });
       return;
     }
 
