@@ -1,31 +1,39 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
 
 import FaceIcon from "@/assets/mood-illustration.svg";
 import { lightModeColors } from "@/constants/colors";
+import { logMood } from "@/lib/api";
 
+// Update color map to match mood values
 const moodColorMap = {
-  Amazing: lightModeColors.moodAccent,
+  Happy: lightModeColors.moodAccent,
   Good: lightModeColors.moodGood,
-  Meh: lightModeColors.moodOkay,
-  Bad: lightModeColors.moodMeh,
-  Awful: lightModeColors.moodBad,
+  Okay: lightModeColors.moodOkay,
+  Meh: lightModeColors.moodMeh,
+  Bad: lightModeColors.moodBad,
 };
 
 const moods = [
-  { label: "Amazing", value: "amazing" },
-  { label: "Good", value: "good" },
-  { label: "Meh", value: "meh" },
-  { label: "Bad", value: "bad" },
-  { label: "Awful", value: "awful" },
-];
+  { label: "Happy", value: "Happy" },
+  { label: "Good", value: "Good" },
+  { label: "Okay", value: "Okay" },
+  { label: "Meh", value: "Meh" },
+  { label: "Bad", value: "Bad" },
+] as const;
+
+type MoodValue = (typeof moods)[number]["value"];
 
 const { width: screenWidth } = Dimensions.get("window");
 
-export default function CheckInPopup({ userId }) {
+interface CheckInPopupProps {
+  userId: string;
+}
+
+export default function CheckInPopup({ userId }: CheckInPopupProps) {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedMood, setSelectedMood] = useState(null);
+  const [selectedMood, setSelectedMood] = useState<MoodValue | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
@@ -44,11 +52,21 @@ export default function CheckInPopup({ userId }) {
 
   const handleCheckIn = async () => {
     if (!selectedMood) return;
-    const today = new Date().toISOString().split("T")[0];
-    const key = `moodCheckin-${userId}-${today}`;
 
-    await AsyncStorage.setItem(key, selectedMood);
-    setShowConfirmation(true);
+    try {
+      // Log the mood to the backend - no need to convert case since values match
+      await logMood(userId, selectedMood);
+
+      // Store in AsyncStorage to prevent multiple check-ins
+      const today = new Date().toISOString().split("T")[0];
+      const key = `moodCheckin-${userId}-${today}`;
+      await AsyncStorage.setItem(key, selectedMood);
+
+      setShowConfirmation(true);
+    } catch (error) {
+      console.error("Failed to log mood:", error);
+      // You might want to show an error message to the user here
+    }
   };
 
   const selectedMoodLabel = moods.find((m) => m.value === selectedMood)?.label;
@@ -81,7 +99,7 @@ export default function CheckInPopup({ userId }) {
                       <FaceIcon
                         width={50}
                         height={50}
-                        color={selectedMood === mood.value ? moodColorMap[mood.label] : "#ccc"}
+                        color={selectedMood === mood.value ? moodColorMap[mood.value] : "#ccc"}
                       />
                       <Text style={styles.label}>{mood.label}</Text>
                     </Pressable>
@@ -100,10 +118,10 @@ export default function CheckInPopup({ userId }) {
                 <FaceIcon
                   width={80}
                   height={80}
-                  color={moodColorMap[selectedMoodLabel] || "#ccc"}
+                  color={selectedMood ? moodColorMap[selectedMood] : "#ccc"}
                 />
                 <Text style={styles.subtext}>
-                  {`Glad you're feeling ${selectedMoodLabel?.toLowerCase()}!`}
+                  {`Glad you're feeling ${selectedMoodLabel?.toLowerCase() ?? ""}!`}
                 </Text>
                 <Text style={styles.subtext}>Remember to log your mood every day.</Text>
               </>
