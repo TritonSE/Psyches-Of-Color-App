@@ -4,12 +4,16 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
+  hasCompletedWeeklyCheckin: boolean;
+  hasCompletedDailyCheckin: boolean;
 };
 
 type UserDoc = {
   name: string;
   email: string;
   uid: string;
+  hasCompletedWeeklyCheckin: boolean;
+  hasCompletedDailyCheckin: boolean;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -27,6 +31,15 @@ const userSchema = new mongoose.Schema({
   },
   uid: {
     type: String,
+    required: true,
+  },
+
+  hasCompletedWeeklyCheckin: {
+    type: Boolean,
+    required: true,
+  },
+  hasCompletedDailyCheckin: {
+    type: Boolean,
     required: true,
   },
 });
