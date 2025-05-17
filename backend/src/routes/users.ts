@@ -48,10 +48,12 @@ router.get(
 // POST route to create a user profile
 router.post("/users", async (req: PsychesRequest, res: Response): Promise<void> => {
   try {
-    const { name, email, uid } = req.body;
+    console.log("BODY:", req.body);
+
+    const { name, email, uid, hasCompletedWeeklyCheckin } = req.body;
 
     // Validate required fields
-    if (!name || !email || !uid) {
+    if (!name || !email || !uid || !hasCompletedWeeklyCheckin) {
       res.status(400).json({ message: "All fields are required" });
       return;
     }
@@ -64,7 +66,7 @@ router.post("/users", async (req: PsychesRequest, res: Response): Promise<void> 
     }
 
     // Create and save new user
-    const newUser = new User({ name, email, uid });
+    const newUser = new User({ name, email, uid, hasCompletedWeeklyCheckin });
 
     await newUser.save();
 
@@ -103,20 +105,22 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
   }
 });
 
-router.put("/users/:uid/checkin", verifyAuthToken, async (req: PsychesRequest, res: Response): Promise<void> => {
+router.put("/users/:uid/checkin", async (req: PsychesRequest, res: Response): Promise<void> => {
   try {
     const { uid } = req.params;
 
     const user = await User.findOneAndUpdate(
       { uid },
       { hasCompletedWeeklyCheckin: true },
-      { new: true }
+      { new: true },
     );
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
+
+    console.log("✅ User updated successfully:", user);
 
     res.status(200).json({ message: "Weekly check-in marked as complete", user });
   } catch (error) {

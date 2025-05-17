@@ -29,6 +29,7 @@
     "@eslint/js": "^9.16.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/node-schedule": "^2.1.7",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "concurrently": "^9.1.0",
     "eslint": "^8.56.0",

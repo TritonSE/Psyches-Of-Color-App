@@ -1,5 +1,5 @@
 import { scheduleJob } from "node-schedule";
-import { User } from "@/models/users";
+import { User } from "../models/users";
 
 function resetWeeklyCheckin() {
   scheduleJob("0 0 * * 0", async () => {
@@ -7,7 +7,7 @@ function resetWeeklyCheckin() {
     try {
       const result = await User.updateMany(
         {}, // all users
-        { hasCompletedWeeklyCheckin: false }
+        { hasCompletedWeeklyCheckin: false },
       );
       console.log(`Weekly check-ins reset for ${result.modifiedCount} users.`);
     } catch (error) {
