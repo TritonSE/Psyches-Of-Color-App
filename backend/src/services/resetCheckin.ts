@@ -15,5 +15,19 @@ function resetWeeklyCheckin() {
     }
   });
 }
+function resetDailyCheckin() {
+  scheduleJob("0 0 * * *", async () => {
+    // Runs at 12:00 AM every day (server time)
+    try {
+      const result = await User.updateMany(
+        {}, // all users
+        { hasCompletedDailyCheckin: false },
+      );
+      console.log(`Daily check-ins reset for ${result.modifiedCount} users.`);
+    } catch (error) {
+      console.error("Error resetting Daily check-ins:", error);
+    }
+  });
+}
 
-export { resetWeeklyCheckin };
+export { resetWeeklyCheckin, resetDailyCheckin };
