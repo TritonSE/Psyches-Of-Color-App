@@ -77,7 +77,8 @@ function Home() {
     return days; // No need to reverse since we're already generating in chronological order
   };
 
-  const barData = getLast7Days().map((date) => {
+  const dates = getLast7Days();
+  const barData = dates.map((date) => {
     const mood = moods.find((m) => {
       const moodDate = new Date(m.createdAt);
       return (
@@ -92,6 +93,7 @@ function Home() {
       frontColor: mood
         ? moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh
         : lightModeColors.background,
+      date: date, // Store the full date object
     };
   });
   //   console.log("barData", barData);
@@ -199,7 +201,7 @@ function Home() {
 
               <Text style={styles.dateRangeText}>
                 {barData.length > 0
-                  ? `${barData[0].label} — ${barData[barData.length - 1].label}, ${new Date().getFullYear()}`
+                  ? `${barData[0].date.toLocaleString("default", { month: "long" })} ${barData[0].label} - ${barData[barData.length - 1].date.toLocaleString("default", { month: "long" })} ${barData[barData.length - 1].label}, ${barData[0].date.getFullYear()}`
                   : "No data available"}
               </Text>
 
