@@ -64,20 +64,24 @@ function Home() {
   }, []);
 
   // Transform mood data for the bar chart
-  const getLast7Days = () => {
-    const days = [];
+  const getCurrentWeekDates = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time part to start of day
 
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1)); // If Sunday, go back 6 days, else go back to Monday
+
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
       days.push(date);
     }
-    return days; // No need to reverse since we're already generating in chronological order
+    return days;
   };
 
-  const dates = getLast7Days();
+  const dates = getCurrentWeekDates();
   const barData = dates.map((date) => {
     const mood = moods.find((m) => {
       const moodDate = new Date(m.createdAt);
@@ -93,7 +97,7 @@ function Home() {
       frontColor: mood
         ? moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh
         : lightModeColors.background,
-      date: date, // Store the full date object
+      date: date,
     };
   });
   //   console.log("barData", barData);
