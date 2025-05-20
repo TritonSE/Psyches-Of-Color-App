@@ -43,6 +43,7 @@ function Home() {
   const [moods, setMoods] = useState<Mood[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [weekOffset, setWeekOffset] = useState(0); // 0 is current week, -1 is last week, 1 is next week
 
   // Fetch moods on component mount
   useEffect(() => {
@@ -68,6 +69,9 @@ function Home() {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time part to start of day
 
+    // Adjust the date based on weekOffset
+    today.setDate(today.getDate() + weekOffset * 7);
+
     const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
     const monday = new Date(today);
     monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1)); // If Sunday, go back 6 days, else go back to Monday
@@ -79,6 +83,14 @@ function Home() {
       days.push(date);
     }
     return days;
+  };
+
+  const handlePreviousWeek = () => {
+    setWeekOffset((prev) => prev - 1);
+  };
+
+  const handleNextWeek = () => {
+    setWeekOffset((prev) => prev + 1);
   };
 
   const dates = getCurrentWeekDates();
@@ -199,7 +211,7 @@ function Home() {
           <>
             {/* Date Navigation for Weekly View */}
             <View style={styles.dateNavigation}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handlePreviousWeek}>
                 <ArrowLeftIcon width={24} height={24} />
               </TouchableOpacity>
 
@@ -209,7 +221,7 @@ function Home() {
                   : "No data available"}
               </Text>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleNextWeek}>
                 <ArrowRightIcon width={24} height={24} />
               </TouchableOpacity>
             </View>
@@ -231,8 +243,8 @@ function Home() {
                   data={barData}
                   width={270}
                   height={200}
-                  barWidth={28}
-                  spacing={10}
+                  barWidth={26}
+                  spacing={12}
                   roundedTop
                   barBorderTopLeftRadius={8}
                   barBorderTopRightRadius={8}
@@ -333,7 +345,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 0.5,
     borderColor: lightModeColors.moodAccent,
-    padding: 16,
+    paddingVertical: 16,
+    paddingLeft: 16,
     marginBottom: 20,
   },
   dateNavigation: {
