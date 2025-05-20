@@ -227,8 +227,8 @@ function Home() {
                   data={barData}
                   width={270}
                   height={200}
-                  barWidth={20}
-                  spacing={18}
+                  barWidth={28}
+                  spacing={10}
                   roundedTop
                   barBorderTopLeftRadius={8}
                   barBorderTopRightRadius={8}
@@ -350,22 +350,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   moodIndicatorsColumn: {
-    marginRight: 10,
+    // marginRight: 10,
     justifyContent: "space-between",
-    height: 200,
-    paddingVertical: 15,
+    height: 250,
+    // paddingVertical: 15,
   },
   chartsArea: {
     flex: 1,
     alignItems: "center",
   },
   moodIndicator: {
-    marginVertical: 10,
+    marginVertical: 7,
   },
   moodDot: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 30,
+    height: 30,
+    borderRadius: 20,
   },
   toggleContainer: {
     flexDirection: "row",
