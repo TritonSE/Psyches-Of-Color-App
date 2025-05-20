@@ -44,6 +44,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0); // 0 is current week, -1 is last week, 1 is next week
+  const [monthOffset, setMonthOffset] = useState(0); // 0 is current month, -1 is last month, 1 is next month
 
   // Fetch moods on component mount
   useEffect(() => {
@@ -124,30 +125,58 @@ function Home() {
   ];
 
   // Generate calendar data for the monthly view
-  const generateCalendarData = (): DayInfo[] => {
-    const daysInMonth = 31;
+  const getMonthData = () => {
+    const today = new Date();
+    // Move to the target month based on offset
+    today.setMonth(today.getMonth() + monthOffset);
+    today.setDate(1); // Go to first of the month
+
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
     const days: DayInfo[] = [];
 
     // Create a map of day to mood for quick lookup
     const moodsByDay = new Map(
-      moods.map((mood) => [
-        new Date(mood.createdAt).getDate(),
-        moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh,
-      ]),
+      moods
+        .filter((mood) => {
+          const moodDate = new Date(mood.createdAt);
+          return (
+            moodDate.getMonth() === today.getMonth() &&
+            moodDate.getFullYear() === today.getFullYear()
+          );
+        })
+        .map((mood) => [
+          new Date(mood.createdAt).getDate(),
+          moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh,
+        ]),
     );
 
     // Create days array (1-31)
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({
         day: i,
-        moodColor: moodsByDay.get(i) || lightModeColors.background, // Use background color if no mood
+        moodColor: moodsByDay.get(i) ?? lightModeColors.background,
       });
     }
 
     return days;
   };
 
-  const calendarData = generateCalendarData();
+  const handlePreviousMonth = () => {
+    setMonthOffset((prev) => prev - 1);
+  };
+
+  const handleNextMonth = () => {
+    setMonthOffset((prev) => prev + 1);
+  };
+
+  const calendarData = getMonthData();
+
+  // Get current month name and year for display
+  const getCurrentMonthDisplay = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + monthOffset);
+    return date.toLocaleString("default", { month: "long", year: "numeric" });
+  };
 
   // Split calendar data into weeks for rendering
   const weeks: DayInfo[][] = [];
@@ -269,15 +298,13 @@ function Home() {
             <View style={styles.monthlyContainer}>
               {/* Month Navigation */}
               <View style={styles.monthNavigation}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handlePreviousMonth}>
                   <ArrowLeftIcon width={24} height={24} />
                 </TouchableOpacity>
 
-                <Text style={styles.monthText}>
-                  {new Date().toLocaleString("default", { month: "long", year: "numeric" })}
-                </Text>
+                <Text style={styles.monthText}>{getCurrentMonthDisplay()}</Text>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleNextMonth}>
                   <ArrowRightIcon width={24} height={24} />
                 </TouchableOpacity>
               </View>
