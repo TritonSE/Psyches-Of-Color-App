@@ -64,15 +64,37 @@ function Home() {
   }, []);
 
   // Transform mood data for the bar chart
-  const barData = moods
-    .slice(0, 7) // Get last 7 days
-    .map((mood) => ({
-      value: moodToValue[mood.moodreported as keyof typeof moodToValue] || 0,
-      label: new Date(mood.createdAt).getDate().toString(),
-      frontColor:
-        moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh,
-    }))
-    .reverse(); // Show oldest to newest
+  const getLast7Days = () => {
+    const days = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time part to start of day
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      days.push(date);
+    }
+    return days; // No need to reverse since we're already generating in chronological order
+  };
+
+  const barData = getLast7Days().map((date) => {
+    const mood = moods.find((m) => {
+      const moodDate = new Date(m.createdAt);
+      return (
+        moodDate.getDate() === date.getDate() &&
+        moodDate.getMonth() === date.getMonth() &&
+        moodDate.getFullYear() === date.getFullYear()
+      );
+    });
+    return {
+      value: mood ? moodToValue[mood.moodreported as keyof typeof moodToValue] || 0 : 0,
+      label: date.getDate().toString(),
+      frontColor: mood
+        ? moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh
+        : lightModeColors.background,
+    };
+  });
+  //   console.log("barData", barData);
 
   // Mood indicators with their colors
   const moodIndicators = [
@@ -218,6 +240,7 @@ function Home() {
                   hideOrigin
                   backgroundColor={lightModeColors.background}
                   noOfSections={3}
+                  maxValue={80}
                 />
               </View>
             </View>
