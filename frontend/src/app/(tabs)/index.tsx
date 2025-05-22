@@ -46,22 +46,21 @@ function Home() {
   const [weekOffset, setWeekOffset] = useState(0); // 0 is current week, -1 is last week, 1 is next week
   const [monthOffset, setMonthOffset] = useState(0); // 0 is current month, -1 is last month, 1 is next month
 
-  // Fetch moods on component mount
-  useEffect(() => {
-    const fetchMoods = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const fetchedMoods = await getUserMoods("demo-user"); // Replace with actual user ID
-        setMoods(fetchedMoods);
-      } catch (err) {
-        setError("Failed to fetch moods");
-        console.error("Error fetching moods:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchMoods = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedMoods = await getUserMoods("demo-user");
+      setMoods(fetchedMoods);
+    } catch (err) {
+      setError("Failed to fetch moods");
+      console.error("Error fetching moods:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchMoods();
   }, []);
 
@@ -337,7 +336,7 @@ function Home() {
           </>
         )}
       </View>
-      <MoodCheckinPopup userId="demo-user" />
+      <MoodCheckinPopup userId="demo-user" onMoodLogged={fetchMoods} />
     </View>
   );
 }

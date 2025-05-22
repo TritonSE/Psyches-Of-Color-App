@@ -29,9 +29,10 @@ const { width: screenWidth } = Dimensions.get("window");
 
 interface CheckInPopupProps {
   userId: string;
+  onMoodLogged?: () => void;
 }
 
-export default function CheckInPopup({ userId }: CheckInPopupProps) {
+export default function CheckInPopup({ userId, onMoodLogged }: CheckInPopupProps) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -56,6 +57,8 @@ export default function CheckInPopup({ userId }: CheckInPopupProps) {
     try {
       // Log the mood to the backend - no need to convert case since values match
       await logMood(userId, selectedMood);
+
+      onMoodLogged?.();
 
       // Store in AsyncStorage to prevent multiple check-ins
       const today = new Date().toISOString().split("T")[0];
