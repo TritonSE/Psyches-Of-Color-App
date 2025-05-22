@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "react-native-gifted-charts": "^1.4.61"
+  }
+}

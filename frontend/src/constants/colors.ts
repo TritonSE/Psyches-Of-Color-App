@@ -15,8 +15,12 @@ type Colors = {
   success: string;
   profileBackground: string;
   primary: string;
+  moodAccent: string;
+  moodGood: string;
+  moodOkay: string;
+  moodMeh: string;
+  moodBad: string;
 };
-
 export const lightModeColors: Colors = {
   buttonFill: "#D35144",
   darkFont: "#000000",
@@ -32,6 +36,11 @@ export const lightModeColors: Colors = {
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",
-  profileBackground: "#c13d2f",
+  profileBackground: "#C13D2F",
   primary: "#D35144",
+  moodAccent: "#2E563C",
+  moodGood: "#7CAB4C",
+  moodOkay: "#EFB116",
+  moodMeh: "#D38718",
+  moodBad: "#C13D2F",
 };
