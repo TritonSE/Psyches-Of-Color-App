@@ -5,6 +5,7 @@ type UserInterface = {
   email: string;
   uid: string;
   completedActivities: string[];
+  currActivity: string;
 };
 
 type UserDoc = {
@@ -12,6 +13,7 @@ type UserDoc = {
   email: string;
   uid: string;
   completedActivities: string[];
+  currActivity: string;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -36,6 +38,10 @@ const userSchema = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Activity",
     default: [],
+  },
+  currActivity: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Activity",
   },
 });
 

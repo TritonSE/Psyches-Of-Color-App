@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import ActivityButton from "@/components/ActivityButton";
 import ActivityPopup from "@/components/ActivityPopup";
-import SectionButton from "@/components/SectionButton";
+import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import { Activity, Section } from "@/types";
@@ -130,7 +130,7 @@ export default function ActivitiesPage() {
             onStart={() => {
               console.log("Starting activity...");
               setIsModalOpen(false);
-              router.push("/activityPage");
+              router.push({ pathname: "/activityPage", params: { activityId: currActivity._id } });
             }}
           />
         )}

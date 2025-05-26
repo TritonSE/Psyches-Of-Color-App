@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Back from "@/assets/back.svg";
@@ -7,10 +8,40 @@ import NextButton from "@/components/NextButton";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
 import { Question } from "@/components/Onboarding/Question";
 import { lightModeColors } from "@/constants/colors";
-import { QuestionData, activityPageQuestions } from "@/constants/questionData";
+import { useAuth } from "@/contexts/userContext";
+import { Activity, Question as QuestionType } from "@/types";
+import env from "@/util/validateEnv";
 
 export default function ActivityPageScreens() {
-  const questions: QuestionData[] = activityPageQuestions;
+  const router = useRouter();
+  const { mongoUser } = useAuth();
+  const { activityId } = useLocalSearchParams();
+  const [activity, setActivity] = useState<Activity | null>(null);
+  const [questions, setQuestions] = useState<QuestionType[]>([]);
+
+  useEffect(() => {
+    const fetchActivity = async () => {
+      console.log("Fetched activityId from params:", activityId);
+
+      if (!activityId) return;
+      const id = Array.isArray(activityId) ? activityId[0] : activityId;
+
+      try {
+        const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/activities/${id}`);
+        if (res.ok) {
+          const act = (await res.json()) as Activity;
+          setActivity(act);
+          setQuestions(act.questions);
+        } else {
+          console.error("Failed to fetch activity");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
+
+    void fetchActivity();
+  }, [activityId]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>(
@@ -28,9 +59,44 @@ export default function ActivityPageScreens() {
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
+      console.log("Current index:", currentIndex);
+      console.log("Current question:", questions[currentIndex]?.content);
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
+    }
+  };
+
+  const handleComplete = async () => {
+    const activityIdStr = Array.isArray(activityId) ? activityId[0] : activityId;
+    console.log("Debug values:", {
+      mongoUserId: mongoUser?._id,
+      activityId: activity._id,
+      mongoUser,
+      activity,
+    });
+    if (!mongoUser?._id || !activityIdStr) {
+      alert("User or activity not found.");
+      return;
+    }
+    try {
+      const res = await fetch(
+        `${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${mongoUser.uid}/completed/${activityIdStr}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (res.ok) {
+        alert("Activity completed!");
+        router.back();
+      } else {
+        alert("Failed to update activity progress.");
+      }
+    } catch {
+      alert("Error updating activity progress.");
     }
   };
 
@@ -61,20 +127,26 @@ export default function ActivityPageScreens() {
         <View style={styles.blobContainer}>
           <Blob style={styles.blob}></Blob>
           <View style={styles.main}>
-            <Question
-              type={currentQuestion.type}
-              question={currentQuestion.question}
-              options={currentQuestion.options}
-              placeholder={currentQuestion.placeholder}
-              otherOptions={currentQuestion.otherOptions}
-              onAnswer={handleAnswer}
-              currentAnswer={currentAnswer}
-              variant="activity"
-            />
+            {currentQuestion && (
+              <Question
+                type={currentQuestion.type === "mcq" ? "multipleChoice" : "shortAnswer"}
+                question={currentQuestion.content}
+                options={currentQuestion.options?.map((opt) => opt.content) ?? []}
+                otherOptions={[]} // you can map your actual logic here if needed
+                placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
+                onAnswer={handleAnswer}
+                currentAnswer={currentAnswer}
+                variant="activity"
+              />
+            )}
           </View>
         </View>
         <View style={styles.nextButtonContainer}>
-          <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Continue" />
+          <NextButton
+            onPress={currentIndex === questions.length - 1 ? handleComplete : handleNext}
+            disabled={!!isNextDisabled}
+            textOption={currentIndex === questions.length - 1 ? "Complete" : "Continue"}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
