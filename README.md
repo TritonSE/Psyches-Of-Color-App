@@ -58,9 +58,15 @@ Upon running the frontend (with `npm run start`), you should see a screen with a
 
 **Note:** You may have to run `npm run [ios/android]` if facing errors after making changes, even to use `npm run start`. This will regenerate the build (stored in the `/ios` and `/android` folders).
 
+### Admin Portal
+
+1. `cd admin-portal` to enter the admin portal directory
+2. `npm install` to install any dependencies
+3. `npm run dev` to run the admin portal in development mode
+
 ### Linting
 
-This project has ESLint and Prettier set up to run linting and code formatting, respectively, whenever you run `git commit`. All of the following scripts are available for both the frontend and backend. Make sure to `cd` into either the frontend or backend directory, depending on which you are linting.
+This project has ESLint and Prettier set up to run linting and code formatting, respectively, whenever you run `git commit`. All of the following scripts are available for the frontend, backend, and admin portal. Make sure to `cd` into either the the correct one of those directories, depending on which you are linting.
 
 - `npm run lint-check` runs lint checks on your code
 - `npm run lint-fix` fixes any automatically fixable lint errors
