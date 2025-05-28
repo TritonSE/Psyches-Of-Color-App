@@ -1,11 +1,11 @@
 import React from "react";
-import UserActivityMetrics from "../components/analytics/UserActivityMetrics";
-import MonthlyActivities from "../components/analytics/MonthlyActivities";
-import RetentionCurve from "../components/analytics/RetentionCurve";
-import Demographics from "../components/analytics/Demographics";
-import Counseling from "../components/analytics/Counseling";
+import UserActivityMetrics from "../../components/analytics/UserActivityMetrics";
+import MonthlyActivities from "../../components/analytics/MonthlyActivities";
+import RetentionCurve from "../../components/analytics/RetentionCurve";
+import Demographics from "../../components/analytics/Demographics";
+import Counseling from "../../components/analytics/Counseling";
 
-export default function Home() {
+const AnalyticsPage = () => {
   return (
     <main className="min-h-screen bg-[#F6F6EA]">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -23,4 +23,6 @@ export default function Home() {
       </div>
     </main>
   );
-}
+};
+
+export default AnalyticsPage;
