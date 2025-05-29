@@ -36,7 +36,6 @@ export default function ActivitiesPage() {
     activities: Activity[],
   ): ("inProgress" | "completed" | "incomplete")[] => {
     const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
-
     activities.forEach((activity, index) => {
       if (mongoUser?.completedActivities.find((act) => act._id === activity._id)) {
         statuses.push("completed");

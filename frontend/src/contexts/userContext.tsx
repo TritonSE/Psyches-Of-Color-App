@@ -29,23 +29,41 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (firebaseUser) {
       const token = await firebaseUser.getIdToken();
       const user = await getMongoUser(token);
-
       setMongoUser(user);
     } else {
       setMongoUser(null);
     }
   };
 
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User | null) => {
+  //     setFirebaseUser(user);
+  //     void updateMongoUser();
+  //   });
+  //   console.log(firebaseUser)
+  //   console.log(mongoUser)
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth(), (user: FirebaseAuthTypes.User | null) => {
+    const unsubscribe = onAuthStateChanged(auth(), (user) => {
       setFirebaseUser(user);
-      void updateMongoUser();
     });
-
     return () => {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    const updateMongoUser = async () => {
+      if (!firebaseUser) return;
+      const token = await firebaseUser.getIdToken();
+      const user = await getMongoUser(token);
+      setMongoUser(user);
+    };
+    void updateMongoUser();
+  }, [firebaseUser]);
 
   return (
     <UserContext.Provider value={{ firebaseUser, mongoUser }}>{children}</UserContext.Provider>
@@ -57,7 +75,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
  */
 export const useAuth = (): UserContext => {
   const context = useContext(UserContext);
-
   if (!context) {
     throw new Error("useUserContext must be used within a UserContextProvider");
   }

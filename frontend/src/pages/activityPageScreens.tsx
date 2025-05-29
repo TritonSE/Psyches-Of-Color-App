@@ -69,19 +69,14 @@ export default function ActivityPageScreens() {
 
   const handleComplete = async () => {
     const activityIdStr = Array.isArray(activityId) ? activityId[0] : activityId;
-    console.log("Debug values:", {
-      mongoUserId: mongoUser?._id,
-      activityId: activity._id,
-      mongoUser,
-      activity,
-    });
+    console.log("Before: ", mongoUser?.completedActivities);
     if (!mongoUser?._id || !activityIdStr) {
       alert("User or activity not found.");
       return;
     }
     try {
       const res = await fetch(
-        `${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${mongoUser.uid}/completed/${activityIdStr}`,
+        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${activityIdStr}`,
         {
           method: "PUT",
           headers: {
@@ -91,11 +86,14 @@ export default function ActivityPageScreens() {
       );
       if (res.ok) {
         alert("Activity completed!");
+        const updatedUser = await res.json();
+        console.log("After:", mongoUser?.completedActivities);
         router.back();
       } else {
         alert("Failed to update activity progress.");
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Error updating activity progress.");
     }
   };
