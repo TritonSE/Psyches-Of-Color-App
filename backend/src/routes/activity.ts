@@ -7,7 +7,8 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
   const { id } = req.params;
 
   try {
-    const activity = await Activity.findById(id).populate("questions");
+    const activity = await Activity.findById(id);
+
     if (!activity) {
       res.status(404).json({
         error: "Activity not found",
@@ -15,7 +16,6 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
       return;
     }
 
-    // res.status(200).send(activity);
     res.status(200).json(activity);
     return;
   } catch (e) {

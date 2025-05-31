@@ -1,13 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
-import { Section } from "../models/section";
+import { Unit } from "../models/unit";
 
 const router = express.Router();
 
 router.get("/", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const sections = await Section.find().populate("activities");
+    const units = await Unit.find().populate("lessons");
 
-    res.status(200).send(sections);
+    res.status(200).json(units);
     return;
   } catch (e) {
     next();
@@ -19,4 +19,4 @@ router.get("/", async (req: Request, res: Response, next: NextFunction): Promise
   }
 });
 
-export { router as sectionRouter };
+export { router as unitRouter };

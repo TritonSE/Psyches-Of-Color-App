@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import { Question } from "../models/question";
+import { Lesson } from "../models/lesson";
 
 const router = express.Router();
 
@@ -7,16 +7,15 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
   const { id } = req.params;
 
   try {
-    const question = await Question.findById(id);
-
-    if (!question) {
+    const lesson = await Lesson.findById(id).populate("activities");
+    if (!lesson) {
       res.status(404).json({
-        error: "Question not found",
+        error: "Lesson not found",
       });
       return;
     }
 
-    res.status(200).send(question);
+    res.status(200).json(lesson);
     return;
   } catch (e) {
     next();
@@ -28,4 +27,4 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
   }
 });
 
-export { router as questionRouter };
+export { router as lessonRouter };

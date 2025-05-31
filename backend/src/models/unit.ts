@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
-type SectionDoc = {
+type UnitDoc = {
   title: string;
-  activities: string[];
+  lessons: string[];
 };
 
-const sectionSchema = new mongoose.Schema(
+const unitSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
     },
-    activities: {
+    lessons: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "Activity",
+      ref: "Lesson",
       required: true,
     },
   },
@@ -22,6 +22,6 @@ const sectionSchema = new mongoose.Schema(
   },
 );
 
-const Section = mongoose.model<SectionDoc>("Section", sectionSchema);
+const Unit = mongoose.model<UnitDoc>("Unit", unitSchema);
 
-export { Section };
+export { Unit };
