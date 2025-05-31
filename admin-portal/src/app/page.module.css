@@ -1,9 +1,9 @@
 .page {
-  --background-color: #F6F6EA;
-  --sidebar-color: #2E563C;
-  --sidebar-text-color: #F6F6EA;
+  --background-color: #f6f6ea;
+  --sidebar-color: #2e563c;
+  --sidebar-text-color: #f6f6ea;
   --main-text-color: #000000;
-  --sidebar-button-color: #1A3222;
+  --sidebar-button-color: #1a3222;
 
   display: flex;
   min-height: 100vh;
@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px 40px 40px; 
+  padding: 50px 40px 40px;
   gap: 26px;
 }
 
@@ -55,4 +55,3 @@
   padding: 32px;
   color: var(--main-text-color);
 }
-

@@ -31,8 +31,7 @@ export default function AdminHome() {
         </nav>
       </aside>
 
-      <main className={styles.main}>
-      </main>
+      <main className={styles.main}></main>
     </div>
   );
 }
