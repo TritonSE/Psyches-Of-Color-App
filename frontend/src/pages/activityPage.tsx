@@ -3,41 +3,41 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import ActivityButton from "@/components/ActivityButton";
 import ActivityPopup from "@/components/ActivityPopup";
+import ActivityButton from "@/components/activityButton";
 import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
-import { Activity, Section } from "@/types";
+import { Lesson, Unit } from "@/types";
 import env from "@/util/validateEnv";
 
 export default function ActivitiesPage() {
   const router = useRouter();
   const { mongoUser } = useAuth();
 
-  const [sections, setSections] = useState<Section[]>([]);
-  const [currActivity, setCurrActivity] = useState<Activity | null>(null);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getAllSections = async () => {
-    const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/sections`);
+    const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/units`);
 
     if (res.ok) {
-      const secs = (await res.json()) as Section[];
+      const fetchedUnits = (await res.json()) as Unit[];
 
-      setSections(secs);
+      setUnits(fetchedUnits);
     } else {
-      console.error("Failed to fetch sections");
+      console.error("Failed to fetch units");
     }
   };
 
   const getActivityStatuses = (
-    activities: Activity[],
+    lessons: Lesson[],
   ): ("inProgress" | "completed" | "incomplete")[] => {
     const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
-    activities.forEach((activity, index) => {
-      if (mongoUser?.completedActivities.find((act) => act._id === activity._id)) {
+    lessons.forEach((lesson, index) => {
+      if (mongoUser?.completedLessons.find((les) => les._id === lesson._id)) {
         statuses.push("completed");
       } else if (index === 0 || statuses[index - 1] === "completed") {
         statuses.push("inProgress");
@@ -63,7 +63,7 @@ export default function ActivitiesPage() {
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {sections.map((section, sectionIndex) => (
+        {units.map((section, sectionIndex) => (
           <View key={section._id} style={styles.sectionContainer}>
             <SectionButton
               title={`Section ${(sectionIndex + 1).toString()}`}
@@ -72,8 +72,8 @@ export default function ActivitiesPage() {
             />
 
             <View style={styles.optionsContainer}>
-              {section.activities.map((activity, activityIndex) => {
-                const statuses = getActivityStatuses(section.activities);
+              {section.lessons.map((activity, activityIndex) => {
+                const statuses = getActivityStatuses(section.lessons);
                 const status = statuses[activityIndex];
 
                 if (status === "incomplete") {
@@ -86,7 +86,7 @@ export default function ActivitiesPage() {
                         marginRight: activityIndex % 2 === 0 ? 0 : -99,
                       }}
                       onPress={() => {
-                        setCurrActivity(activity);
+                        setCurrLesson(activity);
                         setIsModalOpen(true);
                       }}
                     />
@@ -103,7 +103,7 @@ export default function ActivitiesPage() {
                       marginRight: activityIndex % 2 === 0 ? 0 : -99,
                     }}
                     onPress={() => {
-                      setCurrActivity(activity);
+                      setCurrLesson(activity);
                       setIsModalOpen(true);
                     }}
                   />
@@ -117,19 +117,19 @@ export default function ActivitiesPage() {
           ••• ••• ••• ••• Jump to the next section ••• ••• ••• •••
         </Text>
 
-        {currActivity && (
+        {currLesson && (
           <ActivityPopup
             isOpen={isModalOpen}
             onClose={() => {
               setIsModalOpen(false);
             }}
             color="green"
-            title={currActivity.title}
-            description={currActivity.description}
+            title={currLesson.title}
+            description={currLesson.description}
             onStart={() => {
               console.log("Starting activity...");
               setIsModalOpen(false);
-              router.push({ pathname: "/activityPage", params: { activityId: currActivity._id } });
+              router.push({ pathname: "/activityPage", params: { lessonId: currLesson._id } });
             }}
           />
         )}

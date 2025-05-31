@@ -20,7 +20,7 @@ router.get(
   async (req: PsychesRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { userUid } = req;
-      const user = await User.findOne({ uid: userUid }).populate("completedActivities");
+      const user = await User.findOne({ uid: userUid }).populate("completedLessons");
 
       if (!user) {
         res.status(404).json({ error: "User not Found" });
@@ -98,11 +98,11 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
   }
 });
 
-// PUT: Mark an activity as completed by a user
+// PUT: Mark an lesson as completed by a user
 router.put(
-  "/users/:uid/completed/:activityId",
+  "/users/:uid/completed/:lessonId",
   async (req: PsychesRequest, res: Response): Promise<void> => {
-    const { uid, activityId } = req.params;
+    const { uid, lessonId } = req.params;
 
     try {
       const user = await User.findOne({ uid });
@@ -111,21 +111,21 @@ router.put(
         return;
       }
 
-      if (!user.completedActivities) user.completedActivities = [];
+      if (!user.completedLessons) user.completedLessons = [];
 
-      const activityExists = user.completedActivities.some((id) => id.toString() === activityId);
+      const lessonExists = user.completedLessons.some((id) => id.toString() === lessonId);
 
-      if (activityExists) {
-        res.status(200).json({ message: "Activity already marked as completed", user });
+      if (lessonExists) {
+        res.status(200).json({ message: "Lesson already marked as completed", user });
         return;
       }
 
-      user.completedActivities.push(activityId);
+      user.completedLessons.push(lessonId);
       await user.save();
 
-      res.status(200).json({ message: "Activity marked as completed", user });
+      res.status(200).json({ message: "Lesson marked as completed", user });
     } catch (error) {
-      console.error("Error updating completed activities:", error);
+      console.error("Error updating completed lessons:", error);
       res.status(500).json({ message: "Server error", error: (error as Error).message });
     }
   },

@@ -7,6 +7,7 @@ import { User } from "@/types";
 type UserContext = {
   firebaseUser: FirebaseAuthTypes.User | null;
   mongoUser: User | null;
+  refreshMongoUser: () => Promise<void>;
 };
 
 /**
@@ -15,6 +16,9 @@ type UserContext = {
 export const UserContext = createContext<UserContext>({
   firebaseUser: null,
   mongoUser: null,
+  refreshMongoUser: async () => {
+    return Promise.resolve();
+  },
 });
 
 /**
@@ -25,10 +29,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [mongoUser, setMongoUser] = useState<User | null>(null);
 
-  const updateMongoUser = async () => {
+  const refreshMongoUser = async () => {
     if (firebaseUser) {
       const token = await firebaseUser.getIdToken();
       const user = await getMongoUser(token);
+
       setMongoUser(user);
     } else {
       setMongoUser(null);
@@ -66,7 +71,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }, [firebaseUser]);
 
   return (
-    <UserContext.Provider value={{ firebaseUser, mongoUser }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ firebaseUser, mongoUser, refreshMongoUser }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 

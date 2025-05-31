@@ -4,16 +4,16 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
-  completedActivities: string[];
-  currActivity: string;
+  completedLessons: string[];
+  currLesson: string;
 };
 
 type UserDoc = {
   name: string;
   email: string;
   uid: string;
-  completedActivities: string[];
-  currActivity: string;
+  completedLessons: string[];
+  currLesson: string;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -34,14 +34,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  completedActivities: {
+  completedLessons: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: "Activity",
+    ref: "Lesson",
     default: [],
   },
-  currActivity: {
+  currLesson: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Activity",
+    ref: "Lesson",
   },
 });
 

@@ -9,31 +9,31 @@ import ProgressBar from "@/components/Onboarding/ProgressBar";
 import { Question } from "@/components/Onboarding/Question";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
-import { Activity, Question as QuestionType } from "@/types";
+import { Activity, Lesson } from "@/types";
 import env from "@/util/validateEnv";
 
 export default function ActivityPageScreens() {
   const router = useRouter();
-  const { mongoUser } = useAuth();
-  const { activityId } = useLocalSearchParams();
-  const [activity, setActivity] = useState<Activity | null>(null);
-  const [questions, setQuestions] = useState<QuestionType[]>([]);
+  const { mongoUser, refreshMongoUser } = useAuth();
+  const { lessonId } = useLocalSearchParams();
+  const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
     const fetchActivity = async () => {
-      console.log("Fetched activityId from params:", activityId);
+      console.log("Fetched activityId from params:", lessonId);
 
-      if (!activityId) return;
-      const id = Array.isArray(activityId) ? activityId[0] : activityId;
+      if (!lessonId) return;
+      const id = Array.isArray(lessonId) ? lessonId[0] : lessonId;
 
       try {
-        const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/activities/${id}`);
+        const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/lessons/${id}`);
         if (res.ok) {
-          const act = (await res.json()) as Activity;
-          setActivity(act);
-          setQuestions(act.questions);
+          const les = (await res.json()) as Lesson;
+          setLesson(les);
+          setActivities(les.activities);
         } else {
-          console.error("Failed to fetch activity");
+          console.error("Failed to fetch lesson");
         }
       } catch (err) {
         console.error("Error:", err);
@@ -41,14 +41,14 @@ export default function ActivityPageScreens() {
     };
 
     void fetchActivity();
-  }, [activityId]);
+  }, [lessonId]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>(
-    Array(questions.length).fill(undefined),
+    Array(activities.length).fill(undefined),
   );
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = activities[currentIndex];
   const currentAnswer = answers[currentIndex] ?? "";
 
   const handleAnswer = (answer: string) => {
@@ -58,9 +58,9 @@ export default function ActivityPageScreens() {
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < activities.length - 1) {
       console.log("Current index:", currentIndex);
-      console.log("Current question:", questions[currentIndex]?.content);
+      console.log("Current question:", activities[currentIndex]?.content);
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
@@ -68,15 +68,15 @@ export default function ActivityPageScreens() {
   };
 
   const handleComplete = async () => {
-    const activityIdStr = Array.isArray(activityId) ? activityId[0] : activityId;
-    console.log("Before: ", mongoUser?.completedActivities);
-    if (!mongoUser?._id || !activityIdStr) {
+    const lessonIdStr = Array.isArray(lessonId) ? lessonId[0] : lessonId;
+    console.log("Before: ", mongoUser?.completedLessons);
+    if (!mongoUser?._id || !lessonIdStr) {
       alert("User or activity not found.");
       return;
     }
     try {
       const res = await fetch(
-        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${activityIdStr}`,
+        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${lessonIdStr}`,
         {
           method: "PUT",
           headers: {
@@ -86,8 +86,9 @@ export default function ActivityPageScreens() {
       );
       if (res.ok) {
         alert("Activity completed!");
-        const updatedUser = await res.json();
-        console.log("After:", mongoUser?.completedActivities);
+
+        void refreshMongoUser();
+
         router.back();
       } else {
         alert("Failed to update activity progress.");
@@ -117,7 +118,7 @@ export default function ActivityPageScreens() {
           )}
           <Text style={styles.titleText}>Anxiety: Part 1</Text>
         </View>
-        <ProgressBar progress={(currentIndex + 1) / questions.length} />
+        <ProgressBar progress={(currentIndex + 1) / activities.length} />
 
         <View>
           <Text style={styles.option}> Select an Option </Text>
@@ -131,7 +132,9 @@ export default function ActivityPageScreens() {
                 question={currentQuestion.content}
                 options={currentQuestion.options?.map((opt) => opt.content) ?? []}
                 otherOptions={[]} // you can map your actual logic here if needed
-                placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
+                placeholder={
+                  currentQuestion.type === "reflection" ? "Type your answer..." : undefined
+                }
                 onAnswer={handleAnswer}
                 currentAnswer={currentAnswer}
                 variant="activity"
@@ -141,9 +144,9 @@ export default function ActivityPageScreens() {
         </View>
         <View style={styles.nextButtonContainer}>
           <NextButton
-            onPress={currentIndex === questions.length - 1 ? handleComplete : handleNext}
+            onPress={currentIndex === activities.length - 1 ? handleComplete : handleNext}
             disabled={!!isNextDisabled}
-            textOption={currentIndex === questions.length - 1 ? "Complete" : "Continue"}
+            textOption={currentIndex === activities.length - 1 ? "Complete" : "Continue"}
           />
         </View>
       </ScrollView>

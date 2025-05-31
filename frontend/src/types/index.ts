@@ -1,29 +1,29 @@
-type QuestionType = "text" | "mcq";
+type ActivityType = "reflection" | "mcq" | "wwyd";
 
 export type User = {
   _id: string;
   name: string;
   email: string;
   uid: string;
-  completedActivities: Activity[];
+  completedLessons: Lesson[];
 };
 
-export type Section = {
+export type Unit = {
   _id: string;
   title: string;
+  lessons: Lesson[];
+};
+
+export type Lesson = {
+  _id: string;
+  title: string;
+  description: string;
   activities: Activity[];
 };
 
 export type Activity = {
   _id: string;
-  title: string;
-  description: string;
-  questions: string[];
-};
-
-export type Question = {
-  _id: string;
-  type: QuestionType;
+  type: ActivityType;
   content: string;
   options?: {
     content: string;
