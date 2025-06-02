@@ -85,10 +85,6 @@ export default function ActivitiesPage() {
                         marginLeft: activityIndex % 2 === 1 ? 0 : -99,
                         marginRight: activityIndex % 2 === 0 ? 0 : -99,
                       }}
-                      onPress={() => {
-                        setCurrLesson(activity);
-                        setIsModalOpen(true);
-                      }}
                     />
                   );
                 }
