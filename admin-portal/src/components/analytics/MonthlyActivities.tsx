@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
-import { Line } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LineElement,
   LinearScale,
   PointElement,
-  LineElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
+import React from "react";
+import { Line } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -87,27 +87,54 @@ const MonthlyActivities: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-7 rounded-[10px] border border-[#F1F1F1]">
-      <div className="flex justify-between items-center mb-7">
-        <h3 className="text-lg font-bold">Average Monthly User Activities</h3>
-        <button className="flex items-center gap-2 px-3 py-2 border border-[#D9D9D9] rounded-[10px] text-black">
+    <div
+      style={{
+        backgroundColor: "white",
+        padding: 28,
+        borderRadius: 10,
+        border: "1px solid #F1F1F1",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 28,
+        }}
+      >
+        <h3 style={{ fontSize: 18, fontWeight: "bold" }}>Average Monthly User Activities</h3>
+        <button
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            border: "1px solid #D9D9D9",
+            borderRadius: 10,
+            color: "#000",
+            fontSize: 14,
+          }}
+        >
           Past 6 Months
           <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
             <path d="M1 3L8 9L15 3" stroke="currentColor" strokeWidth="2" />
           </svg>
         </button>
       </div>
-      <div className="flex gap-9 mb-4">
-        <div className="flex flex-col">
-          <span className="text-3xl font-medium text-[#2E563C]">150</span>
-          <span className="text-sm text-[#6C6C6C]">Active Users</span>
+
+      <div style={{ display: "flex", gap: 36, marginBottom: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontSize: 30, fontWeight: 500, color: "#2E563C" }}>150</span>
+          <span style={{ fontSize: 14, color: "#6C6C6C" }}>Active Users</span>
         </div>
-        <div className="flex flex-col">
-          <span className="text-3xl font-medium text-[#D38718]">200</span>
-          <span className="text-sm text-[#6C6C6C]">Returning Users</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontSize: 30, fontWeight: 500, color: "#D38718" }}>200</span>
+          <span style={{ fontSize: 14, color: "#6C6C6C" }}>Returning Users</span>
         </div>
       </div>
-      <div className="h-[300px]">
+
+      <div style={{ height: 300 }}>
         <Line options={options} data={data} />
       </div>
     </div>

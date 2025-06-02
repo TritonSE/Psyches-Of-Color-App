@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
-import { Bar } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
+import React from "react";
+import { Bar } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -86,10 +86,33 @@ const Demographics: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg p-7">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold font-archivo">Demographics</h3>
-        <div className="flex items-center gap-2 px-3 py-2 border border-[#D9D9D9] rounded-lg text-sm">
+    <div
+      style={{
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 28,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 24,
+        }}
+      >
+        <h3 style={{ fontSize: 18, fontWeight: "bold", fontFamily: "Archivo" }}>Demographics</h3>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            border: "1px solid #D9D9D9",
+            borderRadius: 8,
+            fontSize: 14,
+          }}
+        >
           <span>Monthly</span>
           <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
             <path d="M1 1L8 9L15 1" stroke="#010101" strokeWidth="2" strokeLinecap="round" />
@@ -97,24 +120,30 @@ const Demographics: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 24,
+        }}
+      >
         <div>
-          <h4 className="text-base font-semibold mb-4">Age</h4>
-          <div className="h-[200px]">
+          <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Age</h4>
+          <div style={{ height: 200 }}>
             <Bar options={chartOptions} data={ageData} />
           </div>
         </div>
 
         <div>
-          <h4 className="text-base font-semibold mb-4">Ethnicity</h4>
-          <div className="h-[200px]">
+          <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Ethnicity</h4>
+          <div style={{ height: 200 }}>
             <Bar options={chartOptions} data={ethnicityData} />
           </div>
         </div>
 
         <div>
-          <h4 className="text-base font-semibold mb-4">Gender</h4>
-          <div className="h-[200px]">
+          <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Gender</h4>
+          <div style={{ height: 200 }}>
             <Bar options={chartOptions} data={genderData} />
           </div>
         </div>

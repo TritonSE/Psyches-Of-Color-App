@@ -2,24 +2,32 @@
 
 import React from "react";
 
-interface ProgressBarProps {
+type ProgressBarProps = {
   label: string;
   value: number;
   color: string;
-}
+};
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ label, value, color }) => (
-  <div className="mb-4">
-    <div className="flex justify-between items-center mb-2">
-      <span className="text-sm font-medium">{label}</span>
-      <span className="text-sm font-medium">{value}%</span>
+  <div style={{ marginBottom: 16 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+      <span style={{ fontSize: 14, fontWeight: 500 }}>{label}</span>
+      <span style={{ fontSize: 14, fontWeight: 500 }}>{value}%</span>
     </div>
-    <div className="h-2 bg-[#E1E7EC] rounded-full overflow-hidden">
+    <div
+      style={{
+        height: 8,
+        backgroundColor: "#E1E7EC",
+        borderRadius: 9999,
+        overflow: "hidden",
+      }}
+    >
       <div
-        className="h-full rounded-full"
         style={{
+          height: "100%",
           width: `${value}%`,
           backgroundColor: color,
+          borderRadius: 9999,
         }}
       />
     </div>
@@ -51,10 +59,33 @@ const Counseling: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white rounded-lg p-7">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold font-archivo">Counseling</h3>
-        <div className="flex items-center gap-2 px-3 py-2 border border-[#D9D9D9] rounded-lg text-sm">
+    <div
+      style={{
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 28,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 24,
+        }}
+      >
+        <h3 style={{ fontSize: 18, fontWeight: "bold", fontFamily: "Archivo" }}>Counseling</h3>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            border: "1px solid #D9D9D9",
+            borderRadius: 8,
+            fontSize: 14,
+          }}
+        >
           <span>Monthly</span>
           <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
             <path d="M1 1L8 9L15 1" stroke="#010101" strokeWidth="2" strokeLinecap="round" />
@@ -62,7 +93,7 @@ const Counseling: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         {metrics.map((metric) => (
           <ProgressBar
             key={metric.label}

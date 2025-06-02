@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
-import { Line } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LineElement,
   LinearScale,
   PointElement,
-  LineElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
+import React from "react";
+import { Line } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -42,7 +42,10 @@ const RetentionCurve: React.FC = () => {
         beginAtZero: true,
         max: 100,
         ticks: {
-          callback: (value: number) => `${value}%`,
+          callback: function (value: string | number) {
+            if (typeof value === "number") return `${value}%`;
+            return value;
+          },
           font: {
             family: "Archivo",
             size: 14,
@@ -87,17 +90,43 @@ const RetentionCurve: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg p-7">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-bold font-archivo">User Retention Curve</h3>
-        <div className="flex items-center gap-2 px-3 py-2 border border-[#D9D9D9] rounded-lg text-sm">
+    <div
+      style={{
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 28,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 12,
+        }}
+      >
+        <h3 style={{ fontSize: 18, fontWeight: "bold", fontFamily: "Archivo" }}>
+          User Retention Curve
+        </h3>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            border: "1px solid #D9D9D9",
+            borderRadius: 8,
+            fontSize: 14,
+          }}
+        >
           <span>Monthly</span>
           <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
             <path d="M1 1L8 9L15 1" stroke="#010101" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </div>
       </div>
-      <div className="h-[300px]">
+
+      <div style={{ height: 300 }}>
         <Line options={options} data={data} />
       </div>
     </div>
