@@ -21,6 +21,11 @@ const lessonSchema = new mongoose.Schema(
       ref: "Activity",
       required: true,
     },
+    unit: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Unit",
+      required: true,
+    },
   },
   {
     timestamps: true,

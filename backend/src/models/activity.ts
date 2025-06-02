@@ -52,6 +52,11 @@ const activitySchema = new mongoose.Schema(
         return this.type === "reflection";
       },
     },
+    lesson: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Lesson",
+      required: true,
+    },
   },
   {
     timestamps: true,
