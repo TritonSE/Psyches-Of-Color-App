@@ -3,17 +3,17 @@ import { body } from "express-validator";
 export const createLessonValidator = [
   body("unit")
     .notEmpty()
-    .withMessage("Unit ID is required")
+    .withMessage("unit is required")
     .isMongoId()
-    .withMessage("Unit ID must be a valid MongoDB ObjectId"),
+    .withMessage("unit must be a valid MongoDB ObjectId"),
   body("title")
     .notEmpty()
-    .withMessage("Title is required")
+    .withMessage("title is required")
     .isString()
-    .withMessage("Title must be a string"),
+    .withMessage("title must be a string"),
   body("description")
     .notEmpty()
-    .withMessage("Description is required")
+    .withMessage("description is required")
     .isString()
-    .withMessage("Description must be a string"),
+    .withMessage("description must be a string"),
 ];

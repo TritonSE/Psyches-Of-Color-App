@@ -11,7 +11,6 @@ router.get("/", async (req: Request, res: Response, next: NextFunction): Promise
     const units = await Unit.find().populate("lessons");
 
     res.status(200).json(units);
-    return;
   } catch (e) {
     next(e);
   }

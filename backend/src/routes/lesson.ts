@@ -14,7 +14,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
     const lesson = await Lesson.findById(id).populate("activities");
 
     if (!lesson) {
-      next(createHttpError(404, "Lesson not found"));
+      throw createHttpError(404, "Lesson not found");
     }
 
     res.status(200).json(lesson);

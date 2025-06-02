@@ -3,7 +3,7 @@ import { body } from "express-validator";
 export const createUnitValidator = [
   body("title")
     .notEmpty()
-    .withMessage("Title is required")
+    .withMessage("title is required")
     .isString()
-    .withMessage("Title must be a string"),
+    .withMessage("title must be a string"),
 ];
