@@ -21,7 +21,7 @@ const activitySchema = new mongoose.Schema(
       enum: ["reflction", "mcq", "wwyd"],
       required: true,
     },
-    content: {
+    question: {
       type: String,
       required: true,
     },

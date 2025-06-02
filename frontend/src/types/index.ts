@@ -24,7 +24,7 @@ export type Lesson = {
 export type Activity = {
   _id: string;
   type: ActivityType;
-  content: string;
+  question: string;
   options?: {
     content: string;
     affirmation: string;

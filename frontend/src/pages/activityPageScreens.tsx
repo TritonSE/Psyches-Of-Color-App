@@ -60,7 +60,7 @@ export default function ActivityPageScreens() {
   const handleNext = () => {
     if (currentIndex < activities.length - 1) {
       console.log("Current index:", currentIndex);
-      console.log("Current question:", activities[currentIndex]?.content);
+      console.log("Current question:", activities[currentIndex]?.question);
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
@@ -129,7 +129,7 @@ export default function ActivityPageScreens() {
             {currentQuestion && (
               <Question
                 type={currentQuestion.type === "mcq" ? "multipleChoice" : "shortAnswer"}
-                question={currentQuestion.content}
+                question={currentQuestion.question}
                 options={currentQuestion.options?.map((opt) => opt.content) ?? []}
                 otherOptions={[]} // you can map your actual logic here if needed
                 placeholder={
