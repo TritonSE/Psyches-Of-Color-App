@@ -9,16 +9,17 @@ type OptionDoc = {
 
 type ActivityDoc = {
   type: ActivityType;
-  content: string;
+  question: string;
   options?: OptionDoc[];
   affirmation?: string;
+  lesson: string[];
 } & mongoose.Document;
 
 const activitySchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["reflction", "mcq", "wwyd"],
+      enum: ["reflection", "mcq", "wwyd"],
       required: true,
     },
     question: {
@@ -42,6 +43,10 @@ const activitySchema = new mongoose.Schema(
       // eslint-disable-next-line no-unused-vars
       required: function (this: ActivityDoc) {
         return this.type === "mcq" || this.type === "wwyd";
+      },
+      // eslint-disable-next-line no-unused-vars
+      default: function (this: ActivityDoc) {
+        return this.type === "reflection" ? undefined : [];
       },
     },
     // Only exists for prompt questions
