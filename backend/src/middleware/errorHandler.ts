@@ -3,6 +3,8 @@ import { isHttpError } from "http-errors";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (error: unknown, req: Request, res: Response, _next: NextFunction) => {
+  console.log(error);
+
   // 500 is the "internal server error" error code, this will be our fallback
   let statusCode = 500;
   let errorMessage = "An error has occurred.";
