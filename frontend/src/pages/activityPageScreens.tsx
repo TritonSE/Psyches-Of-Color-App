@@ -16,7 +16,6 @@ export default function ActivityPageScreens() {
   const router = useRouter();
   const { mongoUser, refreshMongoUser } = useAuth();
   const { lessonId } = useLocalSearchParams();
-  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
@@ -30,7 +29,6 @@ export default function ActivityPageScreens() {
         const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/lessons/${id}`);
         if (res.ok) {
           const les = (await res.json()) as Lesson;
-          setLesson(les);
           setActivities(les.activities);
         } else {
           console.error("Failed to fetch lesson");
@@ -59,8 +57,6 @@ export default function ActivityPageScreens() {
 
   const handleNext = () => {
     if (currentIndex < activities.length - 1) {
-      console.log("Current index:", currentIndex);
-      console.log("Current question:", activities[currentIndex]?.question);
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
@@ -69,7 +65,6 @@ export default function ActivityPageScreens() {
 
   const handleComplete = async () => {
     const lessonIdStr = Array.isArray(lessonId) ? lessonId[0] : lessonId;
-    console.log("Before: ", mongoUser?.completedLessons);
     if (!mongoUser?._id || !lessonIdStr) {
       alert("User or activity not found.");
       return;
