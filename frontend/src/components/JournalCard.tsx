@@ -3,13 +3,12 @@ import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native
 import CalendarIcon from "@/assets/calendar.svg";
 import ClockIcon from "@/assets/clock.svg";
 
-
 type JournalCardProps = {
-    title: string;
-    preview: string;
-    time: string;
-    date: string;
-    imageSource: ImageSourcePropType;
+  title: string;
+  preview: string;
+  time: string;
+  date: string;
+  imageSource: ImageSourcePropType;
 };
 
 export default function JournalCard({ title, preview, time, date, imageSource }: JournalCardProps) {
@@ -89,6 +88,6 @@ const styles = StyleSheet.create({
     color: "#2E563C",
   },
   textGroup: {
-    flexShrink: 1, 
+    flexShrink: 1,
   },
 });

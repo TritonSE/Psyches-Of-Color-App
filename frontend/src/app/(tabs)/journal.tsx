@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import LeftIcon from "@/assets/left.svg";
+import Pencil from "@/assets/pencil.svg";
 import RightIcon from "@/assets/right.svg";
 import Button from "@/components/Button";
 import JournalCard from "@/components/JournalCard";
 import { lightModeColors } from "@/constants/colors";
-
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -90,6 +91,19 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     fontFamily: "SG-DemiBold",
   },
+  edit: {
+    width: 52,
+    height: 52,
+    backgroundColor: "#2E563C",
+    borderRadius: 50,
+    marginLeft: "auto",
+    marginRight: 20,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 50,
+    marginTop: -50,
+  },
 });
 
 export default function Journal() {
@@ -100,14 +114,18 @@ export default function Journal() {
         <Text style={styles.headerTitle}>Journal</Text>
       </View>
       <View style={styles.time}>
-        <Button style={styles.timeButton}> <LeftIcon /> </Button>
+        <Button style={styles.timeButton}>
+          <LeftIcon />
+        </Button>
 
         <Text style={styles.timeText}>MAR 2025</Text>
-        <Button style={styles.timeButton}> <RightIcon /> </Button>
+        <Button style={styles.timeButton}>
+          <RightIcon />
+        </Button>
       </View>
       <View style={styles.body}>
         {/* Example call for card component */}
-          {/* <JournalCard
+        {/* <JournalCard
             title="HAPPY DAY"
             preview="Today I woke up feeling energetic..."
             time="08:30 AM"
@@ -115,8 +133,19 @@ export default function Journal() {
             imageSource={require("@/assets/temp.png")}
           /> */}
         <Image source={require("@/assets/journalIcon.png")} style={styles.mascot} />
-        <Text style={styles.noEntryMessage}>Looks like you haven&apos;t wrote an entry this month.</Text>
+        <Text style={styles.noEntryMessage}>
+          Looks like you haven&apos;t wrote an entry this month.
+        </Text>
       </View>
+
+      <TouchableOpacity
+        style={styles.edit}
+        onPress={() => {
+          router.push("/createJournal");
+        }}
+      >
+        <Pencil />
+      </TouchableOpacity>
     </View>
   );
 }
