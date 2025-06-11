@@ -32,9 +32,7 @@ export default function ActivitiesPage() {
     }
   };
 
-  const getActivityStatuses = (
-    lessons: Lesson[],
-  ): ("inProgress" | "completed" | "incomplete")[] => {
+  const getLessonStatuses = (lessons: Lesson[]): ("inProgress" | "completed" | "incomplete")[] => {
     const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
     lessons.forEach((lesson, index) => {
       if (mongoUser?.completedLessons.find((les) => les._id === lesson._id)) {
@@ -53,6 +51,11 @@ export default function ActivitiesPage() {
     void getAllSections();
   }, []);
 
+  const lessonStatuses = getLessonStatuses(units.flatMap((unit) => unit.lessons));
+
+  // keep track of the index to retrieve the correct status
+  let statusIndex = 0;
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -63,51 +66,57 @@ export default function ActivitiesPage() {
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {units.map((section, sectionIndex) => (
-          <View key={section._id} style={styles.sectionContainer}>
-            <SectionButton
-              title={`Section ${(sectionIndex + 1).toString()}`}
-              subtitle={section.title}
-              color="green"
-            />
+        {units.map((unit, sectionIndex) => {
+          return (
+            <View key={unit._id} style={styles.sectionContainer}>
+              <SectionButton
+                title={`Section ${(sectionIndex + 1).toString()}`}
+                subtitle={unit.title}
+                color="green"
+              />
 
-            <View style={styles.optionsContainer}>
-              {section.lessons.map((activity, activityIndex) => {
-                const statuses = getActivityStatuses(section.lessons);
-                const status = statuses[activityIndex];
+              <View style={styles.optionsContainer}>
+                {unit.lessons.map((activity, activityIndex) => {
+                  const status = lessonStatuses[statusIndex];
+                  console.log(
+                    `Lesson: ${activity.title}, Status: ${status}, Index: ${statusIndex.toString()}`,
+                  );
 
-                if (status === "incomplete") {
+                  statusIndex += 1;
+
+                  if (status === "incomplete") {
+                    return (
+                      <ActivityButton
+                        key={activity._id}
+                        status={"incomplete"}
+                        style={{
+                          marginLeft: activityIndex % 2 === 1 ? 0 : -99,
+                          marginRight: activityIndex % 2 === 0 ? 0 : -99,
+                        }}
+                      />
+                    );
+                  }
+
                   return (
                     <ActivityButton
                       key={activity._id}
-                      status={"incomplete"}
+                      color="green"
+                      status={status}
                       style={{
                         marginLeft: activityIndex % 2 === 1 ? 0 : -99,
                         marginRight: activityIndex % 2 === 0 ? 0 : -99,
                       }}
+                      onPress={() => {
+                        setCurrLesson(activity);
+                        setIsModalOpen(true);
+                      }}
                     />
                   );
-                }
-
-                return (
-                  <ActivityButton
-                    key={activity._id}
-                    color="green"
-                    status={status}
-                    style={{
-                      marginLeft: activityIndex % 2 === 1 ? 0 : -99,
-                      marginRight: activityIndex % 2 === 0 ? 0 : -99,
-                    }}
-                    onPress={() => {
-                      setCurrLesson(activity);
-                      setIsModalOpen(true);
-                    }}
-                  />
-                );
-              })}
+                })}
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
 
         <Text style={styles.jumpText}>
           ••• ••• ••• ••• Jump to the next section ••• ••• ••• •••
@@ -143,7 +152,6 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
   },
   sectionContainer: {
-    flex: 1,
     width: "100%",
     alignItems: "center",
   },

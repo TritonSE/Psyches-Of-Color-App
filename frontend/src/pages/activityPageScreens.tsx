@@ -123,7 +123,7 @@ export default function ActivityPageScreens() {
           <View style={styles.main}>
             {currentQuestion && (
               <Question
-                type={currentQuestion.type === "mcq" ? "multipleChoice" : "shortAnswer"}
+                type={currentQuestion.type === "reflection" ? "shortAnswer" : "multipleChoice"}
                 question={currentQuestion.question}
                 options={currentQuestion.options?.map((opt) => opt.content) ?? []}
                 otherOptions={[]} // you can map your actual logic here if needed
