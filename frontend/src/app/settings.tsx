@@ -35,6 +35,10 @@ export default function SettingsScreen() {
     router.back();
   };
 
+  const navigateToChangePassword = () => {
+    router.push("/changePassword");
+  };
+
   const handleLocationToggle = async () => {
     if (!locationTracking) {
       // Request location permissions
@@ -78,6 +82,14 @@ export default function SettingsScreen() {
             <Ionicons name="arrow-back-outline" size={24} color="#B4B4B4" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Settings</Text>
+        </View>
+
+        <Text style={styles.sectionTitle}>Account</Text>
+        <View style={[styles.card]}>
+          <TouchableOpacity style={styles.row} onPress={navigateToChangePassword}>
+            <Text style={styles.cardTitle}>Change Password</Text>
+            <Ionicons name="chevron-forward" size={20} color="black" />
+          </TouchableOpacity>
         </View>
 
         {/* Notifications */}
