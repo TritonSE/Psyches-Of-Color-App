@@ -24,11 +24,11 @@ export default function SettingsScreen() {
 
   // Navigation functions
   // const navigateToProfilePage = () => {
-  //   router.push("/home/profile");
+  //   router.push("/profile");
   // };
 
   const navigateToRandomPage = () => {
-    router.push("/home/randomPage");
+    router.push("/randomPage");
   };
 
   const navigateBack = () => {

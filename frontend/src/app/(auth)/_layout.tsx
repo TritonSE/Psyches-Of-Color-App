@@ -1,12 +1,11 @@
 import { Redirect, Stack } from "expo-router";
-import { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { lightModeColors } from "@/constants/colors";
-import { UserContext } from "@/contexts/userContext";
+import { useAuth } from "@/contexts/userContext";
 
 const AuthLayout = () => {
-  const { firebaseUser } = useContext(UserContext);
+  const { firebaseUser } = useAuth();
 
   if (firebaseUser) {
     return <Redirect href="/" />;
