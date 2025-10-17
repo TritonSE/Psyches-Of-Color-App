@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// eslint-disable-next-line import/namespace
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
