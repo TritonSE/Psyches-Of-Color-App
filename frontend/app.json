@@ -13,6 +13,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "fonts": [
+      {
+        "asset": "./src/assets/fonts/socialGothic",
+        "family": "Social-Gothic"
+      }
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "psychesofcolorapp",
