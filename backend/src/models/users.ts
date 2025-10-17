@@ -4,12 +4,18 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
+  age: number;
+  gender: string;
+  residence: string;
 };
 
 type UserDoc = {
   name: string;
   email: string;
   uid: string;
+  age: number;
+  gender: string;
+  residence: string;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -27,6 +33,21 @@ const userSchema = new mongoose.Schema({
   },
   uid: {
     type: String,
+    required: true,
+  },
+  age: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  gender: {
+    type: String,
+    default: "Not specified",
+    required: true,
+  },
+  residence: {
+    type: String,
+    default: "Not specified",
     required: true,
   },
 });
