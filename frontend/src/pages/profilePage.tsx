@@ -1,7 +1,4 @@
-/* eslint-disable */
-import { useEffect, useState } from "react";
-import { SplashScreen, useRouter } from "expo-router";
-import { useFonts } from "expo-font";
+import { useRouter } from "expo-router";
 import {
   Image,
   SafeAreaView,
@@ -12,6 +9,11 @@ import {
   View,
 } from "react-native";
 
+import Media from "@/assets/Media.png";
+import BiFire from "@/assets/bi_fire.png";
+import Frog from "@/assets/frog.png";
+import Settings from "@/assets/settings.png";
+import Trophy from "@/assets/trophy.png";
 import ButtonItem from "@/components/profileButton";
 import { lightModeColors } from "@/constants/colors";
 
@@ -20,33 +22,19 @@ import { lightModeColors } from "@/constants/colors";
 export default function ProfilePage() {
   const router = useRouter();
 
-  // const [loaded, error] = useFonts({
-  //   "SG-DemiBold": SGDemiBold,
-  // });
-
-  // useEffect(() => {
-  //   if (loaded || error) {
-  //     void SplashScreen.hideAsync();
-  //   }
-  // }, [loaded, error]);
-
-  // if (!loaded && !error) {
-  //   return null;
-  // }
-
   // State for achievements and streaks
-  const [achievementsCompleted, setAchievementsCompleted] = useState(3);
-  const [daysOfStreaks, setDaysOfStreaks] = useState(3);
+  // const [achievementsCompleted, setAchievementsCompleted] = useState(3);
+  // const [daysOfStreaks, setDaysOfStreaks] = useState(3);
 
   // Function to increment achievements
-  const incrementAchievements = () => {
-    setAchievementsCompleted((prev) => prev + 1);
-  };
+  // const incrementAchievements = () => {
+  //   setAchievementsCompleted((prev) => prev + 1);
+  // };
 
   // Function to increment streak days
-  const incrementStreaks = () => {
-    setDaysOfStreaks((prev) => prev + 1);
-  };
+  // const incrementStreaks = () => {
+  //   setDaysOfStreaks((prev) => prev + 1);
+  // };
 
   // Navigate to randomPage when the button is pressed
   const navigateToRandomPage = () => {
@@ -67,9 +55,9 @@ export default function ProfilePage() {
         {/* Profile Picture and Settings */}
         <View style={styles.topSection}>
           <TouchableOpacity style={styles.settingsIcon} onPress={navigateToSettingsPage}>
-            <Image source={require("@/assets/settings.png")} style={styles.icon} />
+            <Image source={Settings} style={styles.icon} />
           </TouchableOpacity>
-          <Image source={require("@/assets/frog.png")} style={styles.profileImage} />
+          <Image source={Frog} style={styles.profileImage} />
         </View>
 
         {/* WHite Box at Bottom*/}
@@ -99,14 +87,14 @@ export default function ProfilePage() {
             <View style={styles.achievementContainer}>
               <View style={styles.achievementCard}>
                 <View style={styles.imageNumberContainer}>
-                  <Image source={require("@/assets/trophy.png")} style={styles.achievementIcon} />
+                  <Image source={Trophy} style={styles.achievementIcon} />
                   <Text style={styles.number}>3</Text>
                 </View>
                 <Text style={styles.label}>Activities Completed</Text>
               </View>
               <View style={styles.achievementCard}>
                 <View style={styles.imageNumberContainer}>
-                  <Image source={require("@/assets/bi_fire.png")} style={styles.achievementIcon} />
+                  <Image source={BiFire} style={styles.achievementIcon} />
                   <Text style={styles.number}>3</Text>
                 </View>
                 <Text style={styles.label}>Days of Streaks</Text>
@@ -117,26 +105,21 @@ export default function ProfilePage() {
           {/* Saved Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Saved</Text>
-            <ButtonItem icon={require("@/assets/Media.png")} title="Resources" isSaved={true} />
+            <ButtonItem icon={Media} title="Resources" isSaved={true} />
           </View>
 
           {/* Activity History Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Activity History</Text>
             <ButtonItem
-              icon={require("@/assets/Media.png")}
+              icon={Media}
               title="Understanding SAD"
               subtitle="Seasonal Affective Disorder"
               position="top"
             />
+            <ButtonItem icon={Media} title="Story: What If?" subtitle="Anxiety" position="middle" />
             <ButtonItem
-              icon={require("@/assets/Media.png")}
-              title="Story: What If?"
-              subtitle="Anxiety"
-              position="middle"
-            />
-            <ButtonItem
-              icon={require("@/assets/Media.png")}
+              icon={Media}
               title="Understanding Depression"
               subtitle="Depression"
               position="bottom"
