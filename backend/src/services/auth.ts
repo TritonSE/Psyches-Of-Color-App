@@ -1,4 +1,4 @@
-import { firebaseAuth } from "./firebase";
+import { firebaseAuth } from "../services/firebase";
 
 async function decodeAuthToken(token: string) {
   try {
