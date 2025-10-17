@@ -75,7 +75,7 @@ export default function EditProfile() {
   const [isCanceled, setIsCanceled] = useState(true);
   const router = useRouter();
   // const navigateToRandomPage = () => {
-  //   router.push("/home/randomPage");
+  //   router.push("/randomPage");
   // };
   const navigateBack = () => {
     router.back();

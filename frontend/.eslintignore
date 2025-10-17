@@ -7,3 +7,6 @@ public/
 next.config.js
 vite.config.ts
 metro.config.js
+
+# auth.ts imports from react-native-firebase using their modular SDK, which trips up ESLint for some reason
+**/auth.ts

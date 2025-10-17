@@ -6,5 +6,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["svg.d.ts", "declarations.d.ts", "src/**/*", "src/app/home/(tabs)/**/*"]
+  "include": ["svg.d.ts", "declarations.d.ts", "src/**/*", "src/app/(tabs)/**/*"]
 }

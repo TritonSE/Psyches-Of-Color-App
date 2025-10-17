@@ -50,15 +50,15 @@ export default function ProfilePage() {
 
   // Navigate to randomPage when the button is pressed
   const navigateToRandomPage = () => {
-    router.push("/home/randomPage");
+    router.push("/randomPage");
   };
 
   const navigateToSettingsPage = () => {
-    router.push("/home/settings");
+    router.push("/settings");
   };
 
   const navigateToEditProfilePage = () => {
-    router.push("/home/editProfile");
+    router.push("/editProfile");
   };
 
   return (
