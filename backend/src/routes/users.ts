@@ -103,26 +103,30 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
   }
 });
 
-router.put("/users/:uid/checkin", verifyAuthToken, async (req: PsychesRequest, res: Response): Promise<void> => {
-  try {
-    const { uid } = req.params;
+router.put(
+  "/users/:uid/checkin",
+  verifyAuthToken,
+  async (req: PsychesRequest, res: Response): Promise<void> => {
+    try {
+      const { uid } = req.params;
 
-    const user = await User.findOneAndUpdate(
-      { uid },
-      { hasCompletedWeeklyCheckin: true },
-      { new: true }
-    );
+      const user = await User.findOneAndUpdate(
+        { uid },
+        { hasCompletedWeeklyCheckin: true },
+        { new: true },
+      );
 
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      res.status(200).json({ message: "Weekly check-in marked as complete", user });
+    } catch (error) {
+      console.error("Error completing check-in:", error);
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
     }
-
-    res.status(200).json({ message: "Weekly check-in marked as complete", user });
-  } catch (error) {
-    console.error("Error completing check-in:", error);
-    res.status(500).json({ message: "Server error", error: (error as Error).message });
-  }
-});
+  },
+);
 
 export { router as userRouter };

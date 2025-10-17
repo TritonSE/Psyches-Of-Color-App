@@ -7,7 +7,7 @@ function resetWeeklyCheckin() {
     try {
       const result = await User.updateMany(
         {}, // all users
-        { hasCompletedWeeklyCheckin: false }
+        { hasCompletedWeeklyCheckin: false },
       );
       console.log(`Weekly check-ins reset for ${result.modifiedCount} users.`);
     } catch (error) {

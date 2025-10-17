@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   hasCompletedWeeklyCheckin: {
     type: Boolean,
     required: true,
-  }
+  },
 });
 
 userSchema.statics.build = (attr: UserInterface) => {

@@ -35,7 +35,7 @@ const NewDayComponent: React.FC = () => {
       }
     };
 
-    checkNewDay();
+    void checkNewDay();
   }, []);
 
   return (
