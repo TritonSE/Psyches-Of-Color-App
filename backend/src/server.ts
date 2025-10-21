@@ -3,6 +3,7 @@
 import "dotenv/config";
 import express, { Express, Request, Response } from "express";
 import mongoose from "mongoose";
+import { resetWeeklyCheckin, resetDailyCheckin } from "./services/resetCheckin";
 
 import env from "../src/util/validateEnv";
 
@@ -35,4 +36,6 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${String(port)}`);
 });
 
+resetWeeklyCheckin();
+resetDailyCheckin();
 module.exports = app;
