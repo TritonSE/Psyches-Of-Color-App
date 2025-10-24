@@ -4,7 +4,7 @@
 
 import { User } from "@/types";
 import env from "@/util/validateEnv";
-import { getApp } from "@react-native-firebase/app";
+import { getApp, initializeApp } from "@react-native-firebase/app";
 import {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
@@ -21,8 +21,12 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // We're already using their modular SDK but still getting warnings for some reason
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
-const app = getApp();
-const auth = getAuth(app);
+export const getFirebaseAuth = async () => {
+  initializeApp(env.EXPO_PUBLIC_FIREBASE_SETTINGS);
+  const app = getApp();
+  const auth = getAuth(app);
+  return auth;
+};
 
 GoogleSignin.configure({
   webClientId: "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
@@ -67,7 +71,11 @@ export const signUpEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await createUserWithEmailAndPassword(auth, email, password);
+    const userCreds = await createUserWithEmailAndPassword(
+      await getFirebaseAuth(),
+      email,
+      password,
+    );
 
     return {
       success: true,
@@ -93,7 +101,7 @@ export const loginEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await signInWithEmailAndPassword(auth, email, password);
+    const userCreds = await signInWithEmailAndPassword(await getFirebaseAuth(), email, password);
 
     return {
       success: true,
@@ -169,7 +177,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
     const googleCredential = GoogleAuthProvider.credential(idToken);
 
     // Sign-in the user with the credential
-    const userCreds = await signInWithCredential(auth, googleCredential);
+    const userCreds = await signInWithCredential(await getFirebaseAuth(), googleCredential);
 
     return {
       success: true,
@@ -194,7 +202,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  * @returns {Promise<void>}
  */
 export const logout = async (): Promise<void> => {
-  await signOut(auth);
+  await signOut(await getFirebaseAuth());
 };
 
 /**
@@ -205,7 +213,7 @@ export const logout = async (): Promise<void> => {
  */
 export const forgotPassword = async (email: string): Promise<EmailSendResponse> => {
   try {
-    await sendPasswordResetEmail(auth, email);
+    await sendPasswordResetEmail(await getFirebaseAuth(), email);
 
     return {
       success: true,

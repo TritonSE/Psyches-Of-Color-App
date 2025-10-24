@@ -4,6 +4,7 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
+  character: string;
   completedLessons: string[];
   currLesson: string;
   age: number;
@@ -15,6 +16,7 @@ type UserDoc = {
   name: string;
   email: string;
   uid: string;
+  character: string;
   completedLessons: string[];
   currLesson: string;
   age: number;
@@ -39,6 +41,11 @@ const userSchema = new mongoose.Schema({
   uid: {
     type: String,
     required: true,
+  },
+  character: {
+    type: String,
+    enum: ["fire", "water", "earth"],
+    default: "fire",
   },
   completedLessons: {
     type: [mongoose.Schema.Types.ObjectId],
