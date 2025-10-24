@@ -20,19 +20,14 @@ router.get(
   async (req: PsychesRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { userUid } = req;
-      const user = await User.findOne({ uid: userUid });
+      const user = await User.findOne({ uid: userUid }).populate("completedLessons");
+
       if (!user) {
         res.status(404).json({ error: "User not Found" });
         return;
       }
-      const { _id: mongoId, uid } = user;
-      res.status(200).send({
-        message: "Current user information",
-        user: {
-          mongoId,
-          uid,
-        },
-      });
+
+      res.status(200).send(user);
       return;
     } catch (e) {
       next();
@@ -105,5 +100,38 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
     res.status(500).json({ message: "Server error", error: (error as Error).message });
   }
 });
+
+// PUT: Mark an lesson as completed by a user
+router.put(
+  "/users/:uid/completed/:lessonId",
+  async (req: PsychesRequest, res: Response): Promise<void> => {
+    const { uid, lessonId } = req.params;
+
+    try {
+      const user = await User.findOne({ uid });
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      if (!user.completedLessons) user.completedLessons = [];
+
+      const lessonExists = user.completedLessons.some((id) => id.toString() === lessonId);
+
+      if (lessonExists) {
+        res.status(200).json({ message: "Lesson already marked as completed", user });
+        return;
+      }
+
+      user.completedLessons.push(lessonId);
+      await user.save();
+
+      res.status(200).json({ message: "Lesson marked as completed", user });
+    } catch (error) {
+      console.error("Error updating completed lessons:", error);
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
+    }
+  },
+);
 
 export { router as userRouter };

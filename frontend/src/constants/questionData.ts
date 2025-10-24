@@ -8,6 +8,20 @@ export type QuestionData = {
   otherOptions?: string[];
 };
 
+export const activityPageQuestions: QuestionData[] = [
+  {
+    type: "multipleChoice",
+    question:
+      "How often do you replay conversations or events in your head, worrying about how they went?",
+    options: ["Often", "Sometimes", "Rarely", "Never"],
+  },
+  {
+    type: "multipleChoice",
+    question: "Question 2",
+    options: ["Often", "Sometimes", "Rarely", "Never"],
+  },
+];
+
 export const onboardingQuestions: QuestionData[] = [
   {
     type: "multipleChoice",

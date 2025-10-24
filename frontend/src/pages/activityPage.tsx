@@ -1,20 +1,60 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
+import ActivityButton from "@/components/ActivityButton";
 import ActivityPopup from "@/components/ActivityPopup";
-import ActivityButton from "@/components/activityButton";
 import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
+import { useAuth } from "@/contexts/userContext";
+import { Lesson, Unit } from "@/types";
+import env from "@/util/validateEnv";
 
 export default function ActivitiesPage() {
+  const router = useRouter();
+  const { mongoUser } = useAuth();
+
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Function to handle section button press and toggle dropdown
-  const handleSectionPress = (header: string) => {
-    // You can add any logic here when a header is pressed
-    console.log(header); // For now, just log the header name
+  const getAllSections = async () => {
+    const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/units`);
+
+    if (res.ok) {
+      const fetchedUnits = (await res.json()) as Unit[];
+
+      setUnits(fetchedUnits);
+    } else {
+      console.error("Failed to fetch units");
+    }
   };
+
+  const getLessonStatuses = (lessons: Lesson[]): ("inProgress" | "completed" | "incomplete")[] => {
+    const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
+    lessons.forEach((lesson, index) => {
+      if (mongoUser?.completedLessons.find((les) => les._id === lesson._id)) {
+        statuses.push("completed");
+      } else if (index === 0 || statuses[index - 1] === "completed") {
+        statuses.push("inProgress");
+      } else {
+        statuses.push("incomplete");
+      }
+    });
+
+    return statuses;
+  };
+
+  useEffect(() => {
+    void getAllSections();
+  }, []);
+
+  const lessonStatuses = getLessonStatuses(units.flatMap((unit) => unit.lessons));
+
+  // keep track of the index to retrieve the correct status
+  let statusIndex = 0;
 
   return (
     <View style={styles.container}>
@@ -26,47 +66,78 @@ export default function ActivitiesPage() {
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Section 1 */}
-        <SectionButton
-          title="SECTION 1"
-          subtitle="Understanding yourself"
-          onPress={handleSectionPress}
-          color="green"
-        />
+        {units.map((unit, sectionIndex) => {
+          return (
+            <View key={unit._id} style={styles.sectionContainer}>
+              <SectionButton
+                title={`Section ${(sectionIndex + 1).toString()}`}
+                subtitle={unit.title}
+                color="green"
+              />
 
-        {/* Circle Images - Use the ActivityOptions component here */}
-        <View style={styles.optionsContainer}>
-          <ActivityButton color="green" status="completed" style={{ marginLeft: -99 }} />
-          <ActivityButton color="green" status="completed" style={{ marginRight: -99 }} />
-          <ActivityButton
-            color="green"
-            status="inProgress"
-            style={{ marginLeft: -99 }}
-            onPress={() => {
-              setIsModalOpen(true);
-            }}
-          />
-          <ActivityButton status="incomplete" style={{ marginRight: -99 }} />
-          <ActivityButton status="incomplete" style={{ marginLeft: -99 }} />
-        </View>
+              <View style={styles.optionsContainer}>
+                {unit.lessons.map((activity, activityIndex) => {
+                  const status = lessonStatuses[statusIndex];
+                  console.log(
+                    `Lesson: ${activity.title}, Status: ${status}, Index: ${statusIndex.toString()}`,
+                  );
 
-        <ActivityPopup
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-          }}
-          color="green"
-          title="Anxiety: Part I"
-          description="Start this unit"
-          onStart={() => {
-            console.log("Starting activity...");
-          }}
-        />
+                  statusIndex += 1;
 
-        {/* Jump to Next Section */}
+                  if (status === "incomplete") {
+                    return (
+                      <ActivityButton
+                        key={activity._id}
+                        status={"incomplete"}
+                        style={{
+                          marginLeft: activityIndex % 2 === 1 ? 0 : -99,
+                          marginRight: activityIndex % 2 === 0 ? 0 : -99,
+                        }}
+                      />
+                    );
+                  }
+
+                  return (
+                    <ActivityButton
+                      key={activity._id}
+                      color="green"
+                      status={status}
+                      style={{
+                        marginLeft: activityIndex % 2 === 1 ? 0 : -99,
+                        marginRight: activityIndex % 2 === 0 ? 0 : -99,
+                      }}
+                      onPress={() => {
+                        setCurrLesson(activity);
+                        setIsModalOpen(true);
+                      }}
+                    />
+                  );
+                })}
+              </View>
+            </View>
+          );
+        })}
+
         <Text style={styles.jumpText}>
           ••• ••• ••• ••• Jump to the next section ••• ••• ••• •••
         </Text>
+
+        {currLesson && (
+          <ActivityPopup
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+            }}
+            color="green"
+            title={currLesson.title}
+            description={currLesson.description}
+            onStart={() => {
+              console.log("Starting activity...");
+              setIsModalOpen(false);
+              router.push({ pathname: "/activityPage", params: { lessonId: currLesson._id } });
+            }}
+          />
+        )}
       </ScrollView>
     </View>
   );
@@ -75,8 +146,14 @@ export default function ActivitiesPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     backgroundColor: lightModeColors.background,
     paddingVertical: 50,
+  },
+  sectionContainer: {
+    width: "100%",
+    alignItems: "center",
   },
   optionsContainer: {
     marginTop: 40,
@@ -107,6 +184,7 @@ const styles = StyleSheet.create({
     fontFamily: "SG-DemiBold",
   },
   scrollContainer: {
+    flex: 1,
     alignItems: "center",
     paddingBottom: 50,
     paddingTop: 32,
