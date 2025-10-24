@@ -1,4 +1,6 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+
+import vector from "@/assets/Vector.png";
 
 const styles = StyleSheet.create({
   container: {
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
 export function CharacterCard(props: {
   color: string;
   character: string;
-  characterIcon: any;
+  characterIcon: ImageSourcePropType;
   selected: boolean;
 }) {
   const { color, character, characterIcon, selected } = props;
@@ -64,7 +66,7 @@ export function CharacterCard(props: {
     <View style={styles.container}>
       <View style={[styles.card, { backgroundColor: color }, selected && styles.selected]}>
         <View style={styles.characterIcon}>
-          <Image source={require("@/assets/Vector.png")} style={styles.baseImage} />
+          <Image source={vector} style={styles.baseImage} />
           <Image source={characterIcon} style={styles.overlayImage} />
         </View>
         <Text style={styles.characterName}>{character}</Text>

@@ -2,13 +2,18 @@ import { useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  ImageSourcePropType,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 
+import fire from "@/assets/fire.png";
+import nature from "@/assets/nature.png";
+import water from "@/assets/water.png";
 import Button from "@/components/Button";
 import { CharacterCard } from "@/components/CharacterCard";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
@@ -22,24 +27,24 @@ const CENTER_OFFSET = (width - CARD_TOTAL_WIDTH) / 2;
 type Character = {
   color: string;
   character: string;
-  characterIcon: any;
+  characterIcon: ImageSourcePropType;
 };
 
-const characters = [
+const characters: Character[] = [
   {
     color: "#83B26D",
     character: "Nature",
-    characterIcon: require("@/assets/nature.png"),
+    characterIcon: nature,
   },
   {
     color: "#FFC97E",
     character: "Fire",
-    characterIcon: require("@/assets/fire.png"),
+    characterIcon: fire,
   },
   {
     color: "#FCA397",
     character: "Water",
-    characterIcon: require("@/assets/water.png"),
+    characterIcon: water,
   },
 ];
 
@@ -49,7 +54,7 @@ export default function CharacterSelection() {
   const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
   const [selectedIndex, setSelectedIndex] = useState(1);
   const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
