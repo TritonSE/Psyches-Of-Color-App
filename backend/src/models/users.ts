@@ -6,6 +6,9 @@ type UserInterface = {
   uid: string;
   completedLessons: string[];
   currLesson: string;
+  age: number;
+  gender: string;
+  residence: string;
 };
 
 type UserDoc = {
@@ -14,6 +17,9 @@ type UserDoc = {
   uid: string;
   completedLessons: string[];
   currLesson: string;
+  age: number;
+  gender: string;
+  residence: string;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -42,6 +48,20 @@ const userSchema = new mongoose.Schema({
   currLesson: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lesson",
+  age: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  gender: {
+    type: String,
+    default: "Not specified",
+    required: true,
+  },
+  residence: {
+    type: String,
+    default: "Not specified",
+    required: true,
   },
 });
 

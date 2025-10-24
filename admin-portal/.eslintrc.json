@@ -15,10 +15,7 @@
     // From https://github.com/TritonSE/linters/blob/main/nextjs.eslintrc.json
 
     // Avoid bugs.
-    "@typescript-eslint/no-shadow": [
-      "error",
-      { "ignoreTypeValueShadow": true }
-    ],
+    "@typescript-eslint/no-shadow": ["error", { "ignoreTypeValueShadow": true }],
     "@typescript-eslint/no-unsafe-unary-minus": "error",
     "@typescript-eslint/no-unused-expressions": "error",
     "@typescript-eslint/no-unused-vars": [
@@ -57,15 +54,7 @@
       "warn",
       {
         "alphabetize": { "order": "asc" },
-        "groups": [
-          "builtin",
-          "external",
-          "parent",
-          "sibling",
-          "index",
-          "object",
-          "type"
-        ],
+        "groups": ["builtin", "external", "parent", "sibling", "index", "object", "type"],
         "newlines-between": "always"
       }
     ],

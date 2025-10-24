@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 
+import Media from "@/assets/Media.png";
 import BiFire from "@/assets/bi_fire.png";
 import Frog from "@/assets/frog.png";
 import Media from "@/assets/media.png";
