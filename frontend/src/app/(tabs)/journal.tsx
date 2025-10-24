@@ -2,16 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import type { ImageSourcePropType } from "react-native";
 
 import JournalIcon from "@/assets/journalIcon.png";
 import LeftIcon from "@/assets/left.svg";
 import Pencil from "@/assets/pencil.svg";
 import RightIcon from "@/assets/right.svg";
-
 import Button from "@/components/Button";
 // import JournalCard from "@/components/JournalCard";
-
 import { lightModeColors } from "@/constants/colors";
 
 const styles = StyleSheet.create({
