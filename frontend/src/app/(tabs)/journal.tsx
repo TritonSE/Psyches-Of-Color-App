@@ -8,8 +8,10 @@ import JournalIcon from "@/assets/journalIcon.png";
 import LeftIcon from "@/assets/left.svg";
 import Pencil from "@/assets/pencil.svg";
 import RightIcon from "@/assets/right.svg";
+
 import Button from "@/components/Button";
 // import JournalCard from "@/components/JournalCard";
+
 import { lightModeColors } from "@/constants/colors";
 
 const styles = StyleSheet.create({
