@@ -40,13 +40,13 @@ export default function CreateJournal() {
   const currMonth = months[currentDate.getMonth()];
   const day = currentDate.getDate();
   const year = currentDate.getFullYear();
-  const formattedDate = `${currMonth.toUpperCase()} ${day}, ${year}`;
+  const formattedDate = `${currMonth.toUpperCase()} ${String(day)}, ${String(year)}`;
 
   const [image, setImage] = useState<string | null>(null);
 
   const requestCameraPermission = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
+    if (status !== ImagePicker.PermissionStatus.GRANTED) {
       Alert.alert("Permission required", "Camera permission is needed to take a photo.");
       return false;
     }
@@ -55,7 +55,7 @@ export default function CreateJournal() {
 
   const requestMediaLibraryPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
+    if (status !== ImagePicker.PermissionStatus.GRANTED) {
       Alert.alert("Permission required", "Media library permission is needed to select a photo.");
       return false;
     }
@@ -165,23 +165,29 @@ export default function CreateJournal() {
 
         <View style={styles.imageButtons}>
           <Button
-            onPress={handleTakePhoto}
+            onPress={() => {
+              void handleTakePhoto();
+            }}
             style={styles.imageButton}
             textStyle={styles.imageButtonText}
-            children="Take Photo"
-          />
+          >
+            Take Photo
+          </Button>
           <Button
-            onPress={handleChoosePhoto}
+            onPress={() => {
+              void handleChoosePhoto();
+            }}
             style={styles.imageButton}
             textStyle={styles.imageButtonText}
-            children="Gallery"
-          />
+          >
+            Gallery
+          </Button>
         </View>
 
         {image && paragraphText !== "" ? (
-          <Button children="Log Journal" style={styles.submitButton} />
+          <Button style={styles.submitButton}>Log Journal</Button>
         ) : (
-          <Button children="Log Journal" style={styles.submitButtonDisabled} />
+          <Button style={styles.submitButtonDisabled}>Log Journal</Button>
         )}
       </View>
     </ScrollView>

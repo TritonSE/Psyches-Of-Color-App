@@ -1,12 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import type { ImageSourcePropType } from "react-native";
 
+import JournalIcon from "@/assets/journalIcon.png";
 import LeftIcon from "@/assets/left.svg";
 import Pencil from "@/assets/pencil.svg";
 import RightIcon from "@/assets/right.svg";
 import Button from "@/components/Button";
-import JournalCard from "@/components/JournalCard";
+// import JournalCard from "@/components/JournalCard";
 import { lightModeColors } from "@/constants/colors";
 
 const styles = StyleSheet.create({
@@ -106,7 +109,43 @@ const styles = StyleSheet.create({
   },
 });
 
+const months = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JULY",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
+
 export default function Journal() {
+  const [month, setMonth] = useState(1);
+  const [year, setYear] = useState(2025);
+
+  const handleIncrease = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear(year + 1);
+    } else {
+      setMonth(month + 1);
+    }
+  };
+
+  const handleDecrease = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear(year - 1);
+    } else {
+      setMonth(month - 1);
+    }
+  };
+
   return (
     <View style={styles.pageContainer}>
       <View style={styles.header}>
@@ -114,25 +153,28 @@ export default function Journal() {
         <Text style={styles.headerTitle}>Journal</Text>
       </View>
       <View style={styles.time}>
-        <Button style={styles.timeButton}>
+        <Button style={styles.timeButton} onPress={handleDecrease}>
           <LeftIcon />
         </Button>
 
-        <Text style={styles.timeText}>MAR 2025</Text>
-        <Button style={styles.timeButton}>
+        <Text style={styles.timeText}>
+          `{months[month]} {year}`
+        </Text>
+        <Button style={styles.timeButton} onPress={handleIncrease}>
           <RightIcon />
         </Button>
       </View>
       <View style={styles.body}>
         {/* Example call for card component */}
+        {/* TODO: implement conditional renderring here by checking if there are journal entries once we have storage setup */}
         {/* <JournalCard
-            title="HAPPY DAY"
-            preview="Today I woke up feeling energetic..."
-            time="08:30 AM"
-            date="March 01, 2025"
-            imageSource={require("@/assets/temp.png")}
-          /> */}
-        <Image source={require("@/assets/journalIcon.png")} style={styles.mascot} />
+          title="HAPPY DAY"
+          preview="Today I woke up feeling energetic..."
+          time="08:30 AM"
+          date="March 01, 2025"
+          imageSource={require("@/assets/temp.png")}
+        /> */}
+        <Image source={JournalIcon as ImageSourcePropType} style={styles.mascot} />
         <Text style={styles.noEntryMessage}>
           Looks like you haven&apos;t wrote an entry this month.
         </Text>

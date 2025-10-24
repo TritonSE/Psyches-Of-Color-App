@@ -6,10 +6,6 @@ import Button from "./Button";
 import Exit from "@/assets/exit.svg";
 import Fire from "@/assets/fire.svg";
 
-type ExitJournalProps = {
-  style?: React.ComponentProps<typeof View>["style"];
-};
-
 const ExitJournal = ({ onClose }: { onClose: () => void }) => {
   const handleDelete = () => {
     onClose();
@@ -29,18 +25,12 @@ const ExitJournal = ({ onClose }: { onClose: () => void }) => {
       <Text style={styles.text}>If you exit now, your progress will not save.</Text>
 
       <View style={styles.buttons}>
-        <Button
-          style={styles.delete}
-          textStyle={styles.deleteText}
-          children="Delete"
-          onPress={handleDelete}
-        />
-        <Button
-          style={styles.continue}
-          textStyle={styles.continueText}
-          onPress={onClose}
-          children="Continue"
-        />
+        <Button style={styles.delete} textStyle={styles.deleteText} onPress={handleDelete}>
+          Delete
+        </Button>
+        <Button style={styles.continue} textStyle={styles.continueText} onPress={onClose}>
+          Continue
+        </Button>
       </View>
     </View>
   );
