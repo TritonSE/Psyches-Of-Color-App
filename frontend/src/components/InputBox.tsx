@@ -98,7 +98,7 @@ const InputBox: React.FC<InputBoxProps> = ({
               <IconPassShow width={20} height={20} />
             )}
           </TouchableOpacity>
-        ) : (
+        ) : value.length > 0 ? (
           <TouchableOpacity
             onPress={() => {
               onChangeText("");
@@ -107,7 +107,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           >
             <Ionicons name={"close-outline"} size={20} color={lightModeColors.secondaryLightFont} />
           </TouchableOpacity>
-        )}
+        ) : null}
       </View>
       <View style={styles.errorRow}>
         <Text style={styles.errorText}>{errorMessage}</Text>
@@ -131,12 +131,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: lightModeColors.overlayBackground,
     paddingHorizontal: 10,
+    backgroundColor: lightModeColors.inputBoxBackground,
   },
   input: {
     flex: 1,
     fontSize: 16,
     color: lightModeColors.darkFont,
     fontFamily: "Archivo",
+    backgroundColor: lightModeColors.inputBoxBackground,
   },
   iconWrapper: {
     marginLeft: 10,

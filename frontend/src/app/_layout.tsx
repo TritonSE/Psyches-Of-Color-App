@@ -52,6 +52,7 @@ const RootLayout = () => {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="randomPage" />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="changePassword" />
       </Stack>
     </UserContextProvider>
   );
