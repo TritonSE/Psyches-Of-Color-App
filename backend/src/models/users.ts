@@ -48,6 +48,7 @@ const userSchema = new mongoose.Schema({
   currLesson: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lesson",
+  },
   age: {
     type: Number,
     default: 0,

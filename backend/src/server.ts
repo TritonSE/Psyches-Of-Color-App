@@ -4,11 +4,11 @@ import mongoose from "mongoose";
 
 import env from "../src/util/validateEnv";
 
-import { userRouter } from "./routes/users";
-import { unitRouter } from "./routes/unit";
-import { activityRouter } from "./routes/activity";
-import { lessonRouter } from "./routes/lesson";
-import errorHandler from "./middleware/errorHandler";
+import { userRouter } from "../src/routes/users";
+import { unitRouter } from "../src/routes/unit";
+import { activityRouter } from "../src/routes/activity";
+import { lessonRouter } from "../src/routes/lesson";
+import errorHandler from "../src/middleware/errorHandler";
 
 const app: Express = express();
 const port = env.PORT || 3000;
