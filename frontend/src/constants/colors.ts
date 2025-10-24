@@ -14,8 +14,10 @@ type Colors = {
   error: string;
   success: string;
   profileBackground: string;
-  primary: string;
   inputBoxBackground: string;
+  primaryRed: string;
+  primaryGreen: string;
+  primaryYellow: string;
 };
 
 export const lightModeColors: Colors = {
@@ -34,6 +36,8 @@ export const lightModeColors: Colors = {
   error: "#B93B3B",
   success: "#3BB966",
   profileBackground: "#c13d2f",
-  primary: "#D35144",
   inputBoxBackground: "#FFFFFF",
+  primaryRed: "#D35144",
+  primaryGreen: "#2E563C",
+  primaryYellow: "#D38718",
 };
