@@ -78,8 +78,8 @@ router.post("/users", async (req: PsychesRequest, res: Response): Promise<void> 
 router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<void> => {
   try {
     const { uid } = req.params;
-    const { name, email } = req.body;
-    if (!name && !email) {
+    const { name, email, age, gender, residence } = req.body;
+    if (!name && !email && !age && !gender && !residence) {
       res.status(400).json({ message: "At least one field is required" });
       return;
     }
@@ -92,6 +92,9 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
 
     if (name) user.name = name;
     if (email) user.email = email;
+    if (age) user.age = age;
+    if (gender) user.gender = gender;
+    if (residence) user.residence = residence;
 
     await user.save();
 
