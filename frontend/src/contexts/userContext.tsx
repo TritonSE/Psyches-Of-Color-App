@@ -1,11 +1,10 @@
-import { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth";
+import { FirebaseAuthTypes, getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
-import { getFirebaseAuth, getMongoUser } from "@/lib/auth";
+import { getMongoUser } from "@/lib/auth";
 import { User } from "@/types";
 
 type UserContext = {
-  firebaseAuth: FirebaseAuthTypes.Module | null;
   firebaseUser: FirebaseAuthTypes.User | null;
   mongoUser: User | null;
   refreshMongoUser: () => Promise<void>;
@@ -15,7 +14,6 @@ type UserContext = {
  * A context that provides the current Firebase user data, null if not logged in
  */
 export const UserContext = createContext<UserContext>({
-  firebaseAuth: null,
   firebaseUser: null,
   mongoUser: null,
   refreshMongoUser: async () => {
@@ -28,7 +26,6 @@ export const UserContext = createContext<UserContext>({
  * with its current user
  */
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const [firebaseAuth, setFirebaseAuth] = useState<FirebaseAuthTypes.Module | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [mongoUser, setMongoUser] = useState<User | null>(null);
 
@@ -44,23 +41,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    if (firebaseAuth) return;
-    getFirebaseAuth()
-      .then(setFirebaseAuth)
-      .catch((error: unknown) => {
-        console.error(`Error initializing Firebase: ${String(error)}`);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!firebaseAuth) return;
-    const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
       setFirebaseUser(user);
     });
     return () => {
       unsubscribe();
     };
-  }, [firebaseAuth]);
+  }, []);
 
   useEffect(() => {
     const updateMongoUser = async () => {
@@ -73,7 +60,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }, [firebaseUser]);
 
   return (
-    <UserContext.Provider value={{ firebaseAuth, firebaseUser, mongoUser, refreshMongoUser }}>
+    <UserContext.Provider value={{ firebaseUser, mongoUser, refreshMongoUser }}>
       {children}
     </UserContext.Provider>
   );

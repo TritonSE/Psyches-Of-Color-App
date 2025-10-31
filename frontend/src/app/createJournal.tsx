@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { router } from "expo-router";
+import { useContext, useState } from "react";
 import {
   Alert,
   Image,
@@ -18,6 +19,8 @@ import Photo from "@/assets/photo.svg";
 import Button from "@/components/Button";
 import ExitJournal from "@/components/ExitJournal";
 import { lightModeColors } from "@/constants/colors";
+import { UserContext } from "@/contexts/userContext";
+import { createJournalEntry } from "@/lib/journalEntries";
 
 export default function CreateJournal() {
   const [titleText, setTitleText] = useState("");
@@ -43,6 +46,7 @@ export default function CreateJournal() {
   const formattedDate = `${currMonth.toUpperCase()} ${String(day)}, ${String(year)}`;
 
   const [image, setImage] = useState<string | null>(null);
+  const { firebaseUser } = useContext(UserContext);
 
   const requestCameraPermission = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -90,6 +94,18 @@ export default function CreateJournal() {
     }
   };
 
+  const onSaveJournal = async () => {
+    // TODO error handling
+    try {
+      if (!firebaseUser) return;
+      const token = await firebaseUser.getIdToken();
+      await createJournalEntry(token, titleText, paragraphText, image ?? undefined);
+      router.navigate("/journal");
+    } catch (error) {
+      console.error(`Error saving journal: ${error as string}`);
+    }
+  };
+
   const [showExitModal, setShowExitModal] = useState(false);
 
   return (
@@ -115,7 +131,13 @@ export default function CreateJournal() {
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
-              setShowExitModal(true);
+              // Show the confirm exit modal if any fields were modified
+              const isModified = titleText !== "" || paragraphText !== "" || image !== null;
+              if (isModified) {
+                setShowExitModal(true);
+              } else {
+                router.navigate("/journal");
+              }
             }}
           >
             <Ionicons name="arrow-back-outline" size={24} color="gray" />
@@ -184,11 +206,19 @@ export default function CreateJournal() {
           </Button>
         </View>
 
-        {image && paragraphText !== "" ? (
-          <Button style={styles.submitButton}>Log Journal</Button>
-        ) : (
-          <Button style={styles.submitButtonDisabled}>Log Journal</Button>
-        )}
+        <Button
+          style={
+            titleText !== "" && paragraphText !== ""
+              ? styles.submitButton
+              : styles.submitButtonDisabled
+          }
+          disabled={titleText === "" || paragraphText === ""}
+          onPress={() => {
+            void onSaveJournal();
+          }}
+        >
+          Log Journal
+        </Button>
       </View>
     </ScrollView>
   );
@@ -204,6 +234,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 358,
     height: 358,
+    marginBottom: 18,
   },
   image: {
     width: "100%",
@@ -216,12 +247,12 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: "#2E563C",
-    marginTop: 183,
+    marginTop: 24,
     marginBottom: 47,
   },
   submitButtonDisabled: {
     backgroundColor: "#B4B4B4",
-    marginTop: 183,
+    marginTop: 24,
     marginBottom: 47,
   },
   imageButton: {
@@ -303,7 +334,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 20,
     marginBottom: 28,
-    marginTop: 70,
+    marginTop: 20,
   },
   headerTitle: {
     fontSize: 18,

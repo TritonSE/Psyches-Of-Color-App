@@ -1,4 +1,4 @@
-import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 import CalendarIcon from "@/assets/calendar.svg";
 import ClockIcon from "@/assets/clock.svg";
@@ -8,13 +8,19 @@ type JournalCardProps = {
   preview: string;
   time: string;
   date: string;
-  imageSource: ImageSourcePropType;
+  imageSourceUrl: string;
 };
 
-export default function JournalCard({ title, preview, time, date, imageSource }: JournalCardProps) {
+export default function JournalCard({
+  title,
+  preview,
+  time,
+  date,
+  imageSourceUrl,
+}: JournalCardProps) {
   return (
     <View style={styles.card}>
-      <Image source={imageSource} style={styles.image} />
+      <Image source={{ uri: imageSourceUrl }} style={styles.image} />
       <View style={styles.content}>
         <View style={styles.textGroup}>
           <Text style={styles.title}>{title}</Text>

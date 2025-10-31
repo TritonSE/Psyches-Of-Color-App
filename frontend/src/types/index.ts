@@ -31,3 +31,12 @@ export type Activity = {
   }[];
   affirmation?: string;
 };
+
+export type JournalEntry = {
+  _id: string;
+  title: string;
+  paragraph: string;
+  imageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};

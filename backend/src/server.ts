@@ -7,6 +7,7 @@ import env from "../src/util/validateEnv";
 import { userRouter } from "../src/routes/users";
 import { unitRouter } from "../src/routes/unit";
 import { activityRouter } from "../src/routes/activity";
+import { journalEntriesRouter } from "../src/routes/journalEntry";
 import { lessonRouter } from "../src/routes/lesson";
 import errorHandler from "../src/middleware/errorHandler";
 
@@ -20,6 +21,7 @@ app.use(userRouter);
 app.use("/api/units", unitRouter);
 app.use("/api/lessons", lessonRouter);
 app.use("/api/activities", activityRouter);
+app.use("/api/journalEntries", journalEntriesRouter);
 
 app.use(errorHandler);
 

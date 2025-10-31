@@ -4,7 +4,6 @@
 
 import { User } from "@/types";
 import env from "@/util/validateEnv";
-import { getApp, initializeApp } from "@react-native-firebase/app";
 import {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
@@ -20,13 +19,6 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // Removes warnings from react native firebase
 // We're already using their modular SDK but still getting warnings for some reason
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
-
-export const getFirebaseAuth = async () => {
-  initializeApp(env.EXPO_PUBLIC_FIREBASE_SETTINGS);
-  const app = getApp();
-  const auth = getAuth(app);
-  return auth;
-};
 
 GoogleSignin.configure({
   webClientId: "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
@@ -71,11 +63,7 @@ export const signUpEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await createUserWithEmailAndPassword(
-      await getFirebaseAuth(),
-      email,
-      password,
-    );
+    const userCreds = await createUserWithEmailAndPassword(getAuth(), email, password);
 
     return {
       success: true,
@@ -101,7 +89,7 @@ export const loginEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await signInWithEmailAndPassword(await getFirebaseAuth(), email, password);
+    const userCreds = await signInWithEmailAndPassword(getAuth(), email, password);
 
     return {
       success: true,
@@ -121,10 +109,8 @@ export const loginEmailPassword = async (
 export const getMongoUser = async (idToken: string): Promise<User | null> => {
   try {
     const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
-      method: "GET",
       headers: {
         Authorization: `Bearer ${idToken}`,
-        "Content-Type": "application/json",
       },
     });
     if (response.ok) {
@@ -136,7 +122,7 @@ export const getMongoUser = async (idToken: string): Promise<User | null> => {
         console.error("User not found");
       }
 
-      console.error("Failed to get user info from JWT Token");
+      console.error("Failed to get user info from JWT Token, status:", response.status);
 
       return null;
     }
@@ -177,7 +163,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
     const googleCredential = GoogleAuthProvider.credential(idToken);
 
     // Sign-in the user with the credential
-    const userCreds = await signInWithCredential(await getFirebaseAuth(), googleCredential);
+    const userCreds = await signInWithCredential(getAuth(), googleCredential);
 
     return {
       success: true,
@@ -202,7 +188,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  * @returns {Promise<void>}
  */
 export const logout = async (): Promise<void> => {
-  await signOut(await getFirebaseAuth());
+  await signOut(getAuth());
 };
 
 /**
@@ -213,7 +199,7 @@ export const logout = async (): Promise<void> => {
  */
 export const forgotPassword = async (email: string): Promise<EmailSendResponse> => {
   try {
-    await sendPasswordResetEmail(await getFirebaseAuth(), email);
+    await sendPasswordResetEmail(getAuth(), email);
 
     return {
       success: true,

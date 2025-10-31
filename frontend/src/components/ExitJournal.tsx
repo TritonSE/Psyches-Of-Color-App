@@ -26,10 +26,10 @@ const ExitJournal = ({ onClose }: { onClose: () => void }) => {
 
       <View style={styles.buttons}>
         <Button style={styles.delete} textStyle={styles.deleteText} onPress={handleDelete}>
-          Delete
+          Exit anyway
         </Button>
         <Button style={styles.continue} textStyle={styles.continueText} onPress={onClose}>
-          Continue
+          Keep writing
         </Button>
       </View>
     </View>
@@ -43,11 +43,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 16,
     width: "83%",
-    height: "45%",
     borderRadius: 16,
     backgroundColor: "#FFF",
     margin: "auto",
     paddingHorizontal: 24,
+    paddingVertical: 32,
   },
   close: {
     marginLeft: "auto",

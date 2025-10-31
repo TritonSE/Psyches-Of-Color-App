@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
+import { format } from "date-fns";
 import { router } from "expo-router";
-import { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { ImageSourcePropType } from "react-native";
 
@@ -10,8 +11,11 @@ import LeftIcon from "@/assets/left.svg";
 import Pencil from "@/assets/pencil.svg";
 import RightIcon from "@/assets/right.svg";
 import Button from "@/components/Button";
-// import JournalCard from "@/components/JournalCard";
+import JournalCard from "@/components/JournalCard";
 import { lightModeColors } from "@/constants/colors";
+import { UserContext } from "@/contexts/userContext";
+import { getJournalEntries } from "@/lib/journalEntries";
+import { JournalEntry } from "@/types";
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -26,7 +30,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 24,
-    marginBottom: 246,
+    marginBottom: 48,
   },
   mascot: {
     width: 159,
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: 358,
-    marginBottom: 138,
+    marginBottom: 24,
     marginTop: 24,
   },
   headerContainer: {
@@ -101,12 +105,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E563C",
     borderRadius: 50,
     marginLeft: "auto",
-    marginRight: 20,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 50,
-    marginTop: -50,
+    position: "absolute",
+    bottom: 70,
+    right: 30,
   },
 });
 
@@ -126,8 +130,20 @@ const months = [
 ];
 
 export default function Journal() {
-  const [month, setMonth] = useState(1);
-  const [year, setYear] = useState(2025);
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
+  const { firebaseUser } = useContext(UserContext);
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[] | null>(null);
+
+  useEffect(() => {
+    if (!firebaseUser) return;
+    firebaseUser
+      .getIdToken()
+      .then((token) => getJournalEntries(token).then(setJournalEntries))
+      .catch((error: unknown) => {
+        console.error(`Error loading journal entries: ${error as string}`);
+      });
+  }, [firebaseUser]);
 
   const handleIncrease = () => {
     if (month === 11) {
@@ -149,37 +165,45 @@ export default function Journal() {
 
   return (
     <View style={styles.pageContainer}>
-      <View style={styles.header}>
-        <Ionicons name="arrow-back-outline" size={24} color="gray" />
-        <Text style={styles.headerTitle}>Journal</Text>
-      </View>
-      <View style={styles.time}>
-        <Button style={styles.timeButton} onPress={handleDecrease}>
-          <LeftIcon />
-        </Button>
+      <ScrollView>
+        <View style={styles.header}>
+          <Ionicons name="arrow-back-outline" size={24} color="gray" />
+          <Text style={styles.headerTitle}>Journal</Text>
+        </View>
+        <View style={styles.time}>
+          <Button style={styles.timeButton} onPress={handleDecrease}>
+            <LeftIcon />
+          </Button>
 
-        <Text style={styles.timeText}>
-          `{months[month]} {year}`
-        </Text>
-        <Button style={styles.timeButton} onPress={handleIncrease}>
-          <RightIcon />
-        </Button>
-      </View>
-      <View style={styles.body}>
-        {/* Example call for card component */}
-        {/* TODO: implement conditional renderring here by checking if there are journal entries once we have storage setup */}
-        {/* <JournalCard
-          title="HAPPY DAY"
-          preview="Today I woke up feeling energetic..."
-          time="08:30 AM"
-          date="March 01, 2025"
-          imageSource={require("@/assets/temp.png")}
-        /> */}
-        <Image source={JournalIcon as ImageSourcePropType} style={styles.mascot} />
-        <Text style={styles.noEntryMessage}>
-          Looks like you haven&apos;t wrote an entry this month.
-        </Text>
-      </View>
+          <Text style={styles.timeText}>
+            {months[month]} {year}
+          </Text>
+          <Button style={styles.timeButton} onPress={handleIncrease}>
+            <RightIcon />
+          </Button>
+        </View>
+        <View style={styles.body}>
+          {journalEntries?.map((entry) => (
+            <JournalCard
+              key={entry._id}
+              title={entry.title}
+              preview={entry.paragraph.slice(0, 100)}
+              time={format(entry.createdAt, "h:mm a")}
+              date={format(entry.createdAt, "MMMM d, yyyy")}
+              imageSourceUrl={entry.imageUrl}
+            />
+          ))}
+
+          {journalEntries && journalEntries.length === 0 ? (
+            <View>
+              <Image source={JournalIcon as ImageSourcePropType} style={styles.mascot} />
+              <Text style={styles.noEntryMessage}>
+                Looks like you haven&apos;t wrote an entry this month.
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      </ScrollView>
 
       <TouchableOpacity
         style={styles.edit}
