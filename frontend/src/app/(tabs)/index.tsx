@@ -1,10 +1,24 @@
-// import CreateJournal from "../createJournal";
+import { StatusBar, StyleSheet, View } from "react-native";
 
-import Journal from "./journal";
+import ActivitiesPage from "../../pages/activityPage";
 
-// import ExitJournal from "@/components/ExitJournal";
-// import InternetError from "@/pages/internetError";
+import { lightModeColors } from "@/constants/colors";
 
 export default function Home() {
-  return <Journal />;
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: lightModeColors.background,
+    },
+    text: {
+      color: lightModeColors.darkFont,
+    },
+  });
+
+  return (
+    <View style={styles.container}>
+      <ActivitiesPage />
+      <StatusBar />
+    </View>
+  );
 }

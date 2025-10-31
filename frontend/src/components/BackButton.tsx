@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     width: 37,
     height: 20,
     backgroundColor: "transparent",
+    flex: 1,
     alignSelf: "flex-start",
     marginLeft: -3,
   },

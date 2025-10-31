@@ -2,7 +2,9 @@
  * Provides functions used for user authentication
  */
 
-import { getApp } from "@react-native-firebase/app";
+import { User } from "@/types";
+import env from "@/util/validateEnv";
+import { getApp, initializeApp } from "@react-native-firebase/app";
 import {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
@@ -18,10 +20,13 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // Removes warnings from react native firebase
 // We're already using their modular SDK but still getting warnings for some reason
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
-(globalThis as any).RNFB_MODULAR_DEPRECATION_STRICT_MODE === true;
 
-const app = getApp();
-const auth = getAuth(app);
+export const getFirebaseAuth = async () => {
+  initializeApp(env.EXPO_PUBLIC_FIREBASE_SETTINGS);
+  const app = getApp();
+  const auth = getAuth(app);
+  return auth;
+};
 
 GoogleSignin.configure({
   webClientId: "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
@@ -66,7 +71,11 @@ export const signUpEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await createUserWithEmailAndPassword(auth, email, password);
+    const userCreds = await createUserWithEmailAndPassword(
+      await getFirebaseAuth(),
+      email,
+      password,
+    );
 
     return {
       success: true,
@@ -92,11 +101,8 @@ export const loginEmailPassword = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const userCreds = await signInWithEmailAndPassword(auth, email, password);
-    const idToken = await userCreds.user?.getIdToken();
-    // REMOVE CONSOLE.LOG BELOW AFTER TESTING
-    console.log(idToken);
-    await sendTokenToBackend(idToken);
+    const userCreds = await signInWithEmailAndPassword(await getFirebaseAuth(), email, password);
+
     return {
       success: true,
       user: userCreds.user,
@@ -112,12 +118,9 @@ export const loginEmailPassword = async (
 /*
  * Sends the Firebase ID token to the backend on the whoami route
  */
-const sendTokenToBackend = async (idToken: string) => {
+export const getMongoUser = async (idToken: string): Promise<User | null> => {
   try {
-    // 10.0.2.2:3000 for android emulators
-    // localhost:3000 for ios
-    // Or just use "http://192.168.x.x:3000/api/whoami" (ip address)
-    const response = await fetch("http://10.0.2.2:3000/api/whoami", {
+    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${idToken}`,
@@ -125,14 +128,22 @@ const sendTokenToBackend = async (idToken: string) => {
       },
     });
     if (response.ok) {
-      const userInfo = await response.json();
+      const user = (await response.json()) as User;
 
-      console.log(userInfo);
+      return user;
     } else {
+      if (response.status === 404) {
+        console.error("User not found");
+      }
+
       console.error("Failed to get user info from JWT Token");
+
+      return null;
     }
   } catch (error) {
     console.error("Error sending token to backend: ", error);
+
+    return null;
   }
 };
 
@@ -166,7 +177,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
     const googleCredential = GoogleAuthProvider.credential(idToken);
 
     // Sign-in the user with the credential
-    const userCreds = await signInWithCredential(auth, googleCredential);
+    const userCreds = await signInWithCredential(await getFirebaseAuth(), googleCredential);
 
     return {
       success: true,
@@ -191,7 +202,7 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  * @returns {Promise<void>}
  */
 export const logout = async (): Promise<void> => {
-  await signOut(auth);
+  await signOut(await getFirebaseAuth());
 };
 
 /**
@@ -202,7 +213,7 @@ export const logout = async (): Promise<void> => {
  */
 export const forgotPassword = async (email: string): Promise<EmailSendResponse> => {
   try {
-    await sendPasswordResetEmail(auth, email);
+    await sendPasswordResetEmail(await getFirebaseAuth(), email);
 
     return {
       success: true,
