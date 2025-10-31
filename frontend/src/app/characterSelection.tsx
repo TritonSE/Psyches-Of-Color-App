@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useRouter } from "expo-router";
 import {
   Animated,
   Dimensions,
@@ -56,6 +57,12 @@ export default function CharacterSelection() {
   const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
   const scrollViewRef = useRef<ScrollView>(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
+
+  const router = useRouter();
+
+  const navigateToOnboarding = () => {
+    router.push("/onboarding");
+  };
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = e.nativeEvent.contentOffset.x;
@@ -146,9 +153,10 @@ export default function CharacterSelection() {
       </Animated.ScrollView>
 
       <Button
-        onPress={() => {
-          console.log(charactersState[selectedIndex].character);
-        }}
+        // onPress={() => {
+        //   console.log(charactersState[selectedIndex].character);
+        // }}
+        onPress={navigateToOnboarding}
         style={styles.nextButton}
         textStyle={styles.buttonText}
       >

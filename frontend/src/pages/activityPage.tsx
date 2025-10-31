@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import ActivityButton from "@/components/ActivityButton";
+import ActivityButton from "@/components/activityButton";
 import ActivityPopup from "@/components/ActivityPopup";
 import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
