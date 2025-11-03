@@ -4,7 +4,6 @@ type UserInterface = {
   name: string;
   email: string;
   uid: string;
-  hasCompletedWeeklyCheckin: boolean;
   character: string;
   completedLessons: string[];
   currLesson: string;
@@ -41,10 +40,6 @@ const userSchema = new mongoose.Schema({
   },
   uid: {
     type: String,
-    required: true,
-  },
-  hasCompletedWeeklyCheckin: {
-    type: Boolean,
     required: true,
   },
   character: {

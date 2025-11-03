@@ -102,29 +102,6 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
   }
 });
 
-router.put(
-  "/users/:uid/checkin",
-  verifyAuthToken,
-  async (req: PsychesRequest, res: Response): Promise<void> => {
-    try {
-      const { uid } = req.params;
-
-      const user = await User.findOneAndUpdate(
-        { uid },
-        { hasCompletedWeeklyCheckin: true },
-        { new: true },
-      );
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-        return;
-      }
-    } catch (error) {
-      console.error("Error completing check-in:", error);
-      res.status(500).json({ message: "Server error", error: (error as Error).message });
-    }
-  },
-);
-
 // PUT: Mark an lesson as completed by a user
 router.put(
   "/users/:uid/completed/:lessonId",
@@ -137,8 +114,6 @@ router.put(
         res.status(404).json({ message: "User not found" });
         return;
       }
-
-      res.status(200).json({ message: "Weekly check-in marked as complete", user });
 
       if (!user.completedLessons) user.completedLessons = [];
 
