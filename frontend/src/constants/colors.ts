@@ -11,6 +11,8 @@ type Colors = {
   background: string;
   overlayBackground: string;
   tabsIcon: string;
+  onboardingGreen: string;
+  progressBarBackground: string;
   error: string;
   success: string;
   profileBackground: string;
@@ -39,6 +41,8 @@ export const lightModeColors: Colors = {
   boxBorder: "#000000",
   background: "#F6F6EA",
   overlayBackground: "#D9D9D9",
+  onboardingGreen: "#2e563c",
+  progressBarBackground: "#ebebeb",
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",

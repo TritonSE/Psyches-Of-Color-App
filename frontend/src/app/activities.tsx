@@ -1,12 +1,12 @@
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
-import ActivityPageScreens from "@/pages/activityPageScreens";
+import ActivitiesPage from "../pages/activityPage";
 
-export default function ActivityPage() {
+export default function Activities() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ActivityPageScreens />
+        <ActivitiesPage />
       </ScrollView>
     </SafeAreaView>
   );
