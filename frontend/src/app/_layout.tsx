@@ -47,10 +47,12 @@ const RootLayout = () => {
   return (
     <UserContextProvider>
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="characterSelection" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="randomPage" />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="changePassword" />
       </Stack>
     </UserContextProvider>
   );

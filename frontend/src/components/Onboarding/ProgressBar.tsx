@@ -1,19 +1,17 @@
 import React from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
 
 type ProgressBarProps = {
   progress: number;
-  style?: StyleProp<ViewStyle>;
-  fillColor?: StyleProp<ViewStyle>;
 };
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ progress, style, fillColor }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
   const progressPercent = (progress * 100).toFixed(0);
   return (
-    <View style={[styles.container, style]}>
-      <View style={[styles.fill, { width: `${progressPercent}%` } as ViewStyle, fillColor]} />
+    <View style={styles.container}>
+      <View style={[styles.fill, { width: `${progressPercent}%` } as ViewStyle]} />
     </View>
   );
 };

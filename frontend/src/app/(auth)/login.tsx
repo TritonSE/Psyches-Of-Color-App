@@ -1,4 +1,4 @@
-import { Link, router } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
@@ -94,7 +94,7 @@ export default function Login() {
     // If login was successful, we don't need to do anything
     // redirection happens in auth context
     if (res.success) {
-      return;
+      return <Redirect href="/characterSelection" />;
     }
 
     // If login was unsuccessful, set the appropriate error message

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import type { ImageSourcePropType } from "react-native";
 
 import checkinIcon from "@/assets/checkinIcon.png";
@@ -21,6 +22,9 @@ import pencilJournal from "@/assets/pencilJournal.png";
 import plantman from "@/assets/plantman.png";
 import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
+import Button from "@/components/Button";
+import ProgressBar from "@/components/Onboarding/ProgressBar";
+// import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
@@ -35,9 +39,6 @@ const IMG = {
   txtBoxHomePage: txtBoxHomePage as unknown as ImageSourcePropType,
   wateringCan: wateringCan as unknown as ImageSourcePropType,
 };
-import Button from "@/components/Button";
-import ProgressBar from "@/components/Onboarding/ProgressBar";
-// import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
 
 const NewDayComponent: React.FC = () => {
   const [isNewDay, setIsNewDay] = useState<boolean>(false);
