@@ -24,7 +24,7 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
-// import { sortRoutesWithInitial } from "expo-router/build/sortRoutes";
+import { router } from "expo-router";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
@@ -132,7 +132,12 @@ export default function HomePage() {
 
         <View style={styles.progressContainer}>
           {/* Row 1: Complete 3 Activities */}
-          <TouchableOpacity style={styles.progressRow}>
+          <TouchableOpacity
+            style={styles.progressRow}
+            onPress={() => {
+              router.push("/activities");
+            }}
+          >
             <Image source={IMG.fireman} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
               <Text style={styles.taskLabel}>Complete 3 Activities</Text>
@@ -150,7 +155,12 @@ export default function HomePage() {
           <View style={styles.divider} />
 
           {/* Row 2: Complete Journal */}
-          <TouchableOpacity style={styles.progressRow}>
+          <TouchableOpacity
+            style={styles.progressRow}
+            onPress={() => {
+              router.push("/journal");
+            }}
+          >
             <Image source={IMG.plantman} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
               <Text style={styles.taskLabel}>Complete Journal</Text>
@@ -167,6 +177,7 @@ export default function HomePage() {
           {/* Divider */}
           <View style={styles.divider} />
 
+          {/* TODO: link to weekly check-in page */}
           <TouchableOpacity style={styles.progressRow}>
             <Image source={IMG.wateringCan} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
@@ -183,12 +194,22 @@ export default function HomePage() {
         </View>
         <Text style={styles.sectionTitle}>Continue on Journey</Text>
         <View style={styles.buttons}>
-          <Button style={styles.lessons}>
+          <Button
+            style={styles.lessons}
+            onPress={() => {
+              router.push("/activities");
+            }}
+          >
             <Text style={styles.lessonsTitle}>Lessons</Text>
             <Image source={IMG.lessonsIcon} style={styles.lessonIcon}></Image>
           </Button>
           <View style={styles.row}>
-            <Button style={styles.journal}>
+            <Button
+              style={styles.journal}
+              onPress={() => {
+                router.push("/journal");
+              }}
+            >
               <Text style={styles.journalTitle}>Journal</Text>
               <Image source={IMG.journalIcon} style={styles.journalIcon}></Image>
               <Image source={IMG.pencilJournal} style={styles.pencilJournal}></Image>
@@ -211,7 +232,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     paddingTop: 30,
-    paddingBottom: 24,
+    paddingBottom: 60,
   },
   header: {
     flexDirection: "row",

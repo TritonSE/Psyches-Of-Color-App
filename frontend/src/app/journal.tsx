@@ -167,7 +167,13 @@ export default function Journal() {
     <View style={styles.pageContainer}>
       <ScrollView>
         <View style={styles.header}>
-          <Ionicons name="arrow-back-outline" size={24} color="gray" />
+          <TouchableOpacity
+            onPress={() => {
+              router.back();
+            }}
+          >
+            <Ionicons name="arrow-back-outline" size={24} color="gray" />
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Journal</Text>
         </View>
         <View style={styles.time}>
