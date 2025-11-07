@@ -11,16 +11,26 @@ type Colors = {
   background: string;
   overlayBackground: string;
   tabsIcon: string;
+  onboardingGreen: string;
+  progressBarBackground: string;
   error: string;
   success: string;
   profileBackground: string;
-  primary: string;
-  buttonBackground: string;
-  optionBackground: string;
+  onboardingGreen: string;
+  progressBarBackground: string;
+  selectedBorder: string;
+  title: string;
+  backArrow: string;
+  questionBorder: string;
+  optionButtonSelected: string;
+  inputBoxBackground: string;
+  primaryRed: string;
+  primaryGreen: string;
+  primaryYellow: string;
 };
 
 export const lightModeColors: Colors = {
-  buttonFill: "#D35144",
+  buttonFill: "#2E563C",
   darkFont: "#000000",
   secondaryDarkFont: "#1D1B20",
   neutralFont: "#484848",
@@ -31,11 +41,21 @@ export const lightModeColors: Colors = {
   boxBorder: "#000000",
   background: "#F6F6EA",
   overlayBackground: "#D9D9D9",
+  onboardingGreen: "#2e563c",
+  progressBarBackground: "#ebebeb",
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",
   profileBackground: "#c13d2f",
-  primary: "#D35144",
-  buttonBackground: "#2E563C",
-  optionBackground: "#efb116",
+  onboardingGreen: "#2e563c",
+  progressBarBackground: "#ebebeb",
+  selectedBorder: "#d38718",
+  title: "#6c6c6c",
+  backArrow: "#b4b4b4",
+  questionBorder: "#ccc",
+  optionButtonSelected: "rgba(239, 177, 22, 0.5)",
+  inputBoxBackground: "#FFFFFF",
+  primaryRed: "#D35144",
+  primaryGreen: "#2E563C",
+  primaryYellow: "#D38718",
 };
