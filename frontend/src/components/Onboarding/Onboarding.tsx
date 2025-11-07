@@ -1,8 +1,8 @@
 // Onboarding.tsx
 
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useRouter } from "expo-router";
 
 import NextButton from "../NextButton";
 

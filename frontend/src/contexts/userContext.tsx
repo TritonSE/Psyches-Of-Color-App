@@ -46,7 +46,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
       setFirebaseUser(user);
-
       if (user?.metadata?.creationTime && user?.metadata?.lastSignInTime) {
         setIsNewUser(user.metadata.creationTime === user.metadata.lastSignInTime);
       } else {

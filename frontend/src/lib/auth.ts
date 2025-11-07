@@ -188,7 +188,12 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  * @returns {Promise<void>}
  */
 export const logout = async (): Promise<void> => {
-  await signOut(getAuth());
+  const auth = getAuth();
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Error Signing out: ", error);
+  }
 };
 
 /**
