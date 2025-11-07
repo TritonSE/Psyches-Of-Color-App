@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
+import auth from "@react-native-firebase/auth";
+import env from "@/util/validateEnv";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackButton from "@/components/BackButton";
@@ -8,6 +10,34 @@ import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 import { signUpEmailPassword } from "@/lib/auth";
+
+async function createMongoUser({
+  firstName,
+  lastName,
+  email,
+}: {
+  firstName: string;
+  lastName: string;
+  email: string;
+}) {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return;
+
+  await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      name: `${firstName} ${lastName}`.trim(),
+      email,
+      uid: firebaseUser.uid,
+    }),
+  });
+}
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -66,6 +96,7 @@ export default function Signup() {
     // If signup was succesl, we don't need to do anything
     // redirection happens in auth context
     if (res.success) {
+      void createMongoUser({ firstName, lastName, email });
       return;
     }
     // If signup was unsuccessful, set the appropriate error message
