@@ -46,7 +46,7 @@ export const lightModeColors: Colors = {
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",
-  profileBackground: "#c13d2f",
+  profileBackground: "#f2f2d2ff",
   onboardingGreen: "#2e563c",
   progressBarBackground: "#ebebeb",
   selectedBorder: "#d38718",

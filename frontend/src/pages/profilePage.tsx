@@ -1,6 +1,8 @@
 import { useRouter } from "expo-router";
+import { useContext } from "react";
 import {
   Image,
+  ImageSourcePropType,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -9,22 +11,48 @@ import {
   View,
 } from "react-native";
 
-import BiFire from "@/assets/bi_fire.png";
-import Frog from "@/assets/frog.png";
-import Media from "@/assets/media.png";
-import Settings from "@/assets/settings.png";
-import Trophy from "@/assets/trophy.png";
-import ButtonItem from "@/components/ProfileButton";
-import { lightModeColors } from "@/constants/colors";
-import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
 
+import BiFire from "@/assets/bi_fire.png";
+import fire from "@/assets/fire.png";
+import Media from "@/assets/media.png";
+import nature from "@/assets/nature.png";
+import Settings from "@/assets/settings.png";
+import Trophy from "@/assets/trophy.png";
+import water from "@/assets/water.png";
+import ButtonItem from "@/components/ProfileButton";
+import { lightModeColors } from "@/constants/colors";
+
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
+type Character = {
+  color: string;
+  character: string;
+  characterIcon: ImageSourcePropType;
+};
+
+const characters: Character[] = [
+  {
+    color: "#83B26D",
+    character: "nature",
+    characterIcon: nature,
+  },
+  {
+    color: "#FFC97E",
+    character: "fire",
+    characterIcon: fire,
+  },
+  {
+    color: "#FCA397",
+    character: "water",
+    characterIcon: water,
+  },
+];
 
 export default function ProfilePage() {
   const router = useRouter();
   const { mongoUser } = useContext(UserContext);
-
+  const selectedCharacter =
+    characters.find((c) => c.character === mongoUser?.character) ?? characters[1];
   // State for achievements and streaks
   // const [achievementsCompleted, setAchievementsCompleted] = useState(3);
   // const [daysOfStreaks, setDaysOfStreaks] = useState(3);
@@ -63,7 +91,10 @@ export default function ProfilePage() {
             </TouchableOpacity>
           </View>
 
-          <Image source={Frog} style={styles.profileImage} />
+          <Image
+            source={selectedCharacter.characterIcon}
+            style={[styles.profileImage, { backgroundColor: selectedCharacter.color }]}
+          />
 
           {/* White Box at Bottom*/}
           <View style={styles.bottomSection}>
@@ -167,11 +198,12 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 194,
     height: 194,
-    borderRadius: 50,
+    borderRadius: 100,
     position: "absolute",
     top: 70,
     alignSelf: "center",
     zIndex: 2,
+    padding: 20,
   },
   scrollContainer: {
     flex: 1,
