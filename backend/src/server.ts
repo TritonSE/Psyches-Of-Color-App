@@ -1,15 +1,16 @@
-// /* eslint-disable */
-
 import "dotenv/config";
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
 import env from "../src/util/validateEnv";
 import { userRouter } from "../src/routes/users";
 import { moodRouter } from "../src/routes/mood";
-
-//dotenv.config();
+import { unitRouter } from "../src/routes/unit";
+import { activityRouter } from "../src/routes/activity";
+import { journalEntriesRouter } from "../src/routes/journalEntry";
+import { lessonRouter } from "../src/routes/lesson";
+import errorHandler from "../src/middleware/errorHandler";
 
 const app: Express = express();
 const port = env.PORT || 3000;
@@ -30,6 +31,12 @@ app.use(express.json());
 // Mount routers
 app.use(moodRouter);
 app.use(userRouter);
+app.use("/api/units", unitRouter);
+app.use("/api/lessons", lessonRouter);
+app.use("/api/activities", activityRouter);
+app.use("/api/journalEntries", journalEntriesRouter);
+
+app.use(errorHandler);
 
 // Connect to MongoDB
 mongoose

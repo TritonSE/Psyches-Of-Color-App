@@ -1,4 +1,4 @@
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, usePathname } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 import HomeIcon from "@/assets/home-icon.svg";
@@ -33,17 +33,20 @@ const styles = StyleSheet.create({
 
 export default function TabLayout() {
   const { firebaseUser } = useAuth();
+  const pathname = usePathname();
 
   if (!firebaseUser) {
     return <Redirect href="/login" />;
   }
+
+  const hideTabBar = pathname === "/Home";
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false, // Hides the tab labels
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: hideTabBar ? { display: "none" } : styles.tabBar,
       }}
     >
       {/* Home Tab */}
