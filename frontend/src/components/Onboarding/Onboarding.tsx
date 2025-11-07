@@ -1,5 +1,6 @@
 // Onboarding.tsx
 
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -14,6 +15,8 @@ import { lightModeColors } from "@/constants/colors";
 import { QuestionData, onboardingQuestions } from "@/constants/questionData";
 
 const Onboarding: React.FC = () => {
+  const router = useRouter();
+
   const questions: QuestionData[] = onboardingQuestions;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -35,6 +38,7 @@ const Onboarding: React.FC = () => {
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
+      router.push("/");
     }
   };
 
