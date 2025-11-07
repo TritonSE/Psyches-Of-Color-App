@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -24,7 +25,6 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
-import { router } from "expo-router";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
