@@ -1,8 +1,7 @@
+import auth from "@react-native-firebase/auth";
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
-import auth from "@react-native-firebase/auth";
-import env from "@/util/validateEnv";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackButton from "@/components/BackButton";
@@ -10,6 +9,7 @@ import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 import { signUpEmailPassword } from "@/lib/auth";
+import env from "@/util/validateEnv";
 
 async function createMongoUser({
   firstName,

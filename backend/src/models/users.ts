@@ -44,8 +44,8 @@ const userSchema = new mongoose.Schema({
   },
   character: {
     type: String,
-    enum: ["fire", "water", "earth"],
-    default: "fire",
+    enum: ["Fire", "Water", "Nature"],
+    default: "Fire",
   },
   completedLessons: {
     type: [mongoose.Schema.Types.ObjectId],

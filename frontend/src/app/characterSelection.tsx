@@ -1,3 +1,4 @@
+import auth from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -18,6 +19,7 @@ import water from "@/assets/water.png";
 import Button from "@/components/Button";
 import { CharacterCard } from "@/components/CharacterCard";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import env from "@/util/validateEnv";
 
 const { width } = Dimensions.get("window");
 const WIDTH = 273;
@@ -51,6 +53,27 @@ const characters: Character[] = [
 
 const infiniteCharacters = [...characters, ...characters, ...characters];
 
+async function updateUserCharacter(character: string) {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ character }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    console.warn("Failed to update character: ", res.status, text);
+  }
+}
+
 export default function CharacterSelection() {
   const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -60,7 +83,13 @@ export default function CharacterSelection() {
 
   const router = useRouter();
 
-  const navigateToOnboarding = () => {
+  const navigateToOnboarding = async () => {
+    const choice = characters[selectedIndex].character;
+    try {
+      await updateUserCharacter(choice);
+    } catch (e) {
+      console.warn("Error updating user character: ", e);
+    }
     router.push("/onboarding");
   };
 
@@ -156,7 +185,9 @@ export default function CharacterSelection() {
         // onPress={() => {
         //   console.log(charactersState[selectedIndex].character);
         // }}
-        onPress={navigateToOnboarding}
+        onPress={() => {
+          void navigateToOnboarding();
+        }}
         style={styles.nextButton}
         textStyle={styles.buttonText}
       >
