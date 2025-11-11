@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -25,6 +25,7 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import { UserContext } from "../contexts/userContext";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
@@ -101,13 +102,15 @@ const NewDayComponent: React.FC = () => {
 };
 
 export default function HomePage() {
+  const { mongoUser } = useContext(UserContext);
+
   return (
     <SafeAreaView style={styles.page}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Hey Michael!</Text>
+            <Text style={styles.title}>Hey {mongoUser?.name ?? "there"}!</Text>
             <Text style={styles.subtitle}>Welcome Back</Text>
           </View>
           <Button style={styles.crisisButton}>
