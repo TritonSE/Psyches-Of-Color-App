@@ -69,12 +69,12 @@ const Onboarding: React.FC = () => {
     setAnswers(updatedAnswers);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
-      void handleSubmit();
+      await handleSubmit();
       router.push("/");
     }
   };
@@ -135,7 +135,13 @@ const Onboarding: React.FC = () => {
       </View>
 
       <View style={styles.nextButtonContainer}>
-        <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next" />
+        <NextButton
+          onPress={() => {
+            void handleNext();
+          }}
+          disabled={!!isNextDisabled}
+          textOption="Next"
+        />
       </View>
     </View>
   );
