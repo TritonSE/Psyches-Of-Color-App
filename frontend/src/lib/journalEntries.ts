@@ -31,7 +31,7 @@ export const createJournalEntry = async (
   paragraph: string,
   imageUrl?: string,
 ): Promise<JournalEntry> => {
-  let persistentImageUrl = undefined;
+  let persistentImageUrl: string | undefined = undefined;
   if (imageUrl) {
     // Copy image file from image picker cache to persistent documents directory
     const content = await readFile(imageUrl, "base64");
@@ -41,8 +41,6 @@ export const createJournalEntry = async (
     await writeFile(outputPath, content, "base64");
     persistentImageUrl = `file://${outputPath}`;
   }
-
-  console.log("before:", imageUrl, "after:", persistentImageUrl);
 
   const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries`, {
     method: "POST",

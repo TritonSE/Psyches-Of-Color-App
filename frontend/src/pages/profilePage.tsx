@@ -16,11 +16,14 @@ import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
 import ButtonItem from "@/components/ProfileButton";
 import { lightModeColors } from "@/constants/colors";
+import { useContext } from "react";
+import { UserContext } from "../contexts/userContext";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { mongoUser } = useContext(UserContext);
 
   // State for achievements and streaks
   // const [achievementsCompleted, setAchievementsCompleted] = useState(3);
@@ -52,81 +55,89 @@ export default function ProfilePage() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-        {/* Profile Picture and Settings */}
-        <View style={styles.topSection}>
-          <TouchableOpacity style={styles.settingsIcon} onPress={navigateToSettingsPage}>
-            <Image source={Settings} style={styles.icon} />
-          </TouchableOpacity>
+        <View style={{ position: "relative" }}>
+          {/* Profile Picture and Settings */}
+          <View style={styles.topSection}>
+            <TouchableOpacity style={styles.settingsIcon} onPress={navigateToSettingsPage}>
+              <Image source={Settings} style={styles.icon} />
+            </TouchableOpacity>
+          </View>
+
           <Image source={Frog} style={styles.profileImage} />
-        </View>
 
-        {/* WHite Box at Bottom*/}
-        <View style={styles.bottomSection}>
-          {/* Header Section */}
-          <View style={styles.header}>
-            <Text style={styles.name}>Michael Jordan</Text>
-          </View>
+          {/* White Box at Bottom*/}
+          <View style={styles.bottomSection}>
+            {/* Header Section */}
+            <View style={styles.header}>
+              <Text style={styles.name}>{mongoUser?.name}</Text>
+            </View>
 
-          {/* Edit Section */}
-          <View style={styles.editContainer}>
-            <TouchableOpacity onPress={navigateToEditProfilePage}>
-              <View style={styles.editButton}>
-                <Text style={styles.editButtonText}>Edit Profile</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={navigateToRandomPage}>
-              <View style={styles.editButton}>
-                <Text style={styles.editButtonText}>Edit Companion</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Achievements Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Achievements</Text>
-            <View style={styles.achievementContainer}>
-              <View style={styles.achievementCard}>
-                <View style={styles.imageNumberContainer}>
-                  <Image source={Trophy} style={styles.achievementIcon} />
-                  <Text style={styles.number}>3</Text>
+            {/* Edit Section */}
+            <View style={styles.editContainer}>
+              <TouchableOpacity onPress={navigateToEditProfilePage}>
+                <View style={styles.editButton}>
+                  <Text style={styles.editButtonText}>Edit Profile</Text>
                 </View>
-                <Text style={styles.label}>Activities Completed</Text>
-              </View>
-              <View style={styles.achievementCard}>
-                <View style={styles.imageNumberContainer}>
-                  <Image source={BiFire} style={styles.achievementIcon} />
-                  <Text style={styles.number}>3</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={navigateToRandomPage}>
+                <View style={styles.editButton}>
+                  <Text style={styles.editButtonText}>Edit Companion</Text>
                 </View>
-                <Text style={styles.label}>Days of Streaks</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Achievements Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Achievements</Text>
+              <View style={styles.achievementContainer}>
+                <View style={styles.achievementCard}>
+                  <View style={styles.imageNumberContainer}>
+                    <Image source={Trophy} style={styles.achievementIcon} />
+                    <Text style={styles.number}>3</Text>
+                  </View>
+                  <Text style={styles.label}>Activities Completed</Text>
+                </View>
+                <View style={styles.achievementCard}>
+                  <View style={styles.imageNumberContainer}>
+                    <Image source={BiFire} style={styles.achievementIcon} />
+                    <Text style={styles.number}>3</Text>
+                  </View>
+                  <Text style={styles.label}>Days of Streaks</Text>
+                </View>
               </View>
             </View>
-          </View>
 
-          {/* Saved Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Saved</Text>
-            <ButtonItem icon={Media} title="Resources" isSaved={true} />
-          </View>
+            {/* Saved Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Saved</Text>
+              <ButtonItem icon={Media} title="Resources" isSaved={true} />
+            </View>
 
-          {/* Activity History Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Activity History</Text>
-            <ButtonItem
-              icon={Media}
-              title="Understanding SAD"
-              subtitle="Seasonal Affective Disorder"
-              position="top"
-            />
-            <ButtonItem icon={Media} title="Story: What If?" subtitle="Anxiety" position="middle" />
-            <ButtonItem
-              icon={Media}
-              title="Understanding Depression"
-              subtitle="Depression"
-              position="bottom"
-            />
-            <TouchableOpacity onPress={navigateToRandomPage}>
-              <Text style={styles.viewAll}>View all history →</Text>
-            </TouchableOpacity>
+            {/* Activity History Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Activity History</Text>
+              <ButtonItem
+                icon={Media}
+                title="Understanding SAD"
+                subtitle="Seasonal Affective Disorder"
+                position="top"
+              />
+              <ButtonItem
+                icon={Media}
+                title="Story: What If?"
+                subtitle="Anxiety"
+                position="middle"
+              />
+              <ButtonItem
+                icon={Media}
+                title="Understanding Depression"
+                subtitle="Depression"
+                position="bottom"
+              />
+              <TouchableOpacity onPress={navigateToRandomPage}>
+                <Text style={styles.viewAll}>View all history →</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -140,10 +151,7 @@ const styles = StyleSheet.create({
   },
   topSection: {
     backgroundColor: lightModeColors.profileBackground,
-    alignItems: "center",
-    paddingTop: 54.66,
-    paddingBottom: 20,
-    position: "relative",
+    height: 300,
   },
   settingsIcon: {
     position: "absolute",
@@ -160,7 +168,9 @@ const styles = StyleSheet.create({
     width: 194,
     height: 194,
     borderRadius: 50,
-    marginBottom: 10,
+    position: "absolute",
+    top: 70,
+    alignSelf: "center",
     zIndex: 2,
   },
   scrollContainer: {
