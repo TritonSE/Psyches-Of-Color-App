@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import ActivityPopup from "@/components/ActivityPopup";
-import ActivityButton from "@/components/activityButton";
+import ActivityButton from "@/components/ActivityButton";
 import SectionButton from "@/components/sectionButton";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
