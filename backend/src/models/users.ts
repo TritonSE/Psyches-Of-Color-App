@@ -63,31 +63,25 @@ const userSchema = new mongoose.Schema({
     ref: "Lesson",
   },
   onboardingInfo: {
-    ageRange: {
-      type: String,
-      required: true,
-    },
-    gender: {
-      type: String,
-      required: true,
-      default: "Prefer not to say",
-    },
-    ethnicity: {
-      type: String,
-      required: true,
-      default: "Prefer not to say",
-    },
-    educationLevel: {
-      type: String,
-      required: true,
-    },
-    counselingExperience: {
-      type: String,
-      required: true,
-    },
-    residence: {
-      type: String,
-      required: true,
+    type: new mongoose.Schema(
+      {
+        ageRange: { type: String, required: true, default: "Prefer not to say" },
+        gender: { type: String, required: true, default: "Prefer not to say" },
+        ethnicity: { type: String, required: true, default: "Prefer not to say" },
+        educationLevel: { type: String, required: true, default: "Prefer not to say" },
+        counselingExperience: { type: String, required: true, default: "Prefer not to say" },
+        residence: { type: String, required: true, default: "Prefer not to say" },
+      },
+      { _id: false },
+    ),
+    required: true,
+    default: {
+      ageRange: "Prefer not to say",
+      gender: "Prefer not to say",
+      ethnicity: "Prefer not to say",
+      educationLevel: "Prefer not to say",
+      counselingExperience: "Prefer not to say",
+      residence: "Prefer not to say",
     },
   },
 });
