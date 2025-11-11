@@ -1,4 +1,14 @@
+import { ServerMonitoringMode } from "mongodb";
 import mongoose from "mongoose";
+
+type OnboardingInfo = {
+  ageRange: string;
+  gender: string;
+  ethnicity: string;
+  educationLevel: string;
+  counselingExperience: string;
+  residence: string;
+};
 
 type UserInterface = {
   name: string;
@@ -7,9 +17,7 @@ type UserInterface = {
   character: string;
   completedLessons: string[];
   currLesson: string;
-  age: number;
-  gender: string;
-  residence: string;
+  onboardingInfo: OnboardingInfo;
 };
 
 type UserDoc = {
@@ -19,9 +27,7 @@ type UserDoc = {
   character: string;
   completedLessons: string[];
   currLesson: string;
-  age: number;
-  gender: string;
-  residence: string;
+  onboardingInfo: OnboardingInfo;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -56,20 +62,33 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lesson",
   },
-  age: {
-    type: Number,
-    default: 0,
-    required: true,
-  },
-  gender: {
-    type: String,
-    default: "Not specified",
-    required: true,
-  },
-  residence: {
-    type: String,
-    default: "Not specified",
-    required: true,
+  onboardingInfo: {
+    ageRange: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+      default: "Prefer not to say",
+    },
+    ethnicity: {
+      type: String,
+      required: true,
+      default: "Prefer not to say",
+    },
+    educationLevel: {
+      type: String,
+      required: true,
+    },
+    counselingExperience: {
+      type: String,
+      required: true,
+    },
+    residence: {
+      type: String,
+      required: true,
+    },
   },
 });
 
