@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { useContext } from "react";
 import {
   Image,
   SafeAreaView,
@@ -9,6 +10,8 @@ import {
   View,
 } from "react-native";
 
+import { UserContext } from "../contexts/userContext";
+
 import BiFire from "@/assets/bi_fire.png";
 import Frog from "@/assets/frog.png";
 import Media from "@/assets/media.png";
@@ -16,8 +19,6 @@ import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
 import ButtonItem from "@/components/ProfileButton";
 import { lightModeColors } from "@/constants/colors";
-import { useContext } from "react";
-import { UserContext } from "../contexts/userContext";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
 
