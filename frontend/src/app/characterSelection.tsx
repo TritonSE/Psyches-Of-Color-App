@@ -1,5 +1,5 @@
 import auth from "@react-native-firebase/auth";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -19,6 +19,7 @@ import water from "@/assets/water.png";
 import Button from "@/components/Button";
 import { CharacterCard } from "@/components/CharacterCard";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import { useAuth } from "@/contexts/userContext";
 import env from "@/util/validateEnv";
 
 const { width } = Dimensions.get("window");
@@ -82,6 +83,11 @@ export default function CharacterSelection() {
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
 
   const router = useRouter();
+
+  const { loadingUser, firebaseUser } = useAuth();
+  if (!loadingUser && !firebaseUser) {
+    return <Redirect href="/login" />;
+  }
 
   const navigateToOnboarding = async () => {
     const choice = characters[selectedIndex].character;
