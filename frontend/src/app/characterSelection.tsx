@@ -1,3 +1,5 @@
+import auth from "@react-native-firebase/auth";
+import { Redirect, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -17,6 +19,8 @@ import water from "@/assets/water.png";
 import Button from "@/components/Button";
 import { CharacterCard } from "@/components/CharacterCard";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import { useAuth } from "@/contexts/userContext";
+import env from "@/util/validateEnv";
 
 const { width } = Dimensions.get("window");
 const WIDTH = 273;
@@ -50,12 +54,50 @@ const characters: Character[] = [
 
 const infiniteCharacters = [...characters, ...characters, ...characters];
 
+async function updateUserCharacter(character: string) {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ character }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    console.warn("Failed to update character: ", res.status, text);
+  }
+}
+
 export default function CharacterSelection() {
   const initialScrollPosition = CARD_TOTAL_WIDTH * (characters.length + 1);
   const [selectedIndex, setSelectedIndex] = useState(1);
   const scrollX = useRef(new Animated.Value(initialScrollPosition)).current;
   const scrollViewRef = useRef<ScrollView>(null);
   const [charactersState, setCharactersState] = useState(infiniteCharacters);
+
+  const router = useRouter();
+
+  const { loadingUser, firebaseUser } = useAuth();
+  if (!loadingUser && !firebaseUser) {
+    return <Redirect href="/login" />;
+  }
+
+  const navigateToOnboarding = async () => {
+    const choice = characters[selectedIndex].character;
+    try {
+      await updateUserCharacter(choice);
+    } catch (e) {
+      console.warn("Error updating user character: ", e);
+    }
+    router.push("/onboarding");
+  };
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = e.nativeEvent.contentOffset.x;
@@ -146,8 +188,11 @@ export default function CharacterSelection() {
       </Animated.ScrollView>
 
       <Button
+        // onPress={() => {
+        //   console.log(charactersState[selectedIndex].character);
+        // }}
         onPress={() => {
-          console.log(charactersState[selectedIndex].character);
+          void navigateToOnboarding();
         }}
         style={styles.nextButton}
         textStyle={styles.buttonText}

@@ -7,8 +7,8 @@ import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
-import { signUpEmailPassword } from "@/lib/auth";
-import env from "@/util/validateEnv";
+import { useAuth } from "@/contexts/userContext";
+import { createMongoUser, signUpEmailPassword } from "@/lib/auth";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -18,6 +18,8 @@ export default function Signup() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { setMongoUser } = useAuth();
+
   // input validators
   const emailValidator = z
     .string()
@@ -63,36 +65,14 @@ export default function Signup() {
     setPasswordError("");
     setLoading(true);
     const res = await signUpEmailPassword(email, password);
-
+    setLoading(false);
     // If signup was successful, create MongoDB user
     if (res.success) {
-      try {
-        const idToken = await res.user.getIdToken();
-        const fullName = `${firstName.trim()} ${lastName.trim()}`;
-
-        // Create MongoDB user
-        const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: fullName,
-            email: email.trim(),
-            uid: res.user.uid,
-          }),
-        });
-
-        if (!response.ok) {
-          console.error("Failed to create MongoDB user:", response.status);
-          // Continue anyway - the user is created in Firebase
-          // They can still use the app, MongoDB user will be created on retry
-        }
-      } catch (error) {
-        console.error("Error creating MongoDB user:", error);
-        // Continue anyway - redirection happens in auth context
-      }
-      setLoading(false);
+      const mongoUser = await createMongoUser({
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+      });
+      setMongoUser(mongoUser);
       return;
     }
 

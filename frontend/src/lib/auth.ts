@@ -4,7 +4,7 @@
 
 import { User } from "@/types";
 import env from "@/util/validateEnv";
-import {
+import auth, {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
   getAuth,
@@ -49,6 +49,30 @@ type EmailSendResponse =
 type FirebaseError = {
   field: "email" | "password" | "unknown";
   message: string;
+};
+
+export const createMongoUser = async ({ name, email }: { name: string; email: string }) => {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return null;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      uid: firebaseUser.uid,
+    }),
+  });
+  if (!res.ok) {
+    return null;
+  }
+  return (await res.json()).user as User;
 };
 
 /**
@@ -103,33 +127,6 @@ export const loginEmailPassword = async (
   }
 };
 
-/**
- * Creates a MongoDB user from a Firebase user
- */
-export const createMongoUser = async (
-  firebaseUser: FirebaseAuthTypes.User,
-): Promise<boolean> => {
-  try {
-    const idToken = await firebaseUser.getIdToken();
-    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: firebaseUser.displayName ?? firebaseUser.email?.split("@")[0] ?? "User",
-        email: firebaseUser.email ?? "",
-        uid: firebaseUser.uid,
-      }),
-    });
-
-    return response.ok;
-  } catch (error) {
-    console.error("Error creating MongoDB user:", error);
-    return false;
-  }
-};
-
 /*
  * Sends the Firebase ID token to the backend on the whoami route
  * If user doesn't exist in MongoDB, attempts to create one
@@ -146,33 +143,6 @@ export const getMongoUser = async (idToken: string): Promise<User | null> => {
 
       return user;
     } else {
-      if (response.status === 404) {
-        console.log("User not found in MongoDB, attempting to create...");
-
-        // Try to create the user automatically
-        const auth = getAuth();
-        const currentUser = auth.currentUser;
-
-        if (currentUser) {
-          const created = await createMongoUser(currentUser);
-          if (created) {
-            console.log("MongoDB user created successfully, retrying fetch...");
-            // Retry fetching the user
-            const retryResponse = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
-              headers: {
-                Authorization: `Bearer ${idToken}`,
-              },
-            });
-            if (retryResponse.ok) {
-              const user = (await retryResponse.json()) as User;
-              return user;
-            }
-          }
-        }
-      }
-
-      console.error("Failed to get user info from JWT Token, status:", response.status);
-
       return null;
     }
   } catch (error) {
