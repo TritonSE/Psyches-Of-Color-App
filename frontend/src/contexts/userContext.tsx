@@ -7,7 +7,6 @@ import { User } from "@/types";
 type UserContext = {
   firebaseUser: FirebaseAuthTypes.User | null;
   mongoUser: User | null;
-  isNewUser: boolean;
   refreshMongoUser: () => Promise<void>;
 };
 
@@ -17,7 +16,6 @@ type UserContext = {
 export const UserContext = createContext<UserContext>({
   firebaseUser: null,
   mongoUser: null,
-  isNewUser: false,
   refreshMongoUser: async () => {
     return Promise.resolve();
   },
@@ -30,7 +28,6 @@ export const UserContext = createContext<UserContext>({
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [mongoUser, setMongoUser] = useState<User | null>(null);
-  const [isNewUser, setIsNewUser] = useState(false);
 
   const refreshMongoUser = async () => {
     if (firebaseUser) {
@@ -46,11 +43,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
       setFirebaseUser(user);
-      if (user?.metadata?.creationTime && user?.metadata?.lastSignInTime) {
-        setIsNewUser(user.metadata.creationTime === user.metadata.lastSignInTime);
-      } else {
-        setIsNewUser(false);
-      }
     });
     return () => {
       unsubscribe();
@@ -68,7 +60,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }, [firebaseUser]);
 
   return (
-    <UserContext.Provider value={{ firebaseUser, mongoUser, isNewUser, refreshMongoUser }}>
+    <UserContext.Provider value={{ firebaseUser, mongoUser, refreshMongoUser }}>
       {children}
     </UserContext.Provider>
   );

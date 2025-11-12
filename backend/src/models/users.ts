@@ -17,6 +17,7 @@ type UserInterface = {
   completedLessons: string[];
   currLesson: string;
   onboardingInfo: OnboardingInfo;
+  completedOnboarding: boolean;
 };
 
 type UserDoc = {
@@ -27,6 +28,7 @@ type UserDoc = {
   completedLessons: string[];
   currLesson: string;
   onboardingInfo: OnboardingInfo;
+  completedOnboarding: boolean;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -82,6 +84,11 @@ const userSchema = new mongoose.Schema({
       counselingExperience: "Prefer not to say",
       residence: "Prefer not to say",
     },
+  },
+  completedOnboarding: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 

@@ -41,7 +41,7 @@ async function updateUserOnboardingInfo(onboardingInfo: OnboardingInfo) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${idToken}`,
     },
-    body: JSON.stringify({ onboardingInfo }),
+    body: JSON.stringify({ onboardingInfo, completedOnboarding: true }),
   });
 
   if (!res.ok) {
