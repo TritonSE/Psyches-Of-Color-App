@@ -1,5 +1,7 @@
 // Onboarding.tsx
 
+import auth from "@react-native-firebase/auth";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -12,8 +14,45 @@ import Mascots from "@/assets/Poc_Mascots.svg";
 import Back from "@/assets/back.svg";
 import { lightModeColors } from "@/constants/colors";
 import { QuestionData, onboardingQuestions } from "@/constants/questionData";
+import env from "@/util/validateEnv";
+
+const QUESTION_ORDER = [
+  "ageRange",
+  "gender",
+  "ethnicity",
+  "educationLevel",
+  "counselingExperience",
+  "residence",
+];
+
+type QuestionKey = (typeof QUESTION_ORDER)[number];
+
+type OnboardingInfo = Record<QuestionKey, string>;
+
+async function updateUserOnboardingInfo(onboardingInfo: OnboardingInfo) {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ onboardingInfo, completedOnboarding: true }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    console.warn("Failed to update onboarding info: ", res.status, text);
+  }
+}
 
 const Onboarding: React.FC = () => {
+  const router = useRouter();
+
   const questions: QuestionData[] = onboardingQuestions;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,11 +69,13 @@ const Onboarding: React.FC = () => {
     setAnswers(updatedAnswers);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
       console.log("All questions answered:", answers);
+      await handleSubmit();
+      router.push("/");
     }
   };
 
@@ -42,6 +83,26 @@ const Onboarding: React.FC = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
+  };
+
+  const handleSubmit = async () => {
+    const onboardingInfo: OnboardingInfo = {
+      ageRange: "N/A",
+      gender: "N/A",
+      ethnicity: "N/A",
+      educationLevel: "N/A",
+      counselingExperience: "N/A",
+      residence: "N/A",
+    };
+
+    QUESTION_ORDER.forEach((question: QuestionKey, i) => {
+      const ans = answers[i];
+      if (ans !== undefined) {
+        onboardingInfo[question] = ans;
+      }
+    });
+
+    await updateUserOnboardingInfo(onboardingInfo);
   };
 
   const isNextDisabled = !currentAnswer;
@@ -74,7 +135,13 @@ const Onboarding: React.FC = () => {
       </View>
 
       <View style={styles.nextButtonContainer}>
-        <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next" />
+        <NextButton
+          onPress={() => {
+            void handleNext();
+          }}
+          disabled={!!isNextDisabled}
+          textOption="Next"
+        />
       </View>
     </View>
   );

@@ -4,7 +4,7 @@
 
 import { User } from "@/types";
 import env from "@/util/validateEnv";
-import {
+import auth, {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
   getAuth,
@@ -49,6 +49,30 @@ type EmailSendResponse =
 type FirebaseError = {
   field: "email" | "password" | "unknown";
   message: string;
+};
+
+export const createMongoUser = async ({ name, email }: { name: string; email: string }) => {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return null;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      uid: firebaseUser.uid,
+    }),
+  });
+  if (!res.ok) {
+    return null;
+  }
+  return (await res.json()) as User;
 };
 
 /**
@@ -118,12 +142,6 @@ export const getMongoUser = async (idToken: string): Promise<User | null> => {
 
       return user;
     } else {
-      if (response.status === 404) {
-        console.error("User not found");
-      }
-
-      console.error("Failed to get user info from JWT Token, status:", response.status);
-
       return null;
     }
   } catch (error) {

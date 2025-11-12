@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { useContext } from "react";
+import { useContext } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -10,6 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { UserContext } from "../contexts/userContext";
 
 import { UserContext } from "../contexts/userContext";
 
