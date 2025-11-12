@@ -65,7 +65,6 @@ export default function Signup() {
     setPasswordError("");
     setLoading(true);
     const res = await signUpEmailPassword(email, password);
-    setLoading(false);
     // If signup was successful, create MongoDB user
     if (res.success) {
       const mongoUser = await createMongoUser({
@@ -129,6 +128,7 @@ export default function Signup() {
             hidden={true}
           />
           <Button
+            disabled={loading}
             style={styles.loginButton}
             onPress={() => {
               void handleSignup();
