@@ -1,0 +1,183 @@
+# Cursor Rules for Psyches of Color App
+
+## Git Commit Guidelines
+
+### Conventional Commit Format
+
+All commits MUST follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Commit Types
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `perf`: A code change that improves performance
+- `test`: Adding missing tests or correcting existing tests
+- `build`: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+- `ci`: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+- `chore`: Other changes that don't modify src or test files
+- `revert`: Reverts a previous commit
+
+### Scope
+
+The scope should be the name of the package/component affected:
+
+- `backend`: Backend changes
+- `frontend`: Frontend changes
+- `admin-portal`: Admin portal changes
+- Specific component/service name (e.g., `auth`, `user`, `activity`)
+
+### Commit Message Format
+
+**Format:**
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Examples:**
+
+```
+fix(backend): correct import path in auth.ts
+
+- Change import path from '../src/services/firebase' to 'src/services/firebase'
+- Configure tsconfig.json with baseUrl to support absolute imports
+- Resolves TypeScript module resolution error
+```
+
+```
+feat(frontend): add user profile page
+
+- Create profile page component
+- Add profile editing functionality
+- Connect to user API endpoint
+```
+
+```
+docs: update README with setup instructions
+
+- Add environment variable setup steps
+- Include MongoDB connection instructions
+- Update dependency installation guide
+```
+
+### Commit Rules
+
+1. **Always use conventional commit format** when committing changes
+2. **Type and scope are required** - always include them
+3. **Subject line should be imperative, present tense** - "add feature" not "added feature" or "adds feature"
+4. **Subject line should not end with a period**
+5. **Subject line should be 72 characters or less**
+6. **Body is optional but recommended** for complex changes
+7. **Body should explain the "what" and "why"** of the change
+8. **Use bullet points in body** for multiple changes
+9. **Reference issue numbers** in footer if applicable: `Closes #123`
+
+### Automatic Committing
+
+**ALWAYS commit changes automatically after making them. DO NOT ask for permission to commit.**
+
+After making any code changes:
+
+1. Review all changes made (use `git status` and `git diff` if needed)
+2. Stage all changed files: `git add <files>`
+3. Determine the appropriate type and scope based on the changes
+4. Write a clear, descriptive commit message following conventional commit format
+5. Include a body with bullet points describing the changes
+6. Execute `git commit -m "..."` with the formatted message
+7. If pre-commit hooks fail due to unrelated issues (e.g., frontend lint warnings when only backend was changed), use `--no-verify` flag only after verifying:
+   - The changes are correct and complete
+   - Lint issues are unrelated to your changes
+   - Your changes pass lint checks when tested independently
+
+**Commit immediately after completing a change or set of related changes. Never leave uncommitted changes unless explicitly asked by the user.**
+
+### Examples of Good Commit Messages
+
+```
+fix(backend): resolve MongoDB connection timeout
+
+- Increase connection timeout to 30 seconds
+- Add retry logic for failed connections
+- Update error handling for connection errors
+```
+
+```
+feat(frontend): implement journal entry creation
+
+- Create journal entry form component
+- Add validation for journal entry fields
+- Connect to journal entries API
+- Add success/error notifications
+```
+
+```
+refactor(auth): simplify authentication middleware
+
+- Extract token verification logic to separate function
+- Improve error messages
+- Add JSDoc comments for better documentation
+```
+
+```
+chore: update dependencies
+
+- Update Express to v4.21.2
+- Update TypeScript to v5.7.2
+- Update React Native to latest stable version
+```
+
+### Bad Commit Messages (DO NOT USE)
+
+❌ `fixed bug`
+❌ `update files`
+❌ `changes`
+❌ `WIP`
+❌ `fix: fixed the bug`
+❌ `feat: added new feature that does stuff and things`
+
+### Pre-commit Hooks
+
+The project uses Husky pre-commit hooks that:
+
+- Run lint checks on backend and frontend
+- Check for secret leaks
+- Verify code formatting
+
+If lint checks fail, fix the issues before committing. If you need to bypass hooks (not recommended), use `--no-verify` flag, but only after verifying that:
+
+1. The changes are correct
+2. Lint issues are unrelated to your changes
+3. You have a valid reason to bypass
+
+## Code Style
+
+- Follow existing code patterns and conventions
+- Use TypeScript strict mode
+- Use relative imports when files are in the same directory (absolute imports require runtime configuration)
+- Follow ESLint and Prettier rules
+- Write clear, descriptive variable and function names
+- Add JSDoc comments for public functions and complex logic
+- After making changes, automatically commit them using conventional commit format
+
+## Project Structure
+
+- `backend/`: Node.js/Express backend
+- `frontend/`: React Native mobile app
+- `admin-portal/`: Next.js admin portal
+
+Each directory has its own `package.json` and dependencies.

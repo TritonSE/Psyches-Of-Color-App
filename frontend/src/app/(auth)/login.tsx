@@ -73,7 +73,6 @@ export default function Login() {
     if (res.success) {
       const token = await res.user.getIdToken();
       const user = await getMongoUser(token);
-      console.log("got mongo user:", user);
       if (user === null && res.user.email !== null) {
         // Create user if necessary because Google doesn't distinguish between signing in vs.
         // signing up with Google, so we have to determine whether the user just signed up

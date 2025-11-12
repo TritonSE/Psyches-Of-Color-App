@@ -7,9 +7,9 @@ import Exit from "@/assets/exit.svg";
 import Fire from "@/assets/fire.svg";
 
 const ExitJournal = ({ onClose }: { onClose: () => void }) => {
-  const handleDelete = () => {
+  const handleExit = () => {
     onClose();
-    router.navigate("/journal");
+    router.back();
   };
 
   return (
@@ -25,7 +25,7 @@ const ExitJournal = ({ onClose }: { onClose: () => void }) => {
       <Text style={styles.text}>If you exit now, your progress will not save.</Text>
 
       <View style={styles.buttons}>
-        <Button style={styles.delete} textStyle={styles.deleteText} onPress={handleDelete}>
+        <Button style={styles.delete} textStyle={styles.deleteText} onPress={handleExit}>
           Exit anyway
         </Button>
         <Button style={styles.continue} textStyle={styles.continueText} onPress={onClose}>
