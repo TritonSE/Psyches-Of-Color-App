@@ -48,6 +48,10 @@ export default function ProfilePage() {
     router.push("/editProfile");
   };
 
+  const navigateToEditCompanionPage = () => {
+    router.push("/editCharacter");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
@@ -75,9 +79,9 @@ export default function ProfilePage() {
                   <Text style={styles.editButtonText}>Edit Profile</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity disabled={true}>
-                <View style={[styles.editButton, styles.disabledButton]}>
-                  <Text style={[styles.editButtonText, styles.disabledText]}>Edit Companion</Text>
+              <TouchableOpacity onPress={navigateToEditCompanionPage}>
+                <View style={styles.editButton}>
+                  <Text style={styles.editButtonText}>Edit Companion</Text>
                 </View>
               </TouchableOpacity>
             </View>

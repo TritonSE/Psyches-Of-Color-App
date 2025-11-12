@@ -100,7 +100,7 @@ export default function CreateJournal() {
       if (!firebaseUser) return;
       const token = await firebaseUser.getIdToken();
       await createJournalEntry(token, titleText, paragraphText, image ?? undefined);
-      router.navigate("/journal");
+      router.back();
     } catch (error) {
       console.error(`Error saving journal: ${error as string}`);
     }
@@ -136,7 +136,7 @@ export default function CreateJournal() {
               if (isModified) {
                 setShowExitModal(true);
               } else {
-                router.navigate("/journal");
+                router.back();
               }
             }}
           >
