@@ -44,7 +44,7 @@ export default function SettingsScreen() {
                   {
                     text: "OK",
                     onPress: () => {
-                      router.replace("/(auth)/signIn");
+                      router.replace("/(auth)/login");
                     },
                   },
                 ]);
