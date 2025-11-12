@@ -7,7 +7,8 @@ import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
-import { signUpEmailPassword } from "@/lib/auth";
+import { useAuth } from "@/contexts/userContext";
+import { createMongoUser, signUpEmailPassword } from "@/lib/auth";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -17,6 +18,8 @@ export default function Signup() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { setMongoUser } = useAuth();
+
   // input validators
   const emailValidator = z
     .string()
@@ -63,9 +66,14 @@ export default function Signup() {
     setLoading(true);
     const res = await signUpEmailPassword(email, password);
     setLoading(false);
-    // If signup was succesl, we don't need to do anything
+    // If signup was successful, we don't need to do anything
     // redirection happens in auth context
     if (res.success) {
+      const mongoUser = await createMongoUser({
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+      });
+      setMongoUser(mongoUser);
       return;
     }
     // If signup was unsuccessful, set the appropriate error message

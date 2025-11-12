@@ -11,6 +11,8 @@ import {
   View,
 } from "react-native";
 
+import { UserContext } from "../contexts/userContext";
+
 import type { ImageSourcePropType } from "react-native";
 
 import checkinIcon from "@/assets/checkinIcon.png";
@@ -25,7 +27,6 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
-import { UserContext } from "../contexts/userContext";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {

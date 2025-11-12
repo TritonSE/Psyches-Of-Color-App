@@ -9,7 +9,8 @@ import GoogleLogo from "@/assets/logo-google.svg";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
-import { loginEmailPassword, signInWithGoogle } from "@/lib/auth";
+import { useAuth } from "@/contexts/userContext";
+import { createMongoUser, getMongoUser, loginEmailPassword, signInWithGoogle } from "@/lib/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,8 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  const { setMongoUser } = useAuth();
 
   // input validators
   const emailValidator = z
@@ -66,7 +69,23 @@ export default function Login() {
 
     setLoading(true);
 
-    await signInWithGoogle();
+    const res = await signInWithGoogle();
+    if (res.success) {
+      const token = await res.user.getIdToken();
+      const user = await getMongoUser(token);
+      console.log("got mongo user:", user);
+      if (user === null && res.user.email !== null) {
+        // Create user if necessary because Google doesn't distinguish between signing in vs.
+        // signing up with Google, so we have to determine whether the user just signed up
+        const mongoUser = await createMongoUser({
+          name: res.user.displayName ?? "User",
+          email: res.user.email,
+        });
+        setMongoUser(mongoUser);
+      }
+    } else {
+      console.error(`Error signing in with Google: ${res.error.message}`);
+    }
 
     setLoading(false);
   };

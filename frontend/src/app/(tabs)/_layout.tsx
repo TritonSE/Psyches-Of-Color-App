@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
 });
 
 export default function TabLayout() {
-  const { firebaseUser } = useAuth();
+  const { loadingUser, firebaseUser } = useAuth();
   const pathname = usePathname();
 
-  if (!firebaseUser) {
+  if (!loadingUser && !firebaseUser) {
     return <Redirect href="/login" />;
   }
 

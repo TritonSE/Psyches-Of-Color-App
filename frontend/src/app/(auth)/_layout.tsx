@@ -5,10 +5,14 @@ import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 
 const AuthLayout = () => {
-  const { firebaseUser } = useAuth();
+  const { loadingUser, firebaseUser, mongoUser } = useAuth();
 
-  if (firebaseUser) {
-    return <Redirect href="/" />;
+  if (!loadingUser && firebaseUser && mongoUser) {
+    if (!mongoUser.completedOnboarding) {
+      return <Redirect href="/characterSelection" />;
+    } else {
+      return <Redirect href="/" />;
+    }
   }
 
   return (

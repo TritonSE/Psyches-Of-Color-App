@@ -1,5 +1,14 @@
 import mongoose from "mongoose";
 
+type OnboardingInfo = {
+  ageRange: string;
+  gender: string;
+  ethnicity: string;
+  educationLevel: string;
+  counselingExperience: string;
+  residence: string;
+};
+
 type UserInterface = {
   name: string;
   email: string;
@@ -7,9 +16,8 @@ type UserInterface = {
   character: string;
   completedLessons: string[];
   currLesson: string;
-  age: number;
-  gender: string;
-  residence: string;
+  onboardingInfo: OnboardingInfo;
+  completedOnboarding: boolean;
 };
 
 type UserDoc = {
@@ -19,9 +27,8 @@ type UserDoc = {
   character: string;
   completedLessons: string[];
   currLesson: string;
-  age: number;
-  gender: string;
-  residence: string;
+  onboardingInfo: OnboardingInfo;
+  completedOnboarding: boolean;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -44,8 +51,8 @@ const userSchema = new mongoose.Schema({
   },
   character: {
     type: String,
-    enum: ["fire", "water", "earth"],
-    default: "fire",
+    enum: ["Fire", "Water", "Nature"],
+    default: "Fire",
   },
   completedLessons: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -56,20 +63,32 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lesson",
   },
-  age: {
-    type: Number,
-    default: 0,
+  onboardingInfo: {
+    type: new mongoose.Schema(
+      {
+        ageRange: { type: String, required: true, default: "Prefer not to say" },
+        gender: { type: String, required: true, default: "Prefer not to say" },
+        ethnicity: { type: String, required: true, default: "Prefer not to say" },
+        educationLevel: { type: String, required: true, default: "Prefer not to say" },
+        counselingExperience: { type: String, required: true, default: "Prefer not to say" },
+        residence: { type: String, required: true, default: "Prefer not to say" },
+      },
+      { _id: false },
+    ),
     required: true,
+    default: {
+      ageRange: "Prefer not to say",
+      gender: "Prefer not to say",
+      ethnicity: "Prefer not to say",
+      educationLevel: "Prefer not to say",
+      counselingExperience: "Prefer not to say",
+      residence: "Prefer not to say",
+    },
   },
-  gender: {
-    type: String,
-    default: "Not specified",
+  completedOnboarding: {
+    type: Boolean,
     required: true,
-  },
-  residence: {
-    type: String,
-    default: "Not specified",
-    required: true,
+    default: false,
   },
 });
 
