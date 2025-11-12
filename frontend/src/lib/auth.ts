@@ -75,6 +75,30 @@ export const createMongoUser = async ({ name, email }: { name: string; email: st
   return (await res.json()).user as User;
 };
 
+export const updateUserCharacter = async (character: string) => {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return null;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ character }),
+  });
+
+  if (res.ok) {
+    return (await res.json()).user as User;
+  } else {
+    const text = await res.text().catch(() => "");
+    console.warn("Failed to update character: ", res.status, text);
+    return null;
+  }
+};
+
 /**
  * Signs up a user with email and password
  *
