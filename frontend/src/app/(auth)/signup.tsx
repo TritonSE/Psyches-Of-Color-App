@@ -65,9 +65,7 @@ export default function Signup() {
     setPasswordError("");
     setLoading(true);
     const res = await signUpEmailPassword(email, password);
-    setLoading(false);
-    // If signup was successful, we don't need to do anything
-    // redirection happens in auth context
+    // If signup was successful, create MongoDB user
     if (res.success) {
       const mongoUser = await createMongoUser({
         name: `${firstName} ${lastName}`.trim(),
@@ -76,6 +74,9 @@ export default function Signup() {
       setMongoUser(mongoUser);
       return;
     }
+
+    setLoading(false);
+
     // If signup was unsuccessful, set the appropriate error message
     if (res.error.field === "email") {
       setEmailError(res.error.message);
@@ -127,6 +128,7 @@ export default function Signup() {
             hidden={true}
           />
           <Button
+            disabled={loading}
             style={styles.loginButton}
             onPress={() => {
               void handleSignup();

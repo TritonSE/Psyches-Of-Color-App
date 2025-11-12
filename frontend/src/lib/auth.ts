@@ -72,7 +72,7 @@ export const createMongoUser = async ({ name, email }: { name: string; email: st
   if (!res.ok) {
     return null;
   }
-  return (await res.json()) as User;
+  return (await res.json()).user as User;
 };
 
 /**
@@ -129,6 +129,7 @@ export const loginEmailPassword = async (
 
 /*
  * Sends the Firebase ID token to the backend on the whoami route
+ * If user doesn't exist in MongoDB, attempts to create one
  */
 export const getMongoUser = async (idToken: string): Promise<User | null> => {
   try {
@@ -207,6 +208,58 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  */
 export const logout = async (): Promise<void> => {
   await signOut(getAuth());
+};
+
+/**
+ * Deletes the current user's account from both Firebase and MongoDB
+ *
+ * @returns {Promise<{ success: boolean; error?: string }>}
+ */
+export const deleteAccount = async (): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      return {
+        success: false,
+        error: "No user is currently signed in",
+      };
+    }
+
+    // Get the user's ID token for backend authentication
+    const idToken = await user.getIdToken();
+
+    // Delete user from MongoDB backend
+    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${user.uid}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || "Failed to delete user from database",
+      };
+    }
+
+    // Delete user from Firebase Authentication
+    await user.delete();
+
+    return {
+      success: true,
+    };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Error deleting account:", err);
+    return {
+      success: false,
+      error: err.message || "An error occurred while deleting the account",
+    };
+  }
 };
 
 /**
