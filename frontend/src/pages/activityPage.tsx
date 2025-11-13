@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-nati
 
 import ActivityButton from "@/components/ActivityButton";
 import ActivityPopup from "@/components/ActivityPopup";
-import SectionButton from "@/components/sectionButton";
+import SectionButton from "@/components/SectionButton";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import { Lesson, Unit } from "@/types";
