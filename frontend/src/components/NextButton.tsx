@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-
 import { lightModeColors } from "@/constants/colors";
 
 type NextButtonProps = {
