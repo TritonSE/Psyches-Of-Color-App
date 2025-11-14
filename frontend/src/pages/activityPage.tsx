@@ -21,14 +21,29 @@ export default function ActivitiesPage() {
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>([]);
+  const [lessonStatuses, setLessonStatuses] = useState<
+    ("inProgress" | "completed" | "incomplete")[]
+  >([]);
 
   // Fetch units & lessons
-  const getAllSections = async () => {
+  const getAllSections = async (): Promise<void> => {
     try {
       const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/units`);
       if (res.ok) {
         const fetchedUnits = (await res.json()) as Unit[];
         setUnits(fetchedUnits);
+
+        // Compute statuses after fetching
+        const allLessons = fetchedUnits.flatMap((unit) => unit.lessons);
+        const statuses: ("inProgress" | "completed" | "incomplete")[] = allLessons.map(
+          (lesson, index) => {
+            if (mongoUser?.completedLessons.find((les) => les._id === lesson._id))
+              return "completed";
+            else if (index === 0 || statuses?.[index - 1] === "completed") return "inProgress";
+            else return "incomplete";
+          },
+        );
+        setLessonStatuses(statuses);
       } else {
         console.error("Failed to fetch units");
       }
@@ -38,31 +53,10 @@ export default function ActivitiesPage() {
   };
 
   useEffect(() => {
-    getAllSections().catch((err: unknown) => {
-      console.error(err);
-    });
+    void getAllSections();
   }, []);
 
-  // Compute lesson statuses
-  const getLessonStatuses = (lessons: Lesson[]): ("inProgress" | "completed" | "incomplete")[] => {
-    const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
-    lessons.forEach((lesson, index) => {
-      if (mongoUser?.completedLessons.find((les) => les._id === lesson._id)) {
-        statuses.push("completed");
-      } else if (index === 0 || statuses[index - 1] === "completed") {
-        statuses.push("inProgress");
-      } else {
-        statuses.push("incomplete");
-      }
-    });
-    return statuses;
-  };
-
-  const allLessons = units.flatMap((unit) => unit.lessons);
-  const lessonStatuses = getLessonStatuses(allLessons);
-  let statusIndex = 0;
-
-  // Reset activity answers when lesson changes
+  // Reset answers when lesson opens
   useEffect(() => {
     if (!currLesson) return;
     setAnswers(Array(currLesson.activities.length).fill(undefined));
@@ -89,10 +83,14 @@ export default function ActivitiesPage() {
   };
 
   const handleBack = () => {
-    if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    } else {
+      setCurrLesson(null); // back to units view
+    }
   };
 
-  const handleComplete = async () => {
+  const handleComplete = async (): Promise<void> => {
     if (!mongoUser?._id || !currLesson?._id) {
       alert("User or activity not found.");
       return;
@@ -100,7 +98,7 @@ export default function ActivitiesPage() {
 
     try {
       const res = await fetch(
-        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${String(currLesson._id)}`,
+        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${currLesson._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -109,7 +107,7 @@ export default function ActivitiesPage() {
 
       if (res.ok) {
         alert("Activity completed!");
-        await refreshMongoUser();
+        void refreshMongoUser();
         setCurrLesson(null);
       } else {
         alert("Failed to update activity progress.");
@@ -133,22 +131,16 @@ export default function ActivitiesPage() {
             >
               <Ionicons name="arrow-back-outline" size={24} color="gray" />
             </TouchableOpacity>
-
             <Text style={styles.headerTitle}>Activities</Text>
           </View>
 
-          {units.map((unit, sectionIndex) => (
+          {units.map((unit) => (
             <View key={unit._id} style={styles.sectionContainer}>
-              <SectionButton
-                title={`Section ${String(sectionIndex + 1)}`}
-                subtitle={unit.title}
-                color="green"
-              />
+              <SectionButton title={unit.title} subtitle="" color="green" />
 
               <View style={styles.optionsContainer}>
                 {unit.lessons.map((lesson, lessonIndex) => {
-                  const status = lessonStatuses[statusIndex];
-                  statusIndex += 1;
+                  const status = lessonStatuses.shift() ?? "incomplete";
 
                   if (status === "incomplete") {
                     return (
@@ -188,13 +180,13 @@ export default function ActivitiesPage() {
       ) : (
         // Lesson activity view
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            {currentIndex > 0 && (
-              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                <Ionicons name="arrow-back-outline" size={24} color="gray" />
-              </TouchableOpacity>
-            )}
-            <Text style={styles.titleText}>{currLesson.title}</Text>
+          <View style={styles.lessonHeader}>
+            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+              <Ionicons name="arrow-back-outline" size={24} color="gray" />
+            </TouchableOpacity>
+            <Text style={styles.lessonTitle} numberOfLines={1} ellipsizeMode="tail">
+              {currLesson.title}
+            </Text>
           </View>
 
           <ProgressBar progress={(currentIndex + 1) / currLesson.activities.length} />
@@ -275,11 +267,20 @@ const styles = StyleSheet.create({
   },
   main: { justifyContent: "center", alignItems: "center", marginTop: 20 },
   nextButtonContainer: { marginTop: 16, alignSelf: "center", width: "100%" },
-  titleText: {
+  lessonHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 50,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  backButton: { marginRight: 16 },
+  lessonTitle: {
+    flex: 1,
     fontSize: 18,
+    fontWeight: "600",
     textAlign: "center",
     color: lightModeColors.title,
     fontFamily: "SG-Medium",
   },
-  backButton: { position: "absolute", left: 5 },
 });
