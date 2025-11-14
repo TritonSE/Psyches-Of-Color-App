@@ -1,15 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import ActivityButton from "@/components/ActivityButton";
-import ActivityPopup from "@/components/ActivityPopup";
-import SectionButton from "@/components/SectionButton";
 import NextButton from "@/components/NextButton";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
 import { Question } from "@/components/Onboarding/Question";
-
+import SectionButton from "@/components/SectionButton";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import { Lesson, Unit } from "@/types";
@@ -21,8 +19,6 @@ export default function ActivitiesPage() {
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>([]);
 
@@ -36,13 +32,15 @@ export default function ActivitiesPage() {
       } else {
         console.error("Failed to fetch units");
       }
-    } catch (err) {
-      console.error("Error fetching units:", err);
+    } catch (err: unknown) {
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    void getAllSections();
+    getAllSections().catch((err: unknown) => {
+      console.error(err);
+    });
   }, []);
 
   // Compute lesson statuses
@@ -64,7 +62,7 @@ export default function ActivitiesPage() {
   const lessonStatuses = getLessonStatuses(allLessons);
   let statusIndex = 0;
 
-  // Initialize answers when a lesson is opened
+  // Reset activity answers when lesson changes
   useEffect(() => {
     if (!currLesson) return;
     setAnswers(Array(currLesson.activities.length).fill(undefined));
@@ -86,7 +84,7 @@ export default function ActivitiesPage() {
     if (currentIndex < currLesson.activities.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      handleComplete();
+      void handleComplete();
     }
   };
 
@@ -102,7 +100,7 @@ export default function ActivitiesPage() {
 
     try {
       const res = await fetch(
-        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${currLesson._id}`,
+        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${String(currLesson._id)}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -111,12 +109,12 @@ export default function ActivitiesPage() {
 
       if (res.ok) {
         alert("Activity completed!");
-        void refreshMongoUser();
+        await refreshMongoUser();
         setCurrLesson(null);
       } else {
         alert("Failed to update activity progress.");
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
       alert("Error updating activity progress.");
     }
@@ -128,16 +126,21 @@ export default function ActivitiesPage() {
         // Activities list view
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity
+              onPress={() => {
+                router.back();
+              }}
+            >
               <Ionicons name="arrow-back-outline" size={24} color="gray" />
             </TouchableOpacity>
+
             <Text style={styles.headerTitle}>Activities</Text>
           </View>
 
           {units.map((unit, sectionIndex) => (
             <View key={unit._id} style={styles.sectionContainer}>
               <SectionButton
-                title={`Section ${sectionIndex + 1}`}
+                title={`Section ${String(sectionIndex + 1)}`}
                 subtitle={unit.title}
                 color="green"
               />
@@ -174,7 +177,6 @@ export default function ActivitiesPage() {
                       }}
                       onPress={() => {
                         setCurrLesson(lesson);
-                        setIsModalOpen(true); // open popup before lesson
                       }}
                     />
                   );
@@ -224,22 +226,6 @@ export default function ActivitiesPage() {
             />
           </View>
         </ScrollView>
-      )}
-
-      {/* Popup */}
-      {currLesson && (
-        <ActivityPopup
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          color="green"
-          title={currLesson.title}
-          description={currLesson.description}
-          onStart={() => {
-            setIsModalOpen(false);
-            setAnswers(Array(currLesson.activities.length).fill(undefined));
-            setCurrentIndex(0);
-          }}
-        />
       )}
     </SafeAreaView>
   );
