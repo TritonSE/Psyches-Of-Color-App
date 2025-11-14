@@ -1,11 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from "react-native";
 
 import ActivityButton from "@/components/ActivityButton";
 import ActivityPopup from "@/components/ActivityPopup";
 import SectionButton from "@/components/SectionButton";
+import NextButton from "@/components/NextButton";
+import ProgressBar from "@/components/Onboarding/ProgressBar";
+import { Question } from "@/components/Onboarding/Question";
+
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import { Lesson, Unit } from "@/types";
@@ -13,25 +17,35 @@ import env from "@/util/validateEnv";
 
 export default function ActivitiesPage() {
   const router = useRouter();
-  const { mongoUser } = useAuth();
+  const { mongoUser, refreshMongoUser } = useAuth();
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<(string | undefined)[]>([]);
+
+  // Fetch units & lessons
   const getAllSections = async () => {
-    const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/units`);
-
-    if (res.ok) {
-      const fetchedUnits = (await res.json()) as Unit[];
-
-      setUnits(fetchedUnits);
-    } else {
-      console.error("Failed to fetch units");
+    try {
+      const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/units`);
+      if (res.ok) {
+        const fetchedUnits = (await res.json()) as Unit[];
+        setUnits(fetchedUnits);
+      } else {
+        console.error("Failed to fetch units");
+      }
+    } catch (err) {
+      console.error("Error fetching units:", err);
     }
   };
 
+  useEffect(() => {
+    void getAllSections();
+  }, []);
+
+  // Compute lesson statuses
   const getLessonStatuses = (lessons: Lesson[]): ("inProgress" | "completed" | "incomplete")[] => {
     const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
     lessons.forEach((lesson, index) => {
@@ -43,61 +57,107 @@ export default function ActivitiesPage() {
         statuses.push("incomplete");
       }
     });
-
     return statuses;
   };
 
-  useEffect(() => {
-    void getAllSections();
-  }, []);
-
-  const lessonStatuses = getLessonStatuses(units.flatMap((unit) => unit.lessons));
-
-  // keep track of the index to retrieve the correct status
+  const allLessons = units.flatMap((unit) => unit.lessons);
+  const lessonStatuses = getLessonStatuses(allLessons);
   let statusIndex = 0;
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <Ionicons name="arrow-back-outline" size={24} color="gray" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Activities</Text>
-      </View>
+  // Initialize answers when a lesson is opened
+  useEffect(() => {
+    if (!currLesson) return;
+    setAnswers(Array(currLesson.activities.length).fill(undefined));
+    setCurrentIndex(0);
+  }, [currLesson]);
 
-      {/* Content */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {units.map((unit, sectionIndex) => {
-          return (
+  const currentQuestion = currLesson?.activities[currentIndex];
+  const currentAnswer = currentQuestion ? (answers[currentIndex] ?? "") : "";
+
+  const handleAnswer = (answer: string) => {
+    if (!currLesson) return;
+    const updatedAnswers = [...answers];
+    updatedAnswers[currentIndex] = answer;
+    setAnswers(updatedAnswers);
+  };
+
+  const handleNext = () => {
+    if (!currLesson) return;
+    if (currentIndex < currLesson.activities.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      handleComplete();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
+  };
+
+  const handleComplete = async () => {
+    if (!mongoUser?._id || !currLesson?._id) {
+      alert("User or activity not found.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${currLesson._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      if (res.ok) {
+        alert("Activity completed!");
+        void refreshMongoUser();
+        setCurrLesson(null);
+      } else {
+        alert("Failed to update activity progress.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating activity progress.");
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {!currLesson ? (
+        // Activities list view
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="arrow-back-outline" size={24} color="gray" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Activities</Text>
+          </View>
+
+          {units.map((unit, sectionIndex) => (
             <View key={unit._id} style={styles.sectionContainer}>
               <SectionButton
-                title={`Section ${(sectionIndex + 1).toString()}`}
+                title={`Section ${sectionIndex + 1}`}
                 subtitle={unit.title}
                 color="green"
               />
 
               <View style={styles.optionsContainer}>
-                {unit.lessons.map((activity, activityIndex) => {
+                {unit.lessons.map((lesson, lessonIndex) => {
                   const status = lessonStatuses[statusIndex];
-                  console.log(
-                    `Lesson: ${activity.title}, Status: ${status}, Index: ${statusIndex.toString()}`,
-                  );
-
                   statusIndex += 1;
 
                   if (status === "incomplete") {
                     return (
-                      <ActivityButton
-                        key={activity._id}
-                        status={"incomplete"}
+                      <View
+                        key={lesson._id}
                         style={{
-                          marginLeft: activityIndex % 2 === 1 ? 0 : -99,
-                          marginRight: activityIndex % 2 === 0 ? 0 : -99,
+                          width: 60,
+                          height: 60,
+                          marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
+                          marginRight: lessonIndex % 2 === 0 ? 0 : -99,
+                          backgroundColor: "#E0E0E0",
+                          borderRadius: 12,
                         }}
                       />
                     );
@@ -105,62 +165,89 @@ export default function ActivitiesPage() {
 
                   return (
                     <ActivityButton
-                      key={activity._id}
-                      color="green"
+                      key={lesson._id}
                       status={status}
+                      color="green"
                       style={{
-                        marginLeft: activityIndex % 2 === 1 ? 0 : -99,
-                        marginRight: activityIndex % 2 === 0 ? 0 : -99,
+                        marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
+                        marginRight: lessonIndex % 2 === 0 ? 0 : -99,
                       }}
                       onPress={() => {
-                        setCurrLesson(activity);
-                        setIsModalOpen(true);
+                        setCurrLesson(lesson);
+                        setIsModalOpen(true); // open popup before lesson
                       }}
                     />
                   );
                 })}
               </View>
             </View>
-          );
-        })}
+          ))}
+        </ScrollView>
+      ) : (
+        // Lesson activity view
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.header}>
+            {currentIndex > 0 && (
+              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={24} color="gray" />
+              </TouchableOpacity>
+            )}
+            <Text style={styles.titleText}>{currLesson.title}</Text>
+          </View>
 
-        <Text style={styles.jumpText}>
-          ••• ••• ••• ••• Jump to the next section ••• ••• ••• •••
-        </Text>
+          <ProgressBar progress={(currentIndex + 1) / currLesson.activities.length} />
 
-        {currLesson && (
-          <ActivityPopup
-            isOpen={isModalOpen}
-            onClose={() => {
-              setIsModalOpen(false);
-            }}
-            color="green"
-            title={currLesson.title}
-            description={currLesson.description}
-            onStart={() => {
-              console.log("Starting activity...");
-              setIsModalOpen(false);
-              router.push({ pathname: "/activityPage", params: { lessonId: currLesson._id } });
-            }}
-          />
-        )}
-      </ScrollView>
-    </View>
+          <View style={styles.main}>
+            {currentQuestion && (
+              <Question
+                type={currentQuestion.type === "reflection" ? "shortAnswer" : "multipleChoice"}
+                question={currentQuestion.question}
+                options={currentQuestion.options?.map((o) => o.content) ?? []}
+                otherOptions={[]}
+                placeholder={
+                  currentQuestion.type === "reflection" ? "Type your answer..." : undefined
+                }
+                onAnswer={handleAnswer}
+                currentAnswer={currentAnswer}
+                variant="activity"
+              />
+            )}
+          </View>
+
+          <View style={styles.nextButtonContainer}>
+            <NextButton
+              onPress={handleNext}
+              disabled={!currentAnswer}
+              textOption={
+                currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
+              }
+            />
+          </View>
+        </ScrollView>
+      )}
+
+      {/* Popup */}
+      {currLesson && (
+        <ActivityPopup
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          color="green"
+          title={currLesson.title}
+          description={currLesson.description}
+          onStart={() => {
+            setIsModalOpen(false);
+            setAnswers(Array(currLesson.activities.length).fill(undefined));
+            setCurrentIndex(0);
+          }}
+        />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    backgroundColor: lightModeColors.background,
-    paddingVertical: 50,
-  },
-  sectionContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
+  container: { flex: 1, backgroundColor: lightModeColors.background },
+  sectionContainer: { width: "100%", alignItems: "center" },
   optionsContainer: {
     marginTop: 40,
     marginBottom: 40,
@@ -174,7 +261,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     height: 50,
     fontSize: 18,
-    fontStyle: "normal",
     fontWeight: "600",
     paddingTop: 10,
     paddingHorizontal: 20,
@@ -190,16 +276,24 @@ const styles = StyleSheet.create({
     fontFamily: "SG-DemiBold",
   },
   scrollContainer: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: "center",
-    paddingBottom: 50,
     paddingTop: 32,
+    paddingBottom: 50,
   },
-  jumpText: {
-    fontSize: 16,
-    color: "#6C6C6C",
-    marginVertical: 10,
-    fontStyle: "normal",
-    fontWeight: "400",
+  scrollContent: {
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    flexGrow: 1,
+    justifyContent: "flex-start",
   },
+  main: { justifyContent: "center", alignItems: "center", marginTop: 20 },
+  nextButtonContainer: { marginTop: 16, alignSelf: "center", width: "100%" },
+  titleText: {
+    fontSize: 18,
+    textAlign: "center",
+    color: lightModeColors.title,
+    fontFamily: "SG-Medium",
+  },
+  backButton: { position: "absolute", left: 5 },
 });
