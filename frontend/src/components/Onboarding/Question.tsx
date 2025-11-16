@@ -71,7 +71,9 @@ export const Question = ({
                         otherOptions.includes(selectedAnswer) &&
                         styles.optionButtonSelected,
                     ]}
-                    onPress={() => setShowOtherDropdown((prev) => !prev)}
+                    onPress={() => {
+                      setShowOtherDropdown((prev) => !prev);
+                    }}
                   >
                     <View style={styles.otherRow}>
                       <Text style={styles.optionText}>{displayText}</Text>

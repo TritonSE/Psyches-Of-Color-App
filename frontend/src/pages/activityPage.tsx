@@ -126,7 +126,11 @@ export default function ActivitiesPage() {
       {!currLesson ? (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity
+              onPress={() => {
+                router.back();
+              }}
+            >
               <Ionicons name="arrow-back-outline" size={24} color="gray" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Activities</Text>
@@ -210,7 +214,7 @@ export default function ActivitiesPage() {
 
           <View style={styles.nextButtonContainer}>
             <NextButton
-              onPress={handleNext}
+              onPress={() => void handleNext()}
               disabled={!currentAnswer}
               textOption={
                 currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
@@ -223,7 +227,9 @@ export default function ActivitiesPage() {
       {currLesson && (
         <ActivityPopup
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
           color="green"
           title={currLesson.title}
           description={currLesson.description}
