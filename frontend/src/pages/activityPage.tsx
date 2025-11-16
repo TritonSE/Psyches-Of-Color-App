@@ -197,7 +197,7 @@ export default function ActivitiesPage() {
           <View style={styles.main}>
             {currentQuestion && (
               <Question
-                type={currentQuestion.type === "text" ? "shortAnswer" : "multipleChoice"}
+                type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
                 question={currentQuestion.question}
                 options={currentQuestion.options?.map((o) => o.content) ?? []}
                 onAnswer={handleAnswer}

@@ -43,6 +43,7 @@ export const Question = ({
     setSelectedAnswer(text);
     onAnswer(text);
   };
+
   return (
     <View style={styles.container}>
       <Text
@@ -54,6 +55,7 @@ export const Question = ({
       >
         {question}
       </Text>
+
       {type === "multipleChoice" && (
         <View style={styles.optionsContainer}>
           {options.map((option) => {
@@ -69,9 +71,7 @@ export const Question = ({
                         otherOptions.includes(selectedAnswer) &&
                         styles.optionButtonSelected,
                     ]}
-                    onPress={() => {
-                      setShowOtherDropdown((prev) => !prev);
-                    }}
+                    onPress={() => setShowOtherDropdown((prev) => !prev)}
                   >
                     <View style={styles.otherRow}>
                       <Text style={styles.optionText}>{displayText}</Text>
@@ -82,6 +82,7 @@ export const Question = ({
                       )}
                     </View>
                   </TouchableOpacity>
+
                   {showOtherDropdown && otherOptions.length > 0 && (
                     <View style={styles.dropdownContainer}>
                       {otherOptions.map((otherOption) => (
@@ -121,26 +122,16 @@ export const Question = ({
         </View>
       )}
 
-      {type === "longAnswer" && (
-        <TextInput
-          style={[
-            styles.textInput,
-            type === "longAnswer" && {
-              width: 358,
-              height: 284,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: "#2E563C",
-              backgroundColor: "#FFFFFF",
-              padding: 16,
-              textAlignVertical: "top", // text starts at top
-            },
-          ]}
-          value={selectedAnswer}
-          onChangeText={handleChangeText}
-          placeholder={placeholder}
-          multiline={type === "longAnswer"}
-        />
+      {(type === "shortAnswer" || type === "longAnswer") && (
+        <View style={{ width: "100%", alignItems: "center" }}>
+          <TextInput
+            style={[styles.textInput, type === "longAnswer" && styles.longTextInput]}
+            value={selectedAnswer}
+            onChangeText={handleChangeText}
+            placeholder={placeholder}
+            multiline={type === "longAnswer"}
+          />
+        </View>
       )}
     </View>
   );
@@ -168,6 +159,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     width: 302,
     height: 81,
+  },
+  questionText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#000",
   },
   optionsContainer: {
     marginTop: 16,
@@ -207,6 +203,18 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: 80,
     textAlignVertical: "top",
+  },
+  longTextInput: {
+    width: 358,
+    height: 284,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#2E563C",
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    marginTop: 8,
+    textAlignVertical: "top",
+    alignSelf: "center",
   },
 
   dropdownContainer: {
