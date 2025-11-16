@@ -23,7 +23,7 @@ const SectionButton: React.FC<SectionButtonProps> = ({ color = "red", title, sub
 
   // Function to toggle dropdown visibility
   const toggleDropdown = () => {
-    setIsDropdownVisible(!isDropdownVisible);
+    setIsDropdownVisible(false);
   };
 
   return (
