@@ -106,25 +106,35 @@ export default function Login() {
     setLoading(true);
 
     const res = await loginEmailPassword(email, password);
-
     setLoading(false);
 
-    // If login was successful, we don't need to do anything
-    // redirection happens in auth context
-    if (res.success) {
-      return <Redirect href="/characterSelection" />;
+    // If login succeeded
+    if (res && res.success) {
+      try {
+        router.push("/characterSelection");
+      } catch (e) {
+        console.error("Navigation error:", e);
+      }
+      return; // Stop here so we don't continue to error-handling
     }
 
-    // If login was unsuccessful, set the appropriate error message
+    // --- If login failed, handle errors safely ---
+
+    // Ensure res.error exists before accessing fields
+    if (!res?.error) {
+      setEmailError("Unknown error. Please try again.");
+      setPasswordError("Unknown error. Please try again.");
+      return;
+    }
+
     if (res.error.field === "email") {
       setEmailError(res.error.message);
     } else if (res.error.field === "password") {
       setPasswordError(res.error.message);
     } else {
-      // Unknown error
-      // TODO: maybe have a general error message at the top of the form
-      setPasswordError(res.error.message);
+      // Unknown field or generic backend error
       setEmailError(res.error.message);
+      setPasswordError(res.error.message);
     }
   };
 

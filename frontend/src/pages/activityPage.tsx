@@ -47,8 +47,11 @@ export default function ActivitiesPage() {
   const getLessonStatuses = (lessons: Lesson[]) => {
     const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
     lessons.forEach((lesson, index) => {
-      const isCompleted = mongoUser?.completedLessons.find((les) => les._id === lesson._id);
-
+      if (!lesson) {
+        statuses.push("incomplete");
+        return;
+      }
+      const isCompleted = mongoUser?.completedLessons?.some((les) => les?._id === lesson._id);
       if (isCompleted) statuses.push("completed");
       else if (index === 0 || statuses[index - 1] === "completed") statuses.push("inProgress");
       else statuses.push("incomplete");
@@ -56,7 +59,7 @@ export default function ActivitiesPage() {
     return statuses;
   };
 
-  const allLessons = units.flatMap((unit) => unit.lessons);
+  const allLessons = units.flatMap((unit) => unit.lessons ?? []);
   const lessonStatuses = getLessonStatuses(allLessons);
 
   useEffect(() => {
@@ -89,7 +92,6 @@ export default function ActivitiesPage() {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     } else {
-      // leaving lesson entirely
       setCurrLesson(null);
     }
   };
@@ -122,30 +124,25 @@ export default function ActivitiesPage() {
   return (
     <SafeAreaView style={styles.container}>
       {!currLesson ? (
-        // -----------------------------
-        // Activities List View
-        // -----------------------------
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => {
-                router.back();
-              }}
-            >
+            <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name="arrow-back-outline" size={24} color="gray" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Activities</Text>
           </View>
 
           {units.map((unit, sectionIndex) => (
-            <View key={unit._id} style={styles.sectionContainer}>
+            <View key={unit._id || sectionIndex} style={styles.sectionContainer}>
               <SectionButton title={unit.title} color="green" />
 
               <View style={styles.optionsContainer}>
-                {unit.lessons.map((lesson, lessonIndex) => {
+                {unit.lessons?.map((lesson, lessonIndex) => {
+                  if (!lesson) return null;
+
                   const precedingLessonsCount = units
                     .slice(0, sectionIndex)
-                    .reduce((acc, u) => acc + u.lessons.length, 0);
+                    .reduce((acc, u) => acc + (u.lessons?.length ?? 0), 0);
 
                   const globalIndex = precedingLessonsCount + lessonIndex;
                   const status = lessonStatuses[globalIndex];
@@ -153,7 +150,7 @@ export default function ActivitiesPage() {
                   if (status === "incomplete") {
                     return (
                       <View
-                        key={lesson._id}
+                        key={lesson._id || lessonIndex}
                         style={{
                           width: 60,
                           height: 60,
@@ -168,8 +165,8 @@ export default function ActivitiesPage() {
 
                   return (
                     <ActivityButton
-                      key={lesson._id}
-                      status={status}
+                      key={lesson._id || lessonIndex}
+                      status={status} // "completed" | "inProgress"
                       color="green"
                       style={{
                         marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
@@ -187,16 +184,11 @@ export default function ActivitiesPage() {
           ))}
         </ScrollView>
       ) : (
-        // -----------------------------
-        // Lesson Activity View
-        // -----------------------------
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
-            {/* ALWAYS show back button like Activities page */}
             <TouchableOpacity onPress={handleBack}>
               <Ionicons name="arrow-back-outline" size={24} color="gray" />
             </TouchableOpacity>
-
             <Text style={styles.headerTitle}>{currLesson.title}</Text>
           </View>
 
@@ -205,14 +197,12 @@ export default function ActivitiesPage() {
           <View style={styles.main}>
             {currentQuestion && (
               <Question
-                type={currentQuestion.type === "reflection" ? "shortAnswer" : "multipleChoice"}
+                type={currentQuestion.type === "text" ? "shortAnswer" : "multipleChoice"}
                 question={currentQuestion.question}
                 options={currentQuestion.options?.map((o) => o.content) ?? []}
                 onAnswer={handleAnswer}
                 currentAnswer={currentAnswer}
-                placeholder={
-                  currentQuestion.type === "reflection" ? "Type your answer..." : undefined
-                }
+                placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
                 variant="activity"
               />
             )}
@@ -220,9 +210,7 @@ export default function ActivitiesPage() {
 
           <View style={styles.nextButtonContainer}>
             <NextButton
-              onPress={() => {
-                void handleNext(); // explicitly ignore the promise
-              }}
+              onPress={handleNext}
               disabled={!currentAnswer}
               textOption={
                 currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
@@ -235,9 +223,7 @@ export default function ActivitiesPage() {
       {currLesson && (
         <ActivityPopup
           isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-          }}
+          onClose={() => setIsModalOpen(false)}
           color="green"
           title={currLesson.title}
           description={currLesson.description}

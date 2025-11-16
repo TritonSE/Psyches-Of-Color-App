@@ -6,7 +6,7 @@ import UpVector from "@/assets/up_vector.svg";
 import { lightModeColors } from "@/constants/colors";
 
 type QuestionProps = {
-  type: "multipleChoice" | "shortAnswer";
+  type: "multipleChoice" | "shortAnswer" | "longAnswer";
   question: string;
   options?: string[];
   onAnswer: (answer: string) => void;
@@ -121,12 +121,25 @@ export const Question = ({
         </View>
       )}
 
-      {type === "shortAnswer" && (
+      {type === "longAnswer" && (
         <TextInput
-          style={styles.textInput}
+          style={[
+            styles.textInput,
+            type === "longAnswer" && {
+              width: 358,
+              height: 284,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: "#2E563C",
+              backgroundColor: "#FFFFFF",
+              padding: 16,
+              textAlignVertical: "top", // text starts at top
+            },
+          ]}
           value={selectedAnswer}
           onChangeText={handleChangeText}
           placeholder={placeholder}
+          multiline={type === "longAnswer"}
         />
       )}
     </View>
@@ -191,7 +204,11 @@ const styles = StyleSheet.create({
     padding: 12,
     marginTop: 8,
     fontSize: 16,
+    width: "100%",
+    minHeight: 80,
+    textAlignVertical: "top",
   },
+
   dropdownContainer: {
     marginTop: 8,
     borderWidth: 1,
