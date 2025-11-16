@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-type ActivityType = "reflection" | "mcq" | "wwyd";
+type ActivityType = "reflection" | "mcq" | "wwyd" | "text";
 
 type OptionDoc = {
   content: string;

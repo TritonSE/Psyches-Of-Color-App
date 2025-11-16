@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "react-native-progress": "^5.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

@@ -6,7 +6,7 @@ import { lightModeColors } from "@/constants/colors";
 
 type SectionButtonProps = {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   color?: "red" | "yellow" | "green";
 };
 
@@ -23,7 +23,7 @@ const SectionButton: React.FC<SectionButtonProps> = ({ color = "red", title, sub
 
   // Function to toggle dropdown visibility
   const toggleDropdown = () => {
-    setIsDropdownVisible(!isDropdownVisible);
+    setIsDropdownVisible(false);
   };
 
   return (
