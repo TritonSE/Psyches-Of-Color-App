@@ -8,7 +8,7 @@ export default function Start() {
     <View style={styles.container}>
       <View style={styles.topSection}>
         <Mascots style={styles.logo} />
-        <Text style={styles.title}>Lets check in on you</Text>
+        <Text style={styles.title}>Let's check in on you</Text>
         <Text style={styles.text}>
           Lorem ipsum odor amet, consectetuer adipiscing elit. Curae phasellus laoreet nullam in
           bibendum ante nec. Blandit sit nunc luctus molestie, sed enim habitasse?{" "}

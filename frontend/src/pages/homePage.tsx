@@ -9,7 +9,11 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
+
+import { StatusBar } from "expo-status-bar";
+import { BarChart } from "react-native-gifted-charts";
 
 import { UserContext } from "../contexts/userContext";
 
@@ -27,6 +31,11 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
+import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
+import { lightModeColors } from "@/constants/colors";
+import { Mood, getUserMoods } from "@/lib/api";
+import MoodCheckinPopup from "@/pages/checkInPopup";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
@@ -76,7 +85,7 @@ const NewDayComponent: React.FC = () => {
               <View style={styles.moodContent}>
                 <Image source={IMG.moodIcon} style={styles.moodIcon} />
                 <Text style={styles.moodText}>
-                  You’re feeling <Text style={styles.moodHighlight}>good</Text> today - nice!
+                  You're feeling <Text style={styles.moodHighlight}>good</Text> today - nice!
                 </Text>
               </View>
 
@@ -102,8 +111,188 @@ const NewDayComponent: React.FC = () => {
   );
 };
 
+// Type definitions
+type DayInfo = {
+  day: number;
+  moodColor: string;
+};
+
+// Map mood strings to numeric values for the chart
+const moodToValue = {
+  Happy: 100,
+  Good: 80,
+  Okay: 60,
+  Meh: 40,
+  Bad: 20,
+};
+
+// Map mood strings to colors
+const moodToColor = {
+  Happy: lightModeColors.moodAccent,
+  Good: lightModeColors.moodGood,
+  Okay: lightModeColors.moodOkay,
+  Meh: lightModeColors.moodMeh,
+  Bad: lightModeColors.moodBad,
+};
+
 export default function HomePage() {
   const { mongoUser } = useContext(UserContext);
+
+  // Mood tracker states moved from app/(tabs)/index.tsx
+  const [viewMode, setViewMode] = useState("weekly");
+  const [moods, setMoods] = useState<Mood[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hasLoggedToday, setHasLoggedToday] = useState(false);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [monthOffset, setMonthOffset] = useState(0);
+
+  const fetchMoods = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (!mongoUser) {
+        setMoods([]);
+        setHasLoggedToday(false);
+        return;
+      }
+
+      const fetchedMoods = await getUserMoods(mongoUser.uid);
+      setMoods(fetchedMoods);
+
+      try {
+        const lastCheck = mongoUser?.lastCompletedDailyCheckIn ?? null;
+        if (!lastCheck) {
+          setHasLoggedToday(false);
+        } else {
+          const lastDate = new Date(lastCheck);
+          const today = new Date();
+          const isSameDay =
+            lastDate.getFullYear() === today.getFullYear() &&
+            lastDate.getMonth() === today.getMonth() &&
+            lastDate.getDate() === today.getDate();
+
+          setHasLoggedToday(isSameDay);
+        }
+      } catch (err) {
+        console.warn(
+          "Could not determine if user logged today from lastCompletedDailyCheckIn:",
+          err,
+        );
+        setHasLoggedToday(false);
+      }
+    } catch (err) {
+      setError("Failed to fetch moods");
+      console.error("Error fetching moods:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void fetchMoods();
+  }, [mongoUser]);
+
+  const getCurrentWeekDates = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    today.setDate(today.getDate() + weekOffset * 7);
+
+    const currentDay = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+
+    const days: Date[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      days.push(date);
+    }
+    return days;
+  };
+
+  const handlePreviousWeek = () => setWeekOffset((prev) => prev - 1);
+  const handleNextWeek = () => setWeekOffset((prev) => prev + 1);
+
+  const dates = getCurrentWeekDates();
+
+  const barData = dates.map((date) => {
+    const mood = moods.find((m) => {
+      const moodDate = new Date(m.createdAt);
+      return (
+        moodDate.getDate() === date.getDate() &&
+        moodDate.getMonth() === date.getMonth() &&
+        moodDate.getFullYear() === date.getFullYear()
+      );
+    });
+    return {
+      value: mood ? moodToValue[mood.moodreported as keyof typeof moodToValue] || 0 : 0,
+      label: date.getDate().toString(),
+      frontColor: mood
+        ? moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh
+        : lightModeColors.background,
+      date,
+    };
+  });
+
+  const moodIndicators = [
+    { color: lightModeColors.moodAccent, label: "Happy" },
+    { color: lightModeColors.moodGood, label: "Good" },
+    { color: lightModeColors.moodOkay, label: "Okay" },
+    { color: lightModeColors.moodMeh, label: "Meh" },
+    { color: lightModeColors.moodBad, label: "Bad" },
+  ];
+
+  const getMonthData = () => {
+    const today = new Date();
+    today.setMonth(today.getMonth() + monthOffset);
+    today.setDate(1);
+
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const days: DayInfo[] = [];
+
+    const moodsByDay = new Map(
+      moods
+        .filter((mood) => {
+          const moodDate = new Date(mood.createdAt);
+          return (
+            moodDate.getMonth() === today.getMonth() &&
+            moodDate.getFullYear() === today.getFullYear()
+          );
+        })
+        .map((mood) => [
+          new Date(mood.createdAt).getDate(),
+          moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh,
+        ]),
+    );
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push({ day: i, moodColor: moodsByDay.get(i) ?? lightModeColors.background });
+    }
+
+    return days;
+  };
+
+  const handlePreviousMonth = () => setMonthOffset((prev) => prev - 1);
+  const handleNextMonth = () => setMonthOffset((prev) => prev + 1);
+
+  const calendarData = getMonthData();
+
+  const getCurrentMonthDisplay = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + monthOffset);
+    return date.toLocaleString("default", { month: "long", year: "numeric" });
+  };
+
+  const weeks: DayInfo[][] = [];
+  let currentWeek: DayInfo[] = [];
+  calendarData.forEach((day, index) => {
+    currentWeek.push(day);
+    if ((index + 1) % 7 === 0 || index === calendarData.length - 1) {
+      weeks.push([...currentWeek]);
+      currentWeek = [];
+    }
+  });
 
   return (
     <SafeAreaView style={styles.page}>
@@ -132,7 +321,7 @@ export default function HomePage() {
         {/* Mood Check-in Section */}
         <NewDayComponent />
         {/* Progress Section */}
-        <Text style={styles.sectionTitle}>Today’s Progress</Text>
+        <Text style={styles.sectionTitle}>Today's Progress</Text>
 
         <View style={styles.progressContainer}>
           {/* Row 1: Complete 3 Activities */}
@@ -196,7 +385,7 @@ export default function HomePage() {
             </View>
           </TouchableOpacity>
         </View>
-        <Text style={styles.sectionTitle}>Continue on Journey</Text>
+        <Text style={styles.sectionTitle}>Continue your Journey</Text>
         <View style={styles.buttons}>
           <Button
             style={styles.lessons}
@@ -218,11 +407,168 @@ export default function HomePage() {
               <Image source={IMG.journalIcon} style={styles.journalIcon}></Image>
               <Image source={IMG.pencilJournal} style={styles.pencilJournal}></Image>
             </Button>
-            <Button style={styles.checkin}>
+            <Button
+              style={styles.checkin}
+              onPress={() => {
+                router.push("/Checkin/Start");
+              }}
+            >
               <Text style={styles.checkinTitle}>Check-in</Text>
               <Image source={IMG.checkinIcon} style={styles.checkinIcon}></Image>
             </Button>
           </View>
+        </View>
+        {/* Mood Tracker (moved from app/(tabs)/index.tsx) */}
+        <View style={styles.containerMoodTracker}>
+          <StatusBar style="auto" />
+
+          <Text style={styles.moodTitle}>Mood Tracker</Text>
+
+          <View style={styles.moodChartContainer}>
+            <View style={styles.moodToggleContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.moodToggleButton,
+                  viewMode === "monthly" && styles.moodActiveToggleButton,
+                ]}
+                onPress={() => setViewMode("monthly")}
+              >
+                <Text
+                  style={[
+                    styles.moodMonthlyText,
+                    viewMode === "monthly" && styles.moodActiveToggleText,
+                  ]}
+                >
+                  Monthly
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.moodToggleButton,
+                  viewMode === "weekly" && styles.moodActiveToggleButton,
+                ]}
+                onPress={() => setViewMode("weekly")}
+              >
+                <Text
+                  style={[
+                    styles.moodWeeklyText,
+                    viewMode === "weekly" && styles.moodActiveToggleText,
+                  ]}
+                >
+                  Weekly
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {loading ? (
+              <View style={[styles.moodContainerCenter, styles.moodCenterContent]}>
+                <ActivityIndicator size="large" color={lightModeColors.moodAccent} />
+              </View>
+            ) : error ? (
+              <View style={[styles.moodContainerCenter, styles.moodCenterContent]}>
+                <Text style={styles.moodErrorText}>{error}</Text>
+              </View>
+            ) : (
+              <>
+                {viewMode === "weekly" ? (
+                  <>
+                    <View style={styles.moodDateNavigation}>
+                      <TouchableOpacity onPress={handlePreviousWeek}>
+                        <ArrowLeftIcon width={24} height={24} />
+                      </TouchableOpacity>
+
+                      <Text style={styles.moodDateRangeText}>
+                        {barData.length > 0
+                          ? `${barData[0].date.toLocaleString("default", { month: "long" })} ${barData[0].label} - ${barData[barData.length - 1].date.toLocaleString("default", { month: "long" })} ${barData[barData.length - 1].label}, ${barData[0].date.getFullYear()}`
+                          : "No data available"}
+                      </Text>
+
+                      <TouchableOpacity onPress={handleNextWeek}>
+                        <ArrowRightIcon width={24} height={24} />
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.moodChartWithLegend}>
+                      <View style={styles.moodIndicatorsColumn}>
+                        {moodIndicators.map((mood, index) => (
+                          <View key={index} style={styles.moodIndicatorRow}>
+                            <View style={[styles.moodDot, { backgroundColor: mood.color }]} />
+                          </View>
+                        ))}
+                      </View>
+
+                      <View style={styles.moodChartsArea}>
+                        <BarChart
+                          data={barData}
+                          width={270}
+                          height={200}
+                          barWidth={26}
+                          spacing={12}
+                          roundedTop
+                          barBorderTopLeftRadius={8}
+                          barBorderTopRightRadius={8}
+                          roundedBottom={false}
+                          hideRules
+                          hideYAxisText
+                          xAxisThickness={0}
+                          yAxisThickness={0}
+                          hideOrigin
+                          backgroundColor={lightModeColors.background}
+                          noOfSections={3}
+                          maxValue={80}
+                        />
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.moodMonthlyContainer}>
+                      <View style={styles.moodMonthNavigation}>
+                        <TouchableOpacity onPress={handlePreviousMonth}>
+                          <ArrowLeftIcon width={24} height={24} />
+                        </TouchableOpacity>
+
+                        <Text style={styles.moodMonthText}>{getCurrentMonthDisplay()}</Text>
+
+                        <TouchableOpacity onPress={handleNextMonth}>
+                          <ArrowRightIcon width={24} height={24} />
+                        </TouchableOpacity>
+                      </View>
+
+                      <View style={styles.moodCalendarGrid}>
+                        {weeks.map((weekDays, weekIndex) => (
+                          <View key={`week-${weekIndex}`} style={styles.moodWeekRow}>
+                            {weekDays.map((day) => (
+                              <View key={`day-${day.day}`} style={styles.moodDayContainer}>
+                                <View
+                                  style={[styles.moodDayCircle, { backgroundColor: day.moodColor }]}
+                                >
+                                  <Text style={styles.moodDayText}>{day.day}</Text>
+                                </View>
+                              </View>
+                            ))}
+                          </View>
+                        ))}
+                      </View>
+
+                      <View style={styles.moodMonthlyLegend}>
+                        {moodIndicators.map((mood, index) => (
+                          <View key={index} style={styles.moodLegendItem}>
+                            <View style={[styles.moodLegendDot, { backgroundColor: mood.color }]} />
+                            <Text style={styles.moodLegendText}>{mood.label}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  </>
+                )}
+              </>
+            )}
+          </View>
+
+          {!hasLoggedToday && mongoUser && (
+            <MoodCheckinPopup userId={mongoUser.uid} onMoodLogged={fetchMoods} />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -481,5 +827,164 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontSize: 14, //16
     fontWeight: "600",
+  },
+  // Mood tracker styles
+  containerMoodTracker: {
+    marginTop: 24,
+    backgroundColor: lightModeColors.background,
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 0.5,
+    borderColor: lightModeColors.moodAccent,
+    marginBottom: 24,
+  },
+  moodTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: lightModeColors.moodAccent,
+    fontFamily: "Archivo",
+    marginBottom: 12,
+  },
+  moodChartContainer: {
+    backgroundColor: lightModeColors.background,
+  },
+  moodToggleContainer: {
+    flexDirection: "row",
+    backgroundColor: lightModeColors.background,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: lightModeColors.moodAccent,
+    height: 40,
+    alignItems: "center",
+    alignSelf: "center",
+    overflow: "hidden",
+    marginBottom: 12,
+  },
+  moodToggleButton: {
+    paddingHorizontal: 20,
+    height: "100%",
+    justifyContent: "center",
+    minWidth: 92,
+  },
+  moodActiveToggleButton: {
+    backgroundColor: lightModeColors.moodAccent,
+  },
+  moodMonthlyText: {
+    fontSize: 14,
+    color: lightModeColors.moodAccent,
+    textAlign: "center",
+  },
+  moodWeeklyText: {
+    fontSize: 14,
+    color: lightModeColors.moodAccent,
+    textAlign: "center",
+  },
+  moodActiveToggleText: {
+    color: lightModeColors.background,
+  },
+  moodContainerCenter: {
+    height: 120,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  moodCenterContent: {
+    alignItems: "center",
+  },
+  moodErrorText: {
+    color: lightModeColors.moodBad,
+  },
+  moodDateNavigation: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+    marginTop: 12,
+  },
+  moodDateRangeText: {
+    fontSize: 12,
+    color: lightModeColors.moodAccent,
+  },
+  moodChartWithLegend: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  moodIndicatorsColumn: {
+    justifyContent: "space-between",
+    height: 200,
+    marginRight: 8,
+  },
+  moodDot: {
+    width: 30,
+    height: 30,
+    borderRadius: 20,
+  },
+  moodIndicatorRow: {
+    marginVertical: 6,
+  },
+  moodChartsArea: {
+    flex: 1,
+    alignItems: "center",
+  },
+  moodMonthlyContainer: {
+    paddingVertical: 10,
+  },
+  moodMonthNavigation: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+    gap: 40,
+  },
+  moodMonthText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: lightModeColors.moodAccent,
+  },
+  moodCalendarGrid: {
+    marginTop: 10,
+  },
+  moodWeekRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 12,
+    gap: 12,
+  },
+  moodDayContainer: {
+    alignItems: "center",
+    width: 26,
+  },
+  moodDayCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  moodDayText: {
+    fontSize: 8,
+    fontWeight: "600",
+    color: lightModeColors.background,
+  },
+  moodMonthlyLegend: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginTop: 12,
+    gap: 10,
+  },
+  moodLegendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  moodLegendDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
+  },
+  moodLegendText: {
+    fontSize: 12,
+    color: lightModeColors.moodAccent,
   },
 });
