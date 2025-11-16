@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import ActivityButton from "@/components/ActivityButton";
+import ActivityPopup from "@/components/ActivityPopup";
 import NextButton from "@/components/NextButton";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
 import { Question } from "@/components/Onboarding/Question";
@@ -19,36 +20,23 @@ export default function ActivitiesPage() {
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>([]);
-  const [lessonStatuses, setLessonStatuses] = useState<
-    ("inProgress" | "completed" | "incomplete")[]
-  >([]);
 
-  // Fetch units & lessons
-  const getAllSections = async (): Promise<void> => {
+  // Fetch units
+  const getAllSections = async () => {
     try {
       const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/units`);
       if (res.ok) {
         const fetchedUnits = (await res.json()) as Unit[];
         setUnits(fetchedUnits);
-
-        // Compute statuses after fetching
-        const allLessons = fetchedUnits.flatMap((unit) => unit.lessons);
-        const statuses: ("inProgress" | "completed" | "incomplete")[] = allLessons.map(
-          (lesson, index) => {
-            if (mongoUser?.completedLessons.find((les) => les._id === lesson._id))
-              return "completed";
-            else if (index === 0 || statuses?.[index - 1] === "completed") return "inProgress";
-            else return "incomplete";
-          },
-        );
-        setLessonStatuses(statuses);
       } else {
         console.error("Failed to fetch units");
       }
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (err) {
+      console.error("Error fetching units:", err);
     }
   };
 
@@ -56,7 +44,21 @@ export default function ActivitiesPage() {
     void getAllSections();
   }, []);
 
-  // Reset answers when lesson opens
+  const getLessonStatuses = (lessons: Lesson[]) => {
+    const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
+    lessons.forEach((lesson, index) => {
+      const isCompleted = mongoUser?.completedLessons.find((les) => les._id === lesson._id);
+
+      if (isCompleted) statuses.push("completed");
+      else if (index === 0 || statuses[index - 1] === "completed") statuses.push("inProgress");
+      else statuses.push("incomplete");
+    });
+    return statuses;
+  };
+
+  const allLessons = units.flatMap((unit) => unit.lessons);
+  const lessonStatuses = getLessonStatuses(allLessons);
+
   useEffect(() => {
     if (!currLesson) return;
     setAnswers(Array(currLesson.activities.length).fill(undefined));
@@ -68,17 +70,18 @@ export default function ActivitiesPage() {
 
   const handleAnswer = (answer: string) => {
     if (!currLesson) return;
-    const updatedAnswers = [...answers];
-    updatedAnswers[currentIndex] = answer;
-    setAnswers(updatedAnswers);
+    const updated = [...answers];
+    updated[currentIndex] = answer;
+    setAnswers(updated);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!currLesson) return;
+
     if (currentIndex < currLesson.activities.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      void handleComplete();
+      await handleComplete();
     }
   };
 
@@ -86,12 +89,13 @@ export default function ActivitiesPage() {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     } else {
-      setCurrLesson(null); // back to units view
+      // leaving lesson entirely
+      setCurrLesson(null);
     }
   };
 
-  const handleComplete = async (): Promise<void> => {
-    if (!mongoUser?._id || !currLesson?._id) {
+  const handleComplete = async () => {
+    if (!mongoUser?.uid || !currLesson?._id) {
       alert("User or activity not found.");
       return;
     }
@@ -99,10 +103,7 @@ export default function ActivitiesPage() {
     try {
       const res = await fetch(
         `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${currLesson._id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-        },
+        { method: "PUT", headers: { "Content-Type": "application/json" } },
       );
 
       if (res.ok) {
@@ -112,7 +113,7 @@ export default function ActivitiesPage() {
       } else {
         alert("Failed to update activity progress.");
       }
-    } catch (err: unknown) {
+    } catch (err) {
       console.error(err);
       alert("Error updating activity progress.");
     }
@@ -121,7 +122,9 @@ export default function ActivitiesPage() {
   return (
     <SafeAreaView style={styles.container}>
       {!currLesson ? (
-        // Activities list view
+        // -----------------------------
+        // Activities List View
+        // -----------------------------
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
             <TouchableOpacity
@@ -134,13 +137,18 @@ export default function ActivitiesPage() {
             <Text style={styles.headerTitle}>Activities</Text>
           </View>
 
-          {units.map((unit) => (
+          {units.map((unit, sectionIndex) => (
             <View key={unit._id} style={styles.sectionContainer}>
-              <SectionButton title={unit.title} subtitle="" color="green" />
+              <SectionButton title={unit.title} color="green" />
 
               <View style={styles.optionsContainer}>
                 {unit.lessons.map((lesson, lessonIndex) => {
-                  const status = lessonStatuses.shift() ?? "incomplete";
+                  const precedingLessonsCount = units
+                    .slice(0, sectionIndex)
+                    .reduce((acc, u) => acc + u.lessons.length, 0);
+
+                  const globalIndex = precedingLessonsCount + lessonIndex;
+                  const status = lessonStatuses[globalIndex];
 
                   if (status === "incomplete") {
                     return (
@@ -169,6 +177,7 @@ export default function ActivitiesPage() {
                       }}
                       onPress={() => {
                         setCurrLesson(lesson);
+                        setIsModalOpen(true);
                       }}
                     />
                   );
@@ -178,15 +187,17 @@ export default function ActivitiesPage() {
           ))}
         </ScrollView>
       ) : (
-        // Lesson activity view
+        // -----------------------------
+        // Lesson Activity View
+        // -----------------------------
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.lessonHeader}>
-            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <View style={styles.header}>
+            {/* ALWAYS show back button like Activities page */}
+            <TouchableOpacity onPress={handleBack}>
               <Ionicons name="arrow-back-outline" size={24} color="gray" />
             </TouchableOpacity>
-            <Text style={styles.lessonTitle} numberOfLines={1} ellipsizeMode="tail">
-              {currLesson.title}
-            </Text>
+
+            <Text style={styles.headerTitle}>{currLesson.title}</Text>
           </View>
 
           <ProgressBar progress={(currentIndex + 1) / currLesson.activities.length} />
@@ -197,12 +208,11 @@ export default function ActivitiesPage() {
                 type={currentQuestion.type === "reflection" ? "shortAnswer" : "multipleChoice"}
                 question={currentQuestion.question}
                 options={currentQuestion.options?.map((o) => o.content) ?? []}
-                otherOptions={[]}
+                onAnswer={handleAnswer}
+                currentAnswer={currentAnswer}
                 placeholder={
                   currentQuestion.type === "reflection" ? "Type your answer..." : undefined
                 }
-                onAnswer={handleAnswer}
-                currentAnswer={currentAnswer}
                 variant="activity"
               />
             )}
@@ -210,7 +220,9 @@ export default function ActivitiesPage() {
 
           <View style={styles.nextButtonContainer}>
             <NextButton
-              onPress={handleNext}
+              onPress={() => {
+                void handleNext(); // explicitly ignore the promise
+              }}
               disabled={!currentAnswer}
               textOption={
                 currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
@@ -218,6 +230,23 @@ export default function ActivitiesPage() {
             />
           </View>
         </ScrollView>
+      )}
+
+      {currLesson && (
+        <ActivityPopup
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+          color="green"
+          title={currLesson.title}
+          description={currLesson.description}
+          onStart={() => {
+            setIsModalOpen(false);
+            setAnswers(Array(currLesson.activities.length).fill(undefined));
+            setCurrentIndex(0);
+          }}
+        />
       )}
     </SafeAreaView>
   );
@@ -238,10 +267,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 50,
-    fontSize: 18,
-    fontWeight: "600",
-    paddingTop: 10,
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
   headerTitle: {
     fontSize: 18,
@@ -267,20 +294,4 @@ const styles = StyleSheet.create({
   },
   main: { justifyContent: "center", alignItems: "center", marginTop: 20 },
   nextButtonContainer: { marginTop: 16, alignSelf: "center", width: "100%" },
-  lessonHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 50,
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  backButton: { marginRight: 16 },
-  lessonTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "600",
-    textAlign: "center",
-    color: lightModeColors.title,
-    fontFamily: "SG-Medium",
-  },
 });
