@@ -6,6 +6,8 @@ export type User = {
   email: string;
   uid: string;
   completedLessons: Lesson[];
+  lastCompletedWeeklyCheckIn?: string | null;
+  lastCompletedDailyCheckIn?: string | null;
 };
 
 export type Unit = {

@@ -10,6 +10,8 @@ type UserInterface = {
   age: number;
   gender: string;
   residence: string;
+  lastCompletedWeeklyCheckIn?: Date | null;
+  lastCompletedDailyCheckIn?: Date | null;
 };
 
 type UserDoc = {
@@ -22,6 +24,8 @@ type UserDoc = {
   age: number;
   gender: string;
   residence: string;
+  lastCompletedWeeklyCheckIn?: Date | null;
+  lastCompletedDailyCheckIn?: Date | null;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -70,6 +74,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Not specified",
     required: true,
+  },
+  lastCompletedWeeklyCheckIn: {
+    type: Date,
+    default: null,
+  },
+  lastCompletedDailyCheckIn: {
+    type: Date,
+    default: null,
   },
 });
 

@@ -11,6 +11,7 @@ import { activityRouter } from "../src/routes/activity";
 import { journalEntriesRouter } from "../src/routes/journalEntry";
 import { lessonRouter } from "../src/routes/lesson";
 import errorHandler from "../src/middleware/errorHandler";
+import { Request, Response } from "express";
 
 const app: Express = express();
 const port = env.PORT || 3000;

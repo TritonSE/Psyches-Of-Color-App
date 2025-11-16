@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import { Mood } from "../models/mood";
+import { User } from "../models/users";
 
 const router: Router = express.Router();
 
@@ -33,6 +34,13 @@ router.post("/api/logmood", async (req: Request, res: Response): Promise<void> =
       // Update the existing mood
       existingMood.moodreported = moodreported;
       await existingMood.save();
+      // update user's last daily check-in timestamp
+      try {
+        await User.findOneAndUpdate({ uid }, { lastCompletedDailyCheckIn: new Date() }).exec();
+      } catch (err) {
+        console.error("Failed to update user's lastCompletedDailyCheckIn:", err);
+      }
+
       res.status(200).json({ message: "Mood updated successfully", mood: existingMood });
       return;
     }
@@ -44,6 +52,13 @@ router.post("/api/logmood", async (req: Request, res: Response): Promise<void> =
       createdAt: date ? new Date(date) : undefined,
     });
     await newMood.save();
+
+    // update user's last daily check-in timestamp
+    try {
+      await User.findOneAndUpdate({ uid }, { lastCompletedDailyCheckIn: new Date() }).exec();
+    } catch (err) {
+      console.error("Failed to update user's lastCompletedDailyCheckIn:", err);
+    }
 
     res.status(201).json({ message: "Mood logged successfully", mood: newMood });
   } catch (error) {

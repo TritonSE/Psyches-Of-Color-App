@@ -1,7 +1,6 @@
-import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
 // import InternetError from "@/pages/internetError";
@@ -11,8 +10,9 @@ import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
 import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
 // Import colors
 import { lightModeColors } from "@/constants/colors";
+import { useAuth } from "@/contexts/userContext";
+import { Mood, getUserMoods } from "@/lib/api";
 import MoodCheckinPopup from "@/pages/checkInPopup";
-import { getUserMoods, Mood } from "@/lib/api";
 
 // Type definitions
 type DayInfo = {
@@ -43,15 +43,47 @@ function Home() {
   const [moods, setMoods] = useState<Mood[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasLoggedToday, setHasLoggedToday] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0); // 0 is current week, -1 is last week, 1 is next week
   const [monthOffset, setMonthOffset] = useState(0); // 0 is current month, -1 is last month, 1 is next month
+
+  const { mongoUser } = useAuth();
 
   const fetchMoods = async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedMoods = await getUserMoods("demo-user");
+      if (!mongoUser) {
+        setMoods([]);
+        setHasLoggedToday(false);
+        return;
+      }
+
+      const fetchedMoods = await getUserMoods(mongoUser.uid);
       setMoods(fetchedMoods);
+
+      // Determine if the user has logged a mood today using their lastCompletedDailyCheckIn
+      try {
+        const lastCheck = mongoUser?.lastCompletedDailyCheckIn ?? null;
+        if (!lastCheck) {
+          setHasLoggedToday(false);
+        } else {
+          const lastDate = new Date(lastCheck);
+          const today = new Date();
+          const isSameDay =
+            lastDate.getFullYear() === today.getFullYear() &&
+            lastDate.getMonth() === today.getMonth() &&
+            lastDate.getDate() === today.getDate();
+
+          setHasLoggedToday(isSameDay);
+        }
+      } catch (err) {
+        console.warn(
+          "Could not determine if user logged today from lastCompletedDailyCheckIn:",
+          err,
+        );
+        setHasLoggedToday(false);
+      }
     } catch (err) {
       setError("Failed to fetch moods");
       console.error("Error fetching moods:", err);
@@ -62,7 +94,7 @@ function Home() {
 
   useEffect(() => {
     fetchMoods();
-  }, []);
+  }, [mongoUser]);
 
   // Transform mood data for the bar chart
   const getCurrentWeekDates = () => {
@@ -109,7 +141,7 @@ function Home() {
       frontColor: mood
         ? moodToColor[mood.moodreported as keyof typeof moodToColor] || lightModeColors.moodMeh
         : lightModeColors.background,
-      date: date,
+      date,
     };
   });
   //   console.log("barData", barData);
@@ -219,7 +251,9 @@ function Home() {
         <View style={styles.toggleContainer}>
           <TouchableOpacity
             style={[styles.toggleButton, viewMode === "monthly" && styles.activeToggleButton]}
-            onPress={() => setViewMode("monthly")}
+            onPress={() => {
+              setViewMode("monthly");
+            }}
           >
             <Text style={[styles.monthlyText, viewMode === "monthly" && styles.activeToggleText]}>
               Monthly
@@ -227,7 +261,9 @@ function Home() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.toggleButton, viewMode === "weekly" && styles.activeToggleButton]}
-            onPress={() => setViewMode("weekly")}
+            onPress={() => {
+              setViewMode("weekly");
+            }}
           >
             <Text style={[styles.weeklyText, viewMode === "weekly" && styles.activeToggleText]}>
               Weekly
@@ -336,7 +372,9 @@ function Home() {
           </>
         )}
       </View>
-      <MoodCheckinPopup userId="demo-user" onMoodLogged={fetchMoods} />
+      {!hasLoggedToday && mongoUser && (
+        <MoodCheckinPopup userId={mongoUser.uid} onMoodLogged={fetchMoods} />
+      )}
     </View>
   );
 }

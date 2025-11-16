@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/namespace
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 
 import Mascots from "@/assets/Poc_Mascots.svg";

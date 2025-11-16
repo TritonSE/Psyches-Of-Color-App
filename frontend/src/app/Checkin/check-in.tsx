@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-// eslint-disable-next-line import/namespace
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import NextButton from "../../components/NextButton";

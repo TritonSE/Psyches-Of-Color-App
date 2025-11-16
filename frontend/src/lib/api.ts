@@ -8,7 +8,7 @@ const API_BASE_URL = Platform.select({
 });
 
 // Interface for the mood object
-export interface Mood {
+export type Mood = {
   _id: string;
   moodreported: string;
   createdAt: string;
@@ -16,12 +16,12 @@ export interface Mood {
   month: number;
   day: number;
   uid: string;
-}
+};
 
 // Interface for the API response
-interface MoodResponse {
+type MoodResponse = {
   moods: Mood[];
-}
+};
 
 /**
  * Fetches all moods for a specific user

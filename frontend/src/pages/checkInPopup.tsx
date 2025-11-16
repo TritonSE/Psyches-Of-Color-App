@@ -27,10 +27,10 @@ type MoodValue = (typeof moods)[number]["value"];
 
 const { width: screenWidth } = Dimensions.get("window");
 
-interface CheckInPopupProps {
+type CheckInPopupProps = {
   userId: string;
   onMoodLogged?: () => void;
-}
+};
 
 export default function CheckInPopup({ userId, onMoodLogged }: CheckInPopupProps) {
   const [showPopup, setShowPopup] = useState(false);
