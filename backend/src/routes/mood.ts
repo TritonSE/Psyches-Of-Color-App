@@ -36,7 +36,7 @@ router.post("/api/logmood", async (req: Request, res: Response): Promise<void> =
       await existingMood.save();
       // update user's last daily check-in timestamp
       try {
-        await User.findOneAndUpdate({ uid }, { lastCompletedDailyCheckIn: new Date() }).exec();
+        await User.findOneAndUpdate({ uid }, { lastCompletedDailyCheckIn: createdAt }).exec();
       } catch (err) {
         console.error("Failed to update user's lastCompletedDailyCheckIn:", err);
       }
@@ -55,7 +55,7 @@ router.post("/api/logmood", async (req: Request, res: Response): Promise<void> =
 
     // update user's last daily check-in timestamp
     try {
-      await User.findOneAndUpdate({ uid }, { lastCompletedDailyCheckIn: new Date() }).exec();
+      await User.findOneAndUpdate({ uid }, { lastCompletedDailyCheckIn: createdAt }).exec();
     } catch (err) {
       console.error("Failed to update user's lastCompletedDailyCheckIn:", err);
     }
