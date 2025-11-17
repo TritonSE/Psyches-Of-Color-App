@@ -40,17 +40,16 @@ export default function ProfilePage() {
   //   setDaysOfStreaks((prev) => prev + 1);
   // };
 
-  // Navigate to randomPage when the button is pressed
-  const navigateToRandomPage = () => {
-    router.push("/randomPage");
-  };
-
   const navigateToSettingsPage = () => {
     router.push("/settings");
   };
 
   const navigateToEditProfilePage = () => {
     router.push("/editProfile");
+  };
+
+  const navigateToEditCompanionPage = () => {
+    router.push("/editCharacter");
   };
 
   return (
@@ -80,7 +79,7 @@ export default function ProfilePage() {
                   <Text style={styles.editButtonText}>Edit Profile</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={navigateToRandomPage}>
+              <TouchableOpacity onPress={navigateToEditCompanionPage}>
                 <View style={styles.editButton}>
                   <Text style={styles.editButtonText}>Edit Companion</Text>
                 </View>
@@ -135,8 +134,8 @@ export default function ProfilePage() {
                 subtitle="Depression"
                 position="bottom"
               />
-              <TouchableOpacity onPress={navigateToRandomPage}>
-                <Text style={styles.viewAll}>View all history →</Text>
+              <TouchableOpacity disabled={true}>
+                <Text style={[styles.viewAll, styles.disabledText]}>View all history →</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -280,5 +279,11 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     lineHeight: 20,
     letterSpacing: 0.1,
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  disabledText: {
+    opacity: 0.5,
   },
 });

@@ -4,7 +4,7 @@
 
 import { User } from "@/types";
 import env from "@/util/validateEnv";
-import {
+import auth, {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
   getAuth,
@@ -49,6 +49,54 @@ type EmailSendResponse =
 type FirebaseError = {
   field: "email" | "password" | "unknown";
   message: string;
+};
+
+export const createMongoUser = async ({ name, email }: { name: string; email: string }) => {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return null;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      uid: firebaseUser.uid,
+    }),
+  });
+  if (!res.ok) {
+    return null;
+  }
+  return (await res.json()).user as User;
+};
+
+export const updateUserCharacter = async (character: string) => {
+  const firebaseUser = auth().currentUser;
+  const idToken = await firebaseUser?.getIdToken();
+
+  if (!firebaseUser || !idToken) return null;
+
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ character }),
+  });
+
+  if (res.ok) {
+    return (await res.json()).user as User;
+  } else {
+    const text = await res.text().catch(() => "");
+    console.warn("Failed to update character: ", res.status, text);
+    return null;
+  }
 };
 
 /**
@@ -105,6 +153,7 @@ export const loginEmailPassword = async (
 
 /*
  * Sends the Firebase ID token to the backend on the whoami route
+ * If user doesn't exist in MongoDB, attempts to create one
  */
 export const getMongoUser = async (idToken: string): Promise<User | null> => {
   try {
@@ -118,12 +167,6 @@ export const getMongoUser = async (idToken: string): Promise<User | null> => {
 
       return user;
     } else {
-      if (response.status === 404) {
-        console.error("User not found");
-      }
-
-      console.error("Failed to get user info from JWT Token, status:", response.status);
-
       return null;
     }
   } catch (error) {
@@ -189,6 +232,58 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
  */
 export const logout = async (): Promise<void> => {
   await signOut(getAuth());
+};
+
+/**
+ * Deletes the current user's account from both Firebase and MongoDB
+ *
+ * @returns {Promise<{ success: boolean; error?: string }>}
+ */
+export const deleteAccount = async (): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      return {
+        success: false,
+        error: "No user is currently signed in",
+      };
+    }
+
+    // Get the user's ID token for backend authentication
+    const idToken = await user.getIdToken();
+
+    // Delete user from MongoDB backend
+    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${user.uid}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || "Failed to delete user from database",
+      };
+    }
+
+    // Delete user from Firebase Authentication
+    await user.delete();
+
+    return {
+      success: true,
+    };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Error deleting account:", err);
+    return {
+      success: false,
+      error: err.message || "An error occurred while deleting the account",
+    };
+  }
 };
 
 /**

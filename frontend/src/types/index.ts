@@ -5,9 +5,22 @@ export type User = {
   name: string;
   email: string;
   uid: string;
+  character: string;
   completedLessons: Lesson[];
   lastCompletedWeeklyCheckIn?: string | null;
   lastCompletedDailyCheckIn?: string | null;
+  currLesson: Lesson;
+  onboardingInfo: OnboardingInfo;
+  completedOnboarding: boolean;
+};
+
+export type OnboardingInfo = {
+  ageRange: string;
+  gender: string;
+  ethnicity: string;
+  educationLevel: string;
+  counselingExperience: string;
+  residence: string;
 };
 
 export type Unit = {

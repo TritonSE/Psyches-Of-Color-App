@@ -5,8 +5,10 @@ import { getMongoUser } from "@/lib/auth";
 import { User } from "@/types";
 
 type UserContext = {
+  loadingUser: boolean;
   firebaseUser: FirebaseAuthTypes.User | null;
   mongoUser: User | null;
+  setMongoUser: (mongoUser: User | null) => unknown;
   refreshMongoUser: () => Promise<void>;
 };
 
@@ -14,8 +16,12 @@ type UserContext = {
  * A context that provides the current Firebase user data, null if not logged in
  */
 export const UserContext = createContext<UserContext>({
+  loadingUser: true,
   firebaseUser: null,
   mongoUser: null,
+  setMongoUser: () => {
+    return;
+  },
   refreshMongoUser: async () => {
     return Promise.resolve();
   },
@@ -26,6 +32,7 @@ export const UserContext = createContext<UserContext>({
  * with its current user
  */
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
+  const [loadingUser, setLoadingUser] = useState(true);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [mongoUser, setMongoUser] = useState<User | null>(null);
 
@@ -38,10 +45,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setMongoUser(null);
     }
+    setLoadingUser(false);
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+    const unsubscribe = onAuthStateChanged(getAuth(), (user: FirebaseAuthTypes.User | null) => {
+      setLoadingUser(true);
       setFirebaseUser(user);
     });
     return () => {
@@ -50,17 +59,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const updateMongoUser = async () => {
-      if (!firebaseUser) return;
-      const token = await firebaseUser.getIdToken();
-      const user = await getMongoUser(token);
-      setMongoUser(user);
-    };
-    void updateMongoUser();
+    void refreshMongoUser();
   }, [firebaseUser]);
 
   return (
-    <UserContext.Provider value={{ firebaseUser, mongoUser, refreshMongoUser }}>
+    <UserContext.Provider
+      value={{ loadingUser, firebaseUser, mongoUser, setMongoUser, refreshMongoUser }}
+    >
       {children}
     </UserContext.Provider>
   );

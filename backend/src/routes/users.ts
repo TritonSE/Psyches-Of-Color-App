@@ -73,8 +73,8 @@ router.post("/users", async (req: PsychesRequest, res: Response): Promise<void> 
 router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<void> => {
   try {
     const { uid } = req.params;
-    const { name, email, age, gender, residence, character } = req.body;
-    if (!name && !email && !age && !gender && !residence) {
+    const { name, email, character, onboardingInfo, completedOnboarding } = req.body;
+    if (!name && !email && !character && !onboardingInfo && !completedOnboarding) {
       res.status(400).json({ message: "At least one field is required" });
       return;
     }
@@ -88,9 +88,8 @@ router.put("/users/:uid", async (req: PsychesRequest, res: Response): Promise<vo
     if (name) user.name = name;
     if (email) user.email = email;
     if (character) user.character = character;
-    if (age) user.age = age;
-    if (gender) user.gender = gender;
-    if (residence) user.residence = residence;
+    if (onboardingInfo) user.onboardingInfo = onboardingInfo;
+    if (completedOnboarding) user.completedOnboarding = completedOnboarding;
 
     await user.save();
 
@@ -144,6 +143,7 @@ router.put(
       const { userUid } = req;
 
       const user = await User.findOne({ uid: userUid });
+
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;
@@ -161,6 +161,37 @@ router.put(
       console.error("Error updating lastCompletedWeeklyCheckIn:", error);
       res.status(500).json({ message: "Server error", error: (error as Error).message });
       return;
+    }
+  },
+);
+
+// DELETE route to delete a user account
+router.delete(
+  "/users/:uid",
+  verifyAuthToken,
+  async (req: PsychesRequest, res: Response): Promise<void> => {
+    try {
+      const { uid } = req.params;
+      const { userUid } = req;
+
+      // Ensure the authenticated user is deleting their own account
+      if (userUid !== uid) {
+        res.status(403).json({ message: "You can only delete your own account" });
+        return;
+      }
+
+      const user = await User.findOne({ uid });
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      await User.deleteOne({ uid });
+
+      res.status(200).json({ message: "User account deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user account:", error);
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
     }
   },
 );
