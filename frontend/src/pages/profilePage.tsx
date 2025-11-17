@@ -33,17 +33,17 @@ type Character = {
 const characters: Character[] = [
   {
     color: "#83B26D",
-    character: "nature",
+    character: "Nature",
     characterIcon: nature,
   },
   {
     color: "#FFC97E",
-    character: "fire",
+    character: "Fire",
     characterIcon: fire,
   },
   {
     color: "#FCA397",
-    character: "water",
+    character: "Water",
     characterIcon: water,
   },
 ];
