@@ -27,6 +27,7 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
+import { getJournalEntries } from "@/lib/journalEntries";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
@@ -103,7 +104,87 @@ const NewDayComponent: React.FC = () => {
 };
 
 export default function HomePage() {
-  const { mongoUser } = useContext(UserContext);
+  const { mongoUser, firebaseUser } = useContext(UserContext);
+
+  const [lessonCompletedToday, setLessonCompletedToday] = useState(false);
+  const [journalCompletedToday, setJournalCompletedToday] = useState(false);
+
+  useEffect(() => {
+    const checkLessonToday = () => {
+      const completed = mongoUser?.completedLessons ?? [];
+      if (!completed || completed.length === 0) {
+        setLessonCompletedToday(false);
+        return;
+      }
+
+      const today = new Date();
+
+      const isSameLocalDate = (dateLike: string | Date) => {
+        const d = new Date(dateLike);
+        return (
+          d.getFullYear() === today.getFullYear() &&
+          d.getMonth() === today.getMonth() &&
+          d.getDate() === today.getDate()
+        );
+      };
+
+      const found = completed.some((c) => {
+        try {
+          return isSameLocalDate(c.completedAt);
+        } catch {
+          return false;
+        }
+      });
+
+      setLessonCompletedToday(!!found);
+    };
+
+    checkLessonToday();
+  }, [mongoUser]);
+
+  useEffect(() => {
+    const checkJournalToday = async () => {
+      if (!firebaseUser) {
+        setJournalCompletedToday(false);
+        return;
+      }
+
+      try {
+        const token = await firebaseUser.getIdToken();
+        const entries = await getJournalEntries(token);
+        if (!entries || entries.length === 0) {
+          setJournalCompletedToday(false);
+          return;
+        }
+
+        const today = new Date();
+
+        const isSameLocalDate = (dateLike: string | Date) => {
+          const d = new Date(dateLike);
+          return (
+            d.getFullYear() === today.getFullYear() &&
+            d.getMonth() === today.getMonth() &&
+            d.getDate() === today.getDate()
+          );
+        };
+
+        const found = entries.some((e) => {
+          try {
+            return isSameLocalDate(e.createdAt);
+          } catch {
+            return false;
+          }
+        });
+
+        setJournalCompletedToday(!!found);
+      } catch (err) {
+        console.error("Error checking journal entries:", err);
+        setJournalCompletedToday(false);
+      }
+    };
+
+    void checkJournalToday();
+  }, [firebaseUser]);
 
   return (
     <SafeAreaView style={styles.page}>
@@ -144,14 +225,13 @@ export default function HomePage() {
           >
             <Image source={IMG.fireman} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
-              <Text style={styles.taskLabel}>Complete 3 Activities</Text>
-              {/* <Progress.Bar*/}
+              <Text style={styles.taskLabel}>Complete Lesson</Text>
               <ProgressBar
-                progress={1 / 3}
+                progress={lessonCompletedToday ? 1 : 0}
                 style={styles.progressBar}
                 fillColor={styles.progressBarColor}
-              ></ProgressBar>
-              <Text style={styles.taskCount}>1/3</Text>
+              />
+              <Text style={styles.taskCount}>{lessonCompletedToday ? "1/1" : "0/1"}</Text>
             </View>
           </TouchableOpacity>
 
@@ -170,11 +250,11 @@ export default function HomePage() {
               <Text style={styles.taskLabel}>Complete Journal</Text>
               {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
               <ProgressBar
-                progress={0 / 1}
+                progress={journalCompletedToday ? 1 : 0}
                 style={styles.progressBar}
                 fillColor={styles.progressBarColor}
-              ></ProgressBar>
-              <Text style={styles.taskCount}>0/1</Text>
+              />
+              <Text style={styles.taskCount}>{journalCompletedToday ? "1/1" : "0/1"}</Text>
             </View>
           </TouchableOpacity>
 
@@ -191,7 +271,7 @@ export default function HomePage() {
                 progress={0 / 1}
                 style={styles.progressBar}
                 fillColor={styles.progressBarColor}
-              ></ProgressBar>
+              />
               <Text style={styles.taskCount}>0/1</Text>
             </View>
           </TouchableOpacity>

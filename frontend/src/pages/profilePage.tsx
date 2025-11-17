@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
-import { useContext } from "react";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -11,8 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { UserContext } from "../contexts/userContext";
 
 import { UserContext } from "../contexts/userContext";
 
@@ -56,6 +53,36 @@ export default function ProfilePage() {
   const { mongoUser } = useContext(UserContext);
   const selectedCharacter =
     characters.find((c) => c.character === mongoUser?.character) ?? characters[1];
+  const lessonsCompletedCount = mongoUser?.completedLessons?.length ?? 0;
+
+  const streakDays = useMemo(() => {
+    const completed = mongoUser?.completedLessons ?? [];
+    if (!completed || completed.length === 0) return 0;
+
+    const formatDate = (d: Date) => d.toISOString().split("T")[0];
+
+    const daySet = new Set<string>();
+    for (const c of completed) {
+      try {
+        const d = new Date(c.completedAt);
+        if (!Number.isNaN(d.getTime())) {
+          daySet.add(formatDate(d));
+        }
+      } catch {
+        // ignore malformed dates
+      }
+    }
+
+    let streak = 0;
+    const cursor = new Date();
+    // Count consecutive days including today where at least one lesson was completed
+    while (daySet.has(formatDate(cursor))) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    return streak;
+  }, [mongoUser?.completedLessons]);
   // State for achievements and streaks
   // const [achievementsCompleted, setAchievementsCompleted] = useState(3);
   // const [daysOfStreaks, setDaysOfStreaks] = useState(3);
@@ -126,16 +153,16 @@ export default function ProfilePage() {
                 <View style={styles.achievementCard}>
                   <View style={styles.imageNumberContainer}>
                     <Image source={Trophy} style={styles.achievementIcon} />
-                    <Text style={styles.number}>3</Text>
+                    <Text style={styles.number}>{lessonsCompletedCount}</Text>
                   </View>
-                  <Text style={styles.label}>Activities Completed</Text>
+                  <Text style={styles.label}>Lessons Completed</Text>
                 </View>
                 <View style={styles.achievementCard}>
                   <View style={styles.imageNumberContainer}>
                     <Image source={BiFire} style={styles.achievementIcon} />
-                    <Text style={styles.number}>3</Text>
+                    <Text style={styles.number}>{streakDays}</Text>
                   </View>
-                  <Text style={styles.label}>Days of Streaks</Text>
+                  <Text style={styles.label}>Current Streak</Text>
                 </View>
               </View>
             </View>

@@ -21,7 +21,7 @@ export default ProgressBar;
 const styles = StyleSheet.create({
   container: {
     height: 12,
-    width: 300,
+    width: 270,
     backgroundColor: lightModeColors.progressBarBackground,
     borderRadius: 12,
     overflow: "hidden",

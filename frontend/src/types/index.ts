@@ -1,12 +1,17 @@
 type ActivityType = "reflection" | "mcq" | "wwyd";
 
+export type CompletedLesson = {
+  lessonId: string;
+  completedAt: string;
+};
+
 export type User = {
   _id: string;
   name: string;
   email: string;
   uid: string;
   character: string;
-  completedLessons: Lesson[];
+  completedLessons: CompletedLesson[];
   currLesson: Lesson;
   onboardingInfo: OnboardingInfo;
   completedOnboarding: boolean;
