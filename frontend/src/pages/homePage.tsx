@@ -19,6 +19,7 @@ import { UserContext } from "../contexts/userContext";
 
 import type { ImageSourcePropType } from "react-native";
 
+import CheckinPopup from "@/app/Checkin/CheckInCompletedPopup";
 import checkinIcon from "@/assets/checkinIcon.png";
 import crisisBtn from "@/assets/crisisBtn.png";
 import fireman from "@/assets/fireman.png";
@@ -138,6 +139,8 @@ const moodToColor = {
 export default function HomePage() {
   const { mongoUser } = useContext(UserContext);
 
+  const [showCheckinPopup, setShowCheckinPopup] = useState(false);
+
   // Mood tracker states moved from app/(tabs)/index.tsx
   const [viewMode, setViewMode] = useState("weekly");
   const [moods, setMoods] = useState<Mood[]>([]);
@@ -193,6 +196,48 @@ export default function HomePage() {
     void fetchMoods();
   }, [mongoUser]);
 
+  const isDateInCurrentWeek = (d: Date) => {
+    const date = new Date(d);
+    date.setHours(0, 0, 0, 0);
+
+    const now = new Date();
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    const day = start.getDay(); // 0 (Sun) - 6 (Sat)
+    start.setDate(start.getDate() - day);
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+
+    return date >= start && date <= end;
+  };
+
+  const handleCheckinPress = () => {
+    try {
+      if (!mongoUser) {
+        router.push("/Checkin/Start");
+        return;
+      }
+
+      const last = mongoUser.lastCompletedWeeklyCheckIn ?? null;
+      if (!last) {
+        router.push("/Checkin/Start");
+        return;
+      }
+
+      const lastDate = new Date(last);
+      if (isDateInCurrentWeek(lastDate)) {
+        setShowCheckinPopup(true);
+      } else {
+        router.push("/Checkin/Start");
+      }
+    } catch (err) {
+      console.warn("Error checking lastCompletedWeeklyCheckIn:", err);
+      router.push("/Checkin/Start");
+    }
+  };
+
   const getCurrentWeekDates = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -211,8 +256,12 @@ export default function HomePage() {
     return days;
   };
 
-  const handlePreviousWeek = () => setWeekOffset((prev) => prev - 1);
-  const handleNextWeek = () => setWeekOffset((prev) => prev + 1);
+  const handlePreviousWeek = () => {
+    setWeekOffset((prev) => prev - 1);
+  };
+  const handleNextWeek = () => {
+    setWeekOffset((prev) => prev + 1);
+  };
 
   const dates = getCurrentWeekDates();
 
@@ -273,8 +322,12 @@ export default function HomePage() {
     return days;
   };
 
-  const handlePreviousMonth = () => setMonthOffset((prev) => prev - 1);
-  const handleNextMonth = () => setMonthOffset((prev) => prev + 1);
+  const handlePreviousMonth = () => {
+    setMonthOffset((prev) => prev - 1);
+  };
+  const handleNextMonth = () => {
+    setMonthOffset((prev) => prev + 1);
+  };
 
   const calendarData = getMonthData();
 
@@ -407,12 +460,7 @@ export default function HomePage() {
               <Image source={IMG.journalIcon} style={styles.journalIcon}></Image>
               <Image source={IMG.pencilJournal} style={styles.pencilJournal}></Image>
             </Button>
-            <Button
-              style={styles.checkin}
-              onPress={() => {
-                router.push("/Checkin/Start");
-              }}
-            >
+            <Button style={styles.checkin} onPress={handleCheckinPress}>
               <Text style={styles.checkinTitle}>Check-in</Text>
               <Image source={IMG.checkinIcon} style={styles.checkinIcon}></Image>
             </Button>
@@ -431,7 +479,9 @@ export default function HomePage() {
                   styles.moodToggleButton,
                   viewMode === "monthly" && styles.moodActiveToggleButton,
                 ]}
-                onPress={() => setViewMode("monthly")}
+                onPress={() => {
+                  setViewMode("monthly");
+                }}
               >
                 <Text
                   style={[
@@ -447,7 +497,9 @@ export default function HomePage() {
                   styles.moodToggleButton,
                   viewMode === "weekly" && styles.moodActiveToggleButton,
                 ]}
-                onPress={() => setViewMode("weekly")}
+                onPress={() => {
+                  setViewMode("weekly");
+                }}
               >
                 <Text
                   style={[
@@ -569,6 +621,12 @@ export default function HomePage() {
           {!hasLoggedToday && mongoUser && (
             <MoodCheckinPopup userId={mongoUser.uid} onMoodLogged={fetchMoods} />
           )}
+          <CheckinPopup
+            visible={showCheckinPopup}
+            onClose={() => {
+              setShowCheckinPopup(false);
+            }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

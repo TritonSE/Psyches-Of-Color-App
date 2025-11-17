@@ -6,6 +6,8 @@ import Button from "@/components/Button";
 import { useAuth } from "@/contexts/userContext";
 import env from "@/util/validateEnv";
 
+import { lightModeColors } from "@/constants/colors";
+
 export default function Start() {
   const { firebaseUser, refreshMongoUser } = useAuth();
 
@@ -69,7 +71,7 @@ export default function Start() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: lightModeColors.background,
     // alignItems: "center",
     // justifyContent: "center",
     justifyContent: "space-between",
@@ -78,6 +80,7 @@ const styles = StyleSheet.create({
     marginTop: 200,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 32,
   },
   bottomSection: {
     marginBottom: 50,
@@ -90,16 +93,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   text: {
-    color: "#000000",
+    color: lightModeColors.darkFont,
     fontFamily: "Open Sans",
-    fontSize: 17,
+    fontSize: 16,
     fontStyle: "normal",
-    fontWeight: "400",
+    fontWeight: "200",
     lineHeight: 25.5,
+    letterSpacing: 0.32,
+    textAlign: "center",
   },
   title: {
-    color: "#000000",
-    fontFamily: "Inter",
+    color: lightModeColors.darkFont,
+    fontFamily: "SG-Medium",
     fontSize: 32,
     fontStyle: "normal",
     fontWeight: "bold",
@@ -110,6 +115,6 @@ const styles = StyleSheet.create({
   nextButtonContainer: {
     marginTop: 16,
     alignSelf: "center",
-    width: "100%",
+    justifyContent: "center",
   },
 });

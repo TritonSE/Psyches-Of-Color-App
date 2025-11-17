@@ -3,6 +3,8 @@ import { StatusBar, StyleSheet, Text, View } from "react-native";
 import Mascots from "@/assets/Poc_Mascots.svg";
 import Button from "@/components/Button";
 
+import { lightModeColors } from "@/constants/colors";
+
 export default function Start() {
   return (
     <View style={styles.container}>
@@ -29,7 +31,7 @@ export default function Start() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: lightModeColors.background,
     // alignItems: "center",
     // justifyContent: "center",
     justifyContent: "space-between",
@@ -38,6 +40,7 @@ const styles = StyleSheet.create({
     marginTop: 200,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 32,
   },
   bottomSection: {
     marginBottom: 50,
@@ -50,26 +53,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   text: {
-    color: "#000000",
+    color: lightModeColors.darkFont,
     fontFamily: "Open Sans",
     fontSize: 17,
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 25.5,
+    textAlign: "center",
   },
   title: {
-    color: "#000000",
-    fontFamily: "Inter",
+    color: lightModeColors.darkFont,
+    fontFamily: "SG-DemiBold",
     fontSize: 32,
     fontStyle: "normal",
-    fontWeight: "bold",
     lineHeight: 38.4,
     letterSpacing: -0.64,
     marginBottom: 16,
+    textAlign: "center",
   },
   nextButtonContainer: {
     marginTop: 16,
     alignSelf: "center",
-    width: "100%",
+    justifyContent: "center",
   },
 });

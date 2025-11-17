@@ -10,6 +10,8 @@ import { Question } from "./Question";
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 
+import { lightModeColors } from "@/constants/colors";
+
 type QuestionData = {
   type: "multipleChoice" | "shortAnswer";
   question: string;
@@ -114,7 +116,7 @@ const CheckIn: React.FC = () => {
         />
 
         <View style={styles.nextButtonContainer}>
-          <NextButton onPress={handleNext} disabled={!!isNextDisabled} />
+          <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next" />
         </View>
       </View>
     </>
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    backgroundColor: "#FFF",
+    backgroundColor: lightModeColors.background,
     justifyContent: "flex-start",
   },
   progressText: {
@@ -161,6 +163,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     marginLeft: 10,
+    fontFamily: "SG-DemiBold",
+    color: lightModeColors.secondaryLightFont,
   },
   backButton: {
     position: "absolute",
