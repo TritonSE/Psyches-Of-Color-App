@@ -1,8 +1,7 @@
 import { useRouter } from "expo-router";
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   Image,
-  ImageSourcePropType,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -14,54 +13,59 @@ import {
 import { UserContext } from "../contexts/userContext";
 
 import BiFire from "@/assets/bi_fire.png";
-import fire from "@/assets/fire.png";
 import Media from "@/assets/media.png";
-import nature from "@/assets/nature.png";
 import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
-import water from "@/assets/water.png";
+import { characters } from "@/components/CharacterCarousel";
 import ButtonItem from "@/components/ProfileButton";
 import { lightModeColors } from "@/constants/colors";
+import { getJournalEntries } from "@/lib/journalEntries";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
-type Character = {
-  color: string;
-  character: string;
-  characterIcon: ImageSourcePropType;
-};
-
-const characters: Character[] = [
-  {
-    color: "#83B26D",
-    character: "Nature",
-    characterIcon: nature,
-  },
-  {
-    color: "#FFC97E",
-    character: "Fire",
-    characterIcon: fire,
-  },
-  {
-    color: "#FCA397",
-    character: "Water",
-    characterIcon: water,
-  },
-];
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { mongoUser } = useContext(UserContext);
+  const { mongoUser, firebaseUser } = useContext(UserContext);
   const selectedCharacter =
     characters.find((c) => c.character === mongoUser?.character) ?? characters[1];
   const lessonsCompletedCount = mongoUser?.completedLessons?.length ?? 0;
 
+  const [journalEntries, setJournalEntries] = useState<{ createdAt: string }[]>([]);
+
+  useEffect(() => {
+    const fetchJournals = async () => {
+      if (!firebaseUser) {
+        setJournalEntries([]);
+        return;
+      }
+      try {
+        const token = await firebaseUser.getIdToken();
+        const entries = await getJournalEntries(token);
+        setJournalEntries(entries ?? []);
+      } catch (err) {
+        console.error("Error fetching journal entries:", err);
+        setJournalEntries([]);
+      }
+    };
+
+    void fetchJournals();
+  }, [firebaseUser]);
+
   const streakDays = useMemo(() => {
     const completed = mongoUser?.completedLessons ?? [];
-    if (!completed || completed.length === 0) return 0;
+    const journals = journalEntries ?? [];
 
-    const formatDate = (d: Date) => d.toISOString().split("T")[0];
+    if ((!completed || completed.length === 0) && (!journals || journals.length === 0)) return 0;
+
+    const formatDate = (d: Date): string => {
+      const year = d.getFullYear().toString();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return year + "-" + month + "-" + day;
+    };
 
     const daySet = new Set<string>();
+    // Add lesson completion dates
     for (const c of completed) {
       try {
         const d = new Date(c.completedAt);
@@ -73,16 +77,28 @@ export default function ProfilePage() {
       }
     }
 
+    // Add journal entry dates
+    for (const j of journals) {
+      try {
+        const d = new Date(j.createdAt);
+        if (!Number.isNaN(d.getTime())) {
+          daySet.add(formatDate(d));
+        }
+      } catch {
+        // ignore malformed dates
+      }
+    }
+
     let streak = 0;
     const cursor = new Date();
-    // Count consecutive days including today where at least one lesson was completed
+    // Count consecutive days including today where at least one lesson or journal entry was completed
     while (daySet.has(formatDate(cursor))) {
       streak += 1;
       cursor.setDate(cursor.getDate() - 1);
     }
 
     return streak;
-  }, [mongoUser?.completedLessons]);
+  }, [mongoUser?.completedLessons, journalEntries]);
   // State for achievements and streaks
   // const [achievementsCompleted, setAchievementsCompleted] = useState(3);
   // const [daysOfStreaks, setDaysOfStreaks] = useState(3);
