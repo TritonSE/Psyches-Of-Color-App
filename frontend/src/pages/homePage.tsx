@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -52,27 +51,26 @@ const IMG = {
   wateringCan: wateringCan as unknown as ImageSourcePropType,
 };
 
-const NewDayComponent: React.FC = () => {
-  const [isNewDay, setIsNewDay] = useState<boolean>(false);
+type NewDayProps = {
+  hasLoggedToday: boolean;
+  onOpenMoodPopup: () => void;
+  currentMood: keyof typeof moodToColor | null;
+};
+
+const NewDayComponent: React.FC<NewDayProps> = ({
+  hasLoggedToday,
+  onOpenMoodPopup,
+  currentMood,
+}) => {
+  const [isNewDay, setIsNewDay] = useState<boolean>(() => !hasLoggedToday);
 
   useEffect(() => {
-    const checkNewDay = async () => {
-      const now = new Date();
-      const today = now.toLocaleDateString();
-      try {
-        const lastVisit = await AsyncStorage.getItem("lastVisitDate");
+    // Derive whether it's a new day from the parent-provided flag
+    setIsNewDay(!hasLoggedToday);
+  }, [hasLoggedToday]);
 
-        if (lastVisit !== today) {
-          await AsyncStorage.setItem("lastVisitDate", today);
-          setIsNewDay(true);
-        }
-      } catch (error) {
-        console.error("Error checking new day:", error);
-      }
-    };
-
-    void checkNewDay();
-  }, []);
+  const moodColor = currentMood ? moodToColor[currentMood] : styles.moodHighlight.color;
+  const moodTextDisplay = currentMood ? currentMood.toLowerCase() : "good";
 
   return (
     <>
@@ -86,21 +84,17 @@ const NewDayComponent: React.FC = () => {
               <View style={styles.moodContent}>
                 <Image source={IMG.moodIcon} style={styles.moodIcon} />
                 <Text style={styles.moodText}>
-                  You're feeling <Text style={styles.moodHighlight}>good</Text> today - nice!
+                  You're feeling
+                  <Text style={[styles.moodHighlight, { color: moodColor }]}>
+                    {` ${moodTextDisplay} `}
+                  </Text>
+                  today - {moodToText[currentMood as keyof typeof moodToText] || "nice!"}
                 </Text>
               </View>
 
               {/* Button container */}
               <View style={{ width: "100%", alignItems: "center" }}>
-                <Button
-                  style={styles.changeMoodButton}
-                  onPress={() => {
-                    void (async () => {
-                      await AsyncStorage.removeItem("lastVisitDate");
-                      console.log("Date reset");
-                    })();
-                  }}
-                >
+                <Button style={styles.changeMoodButton} onPress={onOpenMoodPopup}>
                   <Text style={styles.changeMoodButtonText}>CHANGE MOOD</Text>
                 </Button>
               </View>
@@ -136,10 +130,20 @@ const moodToColor = {
   Bad: lightModeColors.moodBad,
 };
 
+const moodToText = {
+  Happy: "love to see it!",
+  Good: "nice!",
+  Okay: "totally okay! Take it at your own pace.",
+  Meh: "that's alright, we all have those days.",
+  Bad: "I'm here with you. Be gentle with yourself.",
+};
+
 export default function HomePage() {
   const { mongoUser } = useContext(UserContext);
 
   const [showCheckinPopup, setShowCheckinPopup] = useState(false);
+  const [showMoodPopup, setShowMoodPopup] = useState(false);
+  const [currentMood, setCurrentMood] = useState<keyof typeof moodToColor | null>(null);
 
   // Mood tracker states moved from app/(tabs)/index.tsx
   const [viewMode, setViewMode] = useState("weekly");
@@ -157,11 +161,29 @@ export default function HomePage() {
       if (!mongoUser) {
         setMoods([]);
         setHasLoggedToday(false);
+        setCurrentMood(null);
         return;
       }
 
       const fetchedMoods = await getUserMoods(mongoUser.uid);
       setMoods(fetchedMoods);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Normalize time to just the date
+
+      const todaysMood = fetchedMoods.find((m) => {
+        const moodDate = new Date(m.createdAt);
+        moodDate.setHours(0, 0, 0, 0);
+
+        return moodDate.getTime() === today.getTime();
+      });
+
+      if (todaysMood) {
+        // Cast the moodreported string to the expected type for safety
+        setCurrentMood(todaysMood.moodreported as keyof typeof moodToColor);
+      } else {
+        setCurrentMood(null);
+      }
 
       try {
         const lastCheck = mongoUser?.lastCompletedDailyCheckIn ?? null;
@@ -372,7 +394,13 @@ export default function HomePage() {
         </View>
 
         {/* Mood Check-in Section */}
-        <NewDayComponent />
+        <NewDayComponent
+          hasLoggedToday={hasLoggedToday}
+          onOpenMoodPopup={() => {
+            setShowMoodPopup(true);
+          }}
+          currentMood={currentMood}
+        />
         {/* Progress Section */}
         <Text style={styles.sectionTitle}>Today's Progress</Text>
 
@@ -618,8 +646,19 @@ export default function HomePage() {
             )}
           </View>
 
-          {!hasLoggedToday && mongoUser && (
-            <MoodCheckinPopup userId={mongoUser.uid} onMoodLogged={fetchMoods} />
+          {(!hasLoggedToday || showMoodPopup) && mongoUser && (
+            <MoodCheckinPopup
+              userId={mongoUser.uid}
+              onMoodLogged={() => {
+                fetchMoods();
+                setHasLoggedToday(true);
+                // setShowMoodPopup(false);
+              }}
+              visible={showMoodPopup || !hasLoggedToday}
+              onClose={() => {
+                setShowMoodPopup(false);
+              }}
+            />
           )}
           <CheckinPopup
             visible={showCheckinPopup}

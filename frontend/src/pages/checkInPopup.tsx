@@ -23,52 +23,55 @@ const moods = [
   { label: "Bad", value: "Bad" },
 ] as const;
 
+const moodTextMap = {
+  Happy: "So glad you're feeling happy today!",
+  Good: "Glad you're feeling good!",
+  Okay: "Feeling okay today? Nice — steady days count too.",
+  Meh: "That's alright, we all have those days.",
+  Bad: "Really sorry you're feeling bad — hope things brighten up soon.",
+};
+
 type MoodValue = (typeof moods)[number]["value"];
 
 const { width: screenWidth } = Dimensions.get("window");
 
 type CheckInPopupProps = {
   userId: string;
-  onMoodLogged?: () => void;
+  onMoodLogged: () => void;
+  // Parent-controlled flag indicating whether the user has logged today
+  visible: boolean;
+  // Setter from parent to mark the user as having logged today
+  onClose: () => void;
 };
 
-export default function CheckInPopup({ userId, onMoodLogged }: CheckInPopupProps) {
-  const [showPopup, setShowPopup] = useState(false);
+export default function CheckInPopup({
+  userId,
+  onMoodLogged,
+  visible,
+  onClose,
+}: CheckInPopupProps) {
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  useEffect(() => {
-    const checkMoodStatus = async () => {
-      const today = new Date().toISOString().split("T")[0];
-      const key = `moodCheckin-${userId}-${today}`;
-      const hasCheckedIn = await AsyncStorage.getItem(key);
-
-      if (!hasCheckedIn) {
-        setShowPopup(true);
-      }
-    };
-
-    void checkMoodStatus();
-  }, [userId]);
+  const handleClose = () => {
+    if (showConfirmation) {
+      onClose();
+      setShowConfirmation(false);
+      setSelectedMood(null);
+    }
+  };
 
   const handleCheckIn = async () => {
     if (!selectedMood) return;
 
     try {
-      // Log the mood to the backend - no need to convert case since values match
       await logMood(userId, selectedMood);
 
-      onMoodLogged?.();
-
-      // Store in AsyncStorage to prevent multiple check-ins
-      const today = new Date().toISOString().split("T")[0];
-      const key = `moodCheckin-${userId}-${today}`;
-      await AsyncStorage.setItem(key, selectedMood);
-
       setShowConfirmation(true);
+
+      onMoodLogged();
     } catch (error) {
       console.error("Failed to log mood:", error);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -76,17 +79,8 @@ export default function CheckInPopup({ userId, onMoodLogged }: CheckInPopupProps
 
   return (
     <>
-      <Modal visible={showPopup} transparent animationType="slide">
-        <Pressable
-          style={styles.overlay}
-          onPress={() => {
-            if (showConfirmation) {
-              setShowPopup(false);
-              setShowConfirmation(false);
-              setSelectedMood(null);
-            }
-          }}
-        >
+      <Modal visible={visible} transparent animationType="slide">
+        <Pressable style={styles.overlay} onPress={handleClose}>
           <View style={styles.bottomSheet}>
             {!showConfirmation ? (
               <>
@@ -126,7 +120,7 @@ export default function CheckInPopup({ userId, onMoodLogged }: CheckInPopupProps
                   color={selectedMood ? moodColorMap[selectedMood] : "#ccc"}
                 />
                 <Text style={styles.subtext}>
-                  {`Glad you're feeling ${selectedMoodLabel?.toLowerCase() ?? ""}!`}
+                  {selectedMood ? moodTextMap[selectedMood] : "Mood logged!"}
                 </Text>
                 <Text style={styles.subtext}>Remember to log your mood every day.</Text>
               </>
@@ -143,7 +137,6 @@ export default function CheckInPopup({ userId, onMoodLogged }: CheckInPopupProps
               const today = new Date().toISOString().split("T")[0];
               const key = `moodCheckin-${userId}-${today}`;
               await AsyncStorage.removeItem(key);
-              setShowPopup(true);
               setShowConfirmation(false);
               setSelectedMood(null);
             })();
