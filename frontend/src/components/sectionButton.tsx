@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
@@ -18,14 +17,6 @@ const SectionButton: React.FC<SectionButtonProps> = ({ color = "red", title, sub
         ? lightModeColors.primaryYellow
         : lightModeColors.primaryGreen;
 
-  // State to track whether the dropdown is visible or not
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
-  // Function to toggle dropdown visibility
-  const toggleDropdown = () => {
-    setIsDropdownVisible(false);
-  };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -34,45 +25,15 @@ const SectionButton: React.FC<SectionButtonProps> = ({ color = "red", title, sub
           styles.sectionCard,
           {
             backgroundColor: primaryColor,
-            borderBottomLeftRadius: isDropdownVisible ? 0 : 12,
-            borderBottomRightRadius: isDropdownVisible ? 0 : 12,
+            borderRadius: 12,
           },
         ]}
-        onPress={toggleDropdown}
       >
         <View style={styles.sectionText}>
           <Text style={styles.sectionTitle}>{title}</Text>
           <Text style={styles.sectionSubtitle}>{subtitle}</Text>
         </View>
-        <Ionicons
-          name="menu-outline"
-          size={24}
-          color={lightModeColors.background}
-          style={styles.menuIcon}
-        />
       </TouchableOpacity>
-
-      {/* Conditionally render dropdown options if the state is true */}
-      {isDropdownVisible && (
-        <View
-          style={[
-            styles.dropdown,
-            {
-              borderColor: primaryColor,
-            },
-          ]}
-        >
-          <TouchableOpacity>
-            <Text style={styles.dropdownItem}>Header 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.dropdownItem}>Header 2</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.dropdownItem}>Header 3</Text>
-          </TouchableOpacity>
-        </View>
-      )}
     </View>
   );
 };
@@ -92,6 +53,8 @@ const styles = StyleSheet.create({
   },
   sectionText: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   sectionTitle: {
     fontSize: 18,
@@ -100,6 +63,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     textTransform: "uppercase",
     fontFamily: "Archivo",
+    alignItems: "center",
   },
   sectionSubtitle: {
     fontSize: 16,

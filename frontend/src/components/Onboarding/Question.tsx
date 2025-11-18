@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
     marginBottom: 64,
     textAlign: "center",
     width: 302,
-    height: 81,
   },
   questionText: {
     textAlign: "center",
