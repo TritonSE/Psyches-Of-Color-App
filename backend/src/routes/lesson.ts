@@ -4,7 +4,8 @@ import createHttpError from "http-errors";
 
 const router = express.Router();
 
-router.get("/:id", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// GET single lesson by id with activities populated
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
@@ -19,7 +20,6 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
     next(e);
   }
 });
-
 // Uncomment these routes if needed for admin portal in future, but add auth checks first!
 // // POST route to create a new lesson, initializes with an empty activities array
 // router.post(
