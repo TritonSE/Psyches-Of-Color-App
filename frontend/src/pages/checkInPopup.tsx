@@ -3,8 +3,8 @@ import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-nati
 
 import FaceIcon from "@/assets/mood-illustration.svg";
 import { lightModeColors } from "@/constants/colors";
-import { logMood } from "@/lib/api";
 import { useAuth } from "@/contexts/userContext";
+import { logMood } from "@/lib/api";
 
 // Update color map to match mood values
 const moodColorMap = {

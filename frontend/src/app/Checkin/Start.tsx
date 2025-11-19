@@ -1,11 +1,11 @@
 import { useRouter } from "expo-router";
 import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 import Button from "@/components/Button";
 import { lightModeColors } from "@/constants/colors";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Start() {
   const router = useRouter();

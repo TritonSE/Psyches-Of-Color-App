@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import Journal from "@/assets/journal.svg";
 import Photo from "@/assets/photo.svg";
@@ -21,7 +22,6 @@ import ExitJournal from "@/components/ExitJournal";
 import { lightModeColors } from "@/constants/colors";
 import { UserContext } from "@/contexts/userContext";
 import { createJournalEntry } from "@/lib/journalEntries";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateJournal() {
   const [titleText, setTitleText] = useState("");

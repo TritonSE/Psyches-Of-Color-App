@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import NextButton from "../../components/NextButton";
 
@@ -10,7 +11,6 @@ import { Question } from "./Question";
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 import { lightModeColors } from "@/constants/colors";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 type QuestionData = {
   type: "multipleChoice" | "shortAnswer";
