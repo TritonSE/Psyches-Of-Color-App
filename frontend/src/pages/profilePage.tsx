@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   Image,
@@ -13,15 +13,34 @@ import {
 import { UserContext } from "../contexts/userContext";
 
 import BiFire from "@/assets/bi_fire.png";
-import Media from "@/assets/media.png";
 import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
 import { characters } from "@/components/CharacterCarousel";
-import ButtonItem from "@/components/ProfileButton";
 import { lightModeColors } from "@/constants/colors";
 import { getJournalEntries } from "@/lib/journalEntries";
 
-// import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
+const resourcesPhoneNumbers = [
+  {
+    name: "National Suicide Hotline",
+    number: "988",
+  },
+  {
+    name: "Extreme Emergency",
+    number: "911",
+  },
+  {
+    name: "LGBTQIA Hotline",
+    number: "1-888-843-4564",
+  },
+  {
+    name: "Trevor Project",
+    number: "1-866-488-7386",
+  },
+  {
+    name: "Teens & Young Adults",
+    number: "1-800-950-6264",
+  },
+];
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -185,34 +204,15 @@ export default function ProfilePage() {
 
             {/* Saved Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Saved</Text>
-              <ButtonItem icon={Media} title="Resources" isSaved={true} />
-            </View>
-
-            {/* Activity History Section */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Activity History</Text>
-              <ButtonItem
-                icon={Media}
-                title="Understanding SAD"
-                subtitle="Seasonal Affective Disorder"
-                position="top"
-              />
-              <ButtonItem
-                icon={Media}
-                title="Story: What If?"
-                subtitle="Anxiety"
-                position="middle"
-              />
-              <ButtonItem
-                icon={Media}
-                title="Understanding Depression"
-                subtitle="Depression"
-                position="bottom"
-              />
-              <TouchableOpacity disabled={true}>
-                <Text style={[styles.viewAll, styles.disabledText]}>View all history →</Text>
-              </TouchableOpacity>
+              <Text style={styles.sectionTitle}>Crisis Numbers</Text>
+              {resourcesPhoneNumbers.map(({ name, number }) => (
+                <View key={name} style={styles.resourcesRow}>
+                  <Text style={styles.resourcesText}>{name}: </Text>
+                  <Link style={styles.resourcesLink} href={`tel:${number}`}>
+                    {number}
+                  </Link>
+                </View>
+              ))}
             </View>
           </View>
         </View>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: -126,
     marginBottom: -20,
-    paddingBottom: 228,
+    paddingBottom: 100,
   },
   header: {
     alignItems: "center",
@@ -362,5 +362,20 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     opacity: 0.5,
+  },
+  resourcesRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+  },
+  resourcesText: {
+    fontSize: 18,
+    color: lightModeColors.secondaryDarkFont,
+  },
+  resourcesLink: {
+    fontSize: 18,
+    color: lightModeColors.secondaryDarkFont,
+    textDecorationLine: "underline",
   },
 });
