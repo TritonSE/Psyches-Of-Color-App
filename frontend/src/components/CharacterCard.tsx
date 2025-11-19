@@ -71,8 +71,8 @@ export function CharacterCard(props: {
         </View>
         <Text style={styles.characterName}>{character}</Text>
         <Text style={styles.characterDescription}>
-          “Hi! I'm {character}. I represent the power of transformation, motivation, and finding
-          passion for growth and learning. Let's find your spark together!”
+          “Hi! I&apos;m {character}. I represent the power of transformation, motivation, and
+          finding passion for growth and learning. Let&apos;s find your spark together!”
         </Text>
       </View>
     </View>

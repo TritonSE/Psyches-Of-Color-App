@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import FaceIcon from "@/assets/mood-illustration.svg";
@@ -73,8 +73,6 @@ export default function CheckInPopup({
       console.error("Failed to log mood:", error);
     }
   };
-
-  const selectedMoodLabel = moods.find((m) => m.value === selectedMood)?.label;
 
   return (
     <>

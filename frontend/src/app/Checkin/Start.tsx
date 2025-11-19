@@ -1,10 +1,9 @@
-import { StatusBar, StyleSheet, Text, View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 import Button from "@/components/Button";
-
 import { lightModeColors } from "@/constants/colors";
 
 export default function Start() {
@@ -12,16 +11,22 @@ export default function Start() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Pressable
+          onPress={() => {
+            router.back();
+          }}
+          style={styles.backButton}
+        >
           <BackArrow width={20} height={20} />
         </Pressable>
       </View>
       <View style={styles.topSection}>
         <Mascots style={styles.logo} />
-        <Text style={styles.title}>Let's check in on you</Text>
+        <Text style={styles.title}>Let&apos;s check in on you</Text>
         <Text style={styles.text}>
-          Let's take a moment to check in with yourself. These quick questions can help you reflect
-          on how you've been feeling this week. When you're ready, click Next.{" "}
+          Let&apos;s take a moment to check in with yourself. These quick questions can help you
+          reflect on how you&apos;ve been feeling this week. When you&apos;re ready, click
+          Next.{" "}
         </Text>
       </View>
 

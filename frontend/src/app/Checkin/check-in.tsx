@@ -9,7 +9,6 @@ import { Question } from "./Question";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
-
 import { lightModeColors } from "@/constants/colors";
 
 type QuestionData = {

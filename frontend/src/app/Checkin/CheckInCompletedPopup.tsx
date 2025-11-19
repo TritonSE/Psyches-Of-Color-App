@@ -1,4 +1,5 @@
-import { Modal, View, Text, StyleSheet } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
+
 import Button from "@/components/Button";
 
 type Props = {
@@ -11,7 +12,7 @@ export default function CheckinPopup({ visible, onClose }: Props) {
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>You're on Track!</Text>
+          <Text style={styles.title}>You&apos;re on Track!</Text>
           <Text style={styles.text}>
             You have already completed your check-in for this week. Check back in after a few days.
           </Text>

@@ -1,5 +1,4 @@
 import env from "@/util/validateEnv";
-import { Platform } from "react-native";
 
 // Base URL for the API
 const API_BASE_URL = env.EXPO_PUBLIC_BACKEND_URI || "http://localhost:3000";
@@ -20,6 +19,10 @@ type MoodResponse = {
   moods: Mood[];
 };
 
+type LogMoodResponse = {
+  mood: Mood;
+};
+
 /**
  * Fetches all moods for a specific user
  * @param userId The user ID to fetch moods for
@@ -34,7 +37,7 @@ export const getUserMoods = async (userId: string): Promise<Mood[]> => {
     console.log("Response status:", response.status);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status.toString()}`);
     }
 
     const data = (await response.json()) as MoodResponse;
@@ -66,10 +69,10 @@ export const logMood = async (userId: string, mood: string): Promise<Mood> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status.toString()}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as LogMoodResponse;
     return data.mood;
   } catch (error) {
     console.error("Error logging mood:", error);

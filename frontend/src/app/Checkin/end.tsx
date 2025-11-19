@@ -1,12 +1,10 @@
 import { StatusBar, StyleSheet, Text, View } from "react-native";
-import { useCallback } from "react";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import Button from "@/components/Button";
+import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import env from "@/util/validateEnv";
-
-import { lightModeColors } from "@/constants/colors";
 
 export default function Start() {
   const { firebaseUser, refreshMongoUser } = useAuth();

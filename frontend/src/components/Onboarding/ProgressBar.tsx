@@ -1,11 +1,12 @@
 import React from "react";
-import { StyleSheet, View, ViewStyle, StyleProp } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 import { lightModeColors } from "@/constants/colors";
 
 type ProgressBarProps = {
   progress: number;
   style?: StyleProp<ViewStyle>;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   fillColor?: StyleProp<ViewStyle> | string;
 };
 
@@ -16,6 +17,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, style, fillColor })
 
   const fillStyle: StyleProp<ViewStyle> = [
     styles.fill,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
     { width: widthValue as any },
     typeof fillColor === "string"
       ? { backgroundColor: fillColor }

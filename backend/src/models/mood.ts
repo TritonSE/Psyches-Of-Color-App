@@ -17,6 +17,7 @@ type MoodDoc = {
 } & mongoose.Document;
 
 type MoodModelInterface = {
+  // eslint-disable-next-line no-unused-vars
   build(attr: MoodInterface): MoodDoc;
 } & mongoose.Model<MoodDoc>;
 

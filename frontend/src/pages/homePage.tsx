@@ -1,6 +1,8 @@
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   ScrollView,
@@ -8,10 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
-
-import { StatusBar } from "expo-status-bar";
 import { BarChart } from "react-native-gifted-charts";
 
 import { UserContext } from "../contexts/userContext";
@@ -22,6 +21,8 @@ import CheckinPopup from "@/app/Checkin/CheckInCompletedPopup";
 import checkinIcon from "@/assets/checkinIcon.png";
 import crisisBtn from "@/assets/crisisBtn.png";
 import fireman from "@/assets/fireman.png";
+import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
+import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
 import journalIcon from "@/assets/journalIcon.png";
 import lessonsIcon from "@/assets/lessonsIcon.png";
 import moodIcon from "@/assets/moodIcon.png";
@@ -31,12 +32,10 @@ import txtBoxHomePage from "@/assets/txtBoxHomePage.png";
 import wateringCan from "@/assets/wateringcan.png";
 import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
-import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
-import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
 import { lightModeColors } from "@/constants/colors";
 import { Mood, getUserMoods } from "@/lib/api";
-import MoodCheckinPopup from "@/pages/checkInPopup";
 import { getJournalEntries } from "@/lib/journalEntries";
+import MoodCheckinPopup from "@/pages/checkInPopup";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
@@ -72,6 +71,7 @@ const NewDayComponent: React.FC<NewDayProps> = ({
 
   const moodColor = currentMood ? moodToColor[currentMood] : styles.moodHighlight.color;
   const moodTextDisplay = currentMood ? currentMood.toLowerCase() : "good";
+  const moodAuxiliaryText = currentMood ? moodToText[currentMood] : "nice!";
 
   return (
     <>
@@ -85,11 +85,11 @@ const NewDayComponent: React.FC<NewDayProps> = ({
               <View style={styles.moodContent}>
                 <Image source={IMG.moodIcon} style={styles.moodIcon} />
                 <Text style={styles.moodText}>
-                  You're feeling
+                  You&apos;re feeling
                   <Text style={[styles.moodHighlight, { color: moodColor }]}>
                     {` ${moodTextDisplay} `}
                   </Text>
-                  today - {moodToText[currentMood as keyof typeof moodToText] || "nice!"}
+                  today - {moodAuxiliaryText}
                 </Text>
               </View>
 
@@ -250,7 +250,7 @@ export default function HomePage() {
       const fetchedMoods = await getUserMoods(mongoUser.uid);
       setMoods(fetchedMoods);
 
-      const today = new Date();
+      let today = new Date();
       today.setHours(0, 0, 0, 0); // Normalize time to just the date
 
       const todaysMood = fetchedMoods.find((m) => {
@@ -273,7 +273,7 @@ export default function HomePage() {
           setHasLoggedToday(false);
         } else {
           const lastDate = new Date(lastCheck);
-          const today = new Date();
+          today = new Date();
           const isSameDay =
             lastDate.getFullYear() === today.getFullYear() &&
             lastDate.getMonth() === today.getMonth() &&
@@ -506,7 +506,7 @@ export default function HomePage() {
           currentMood={currentMood}
         />
         {/* Progress Section */}
-        <Text style={styles.sectionTitle}>Today's Progress</Text>
+        <Text style={styles.sectionTitle}>Today&apos;s Progress</Text>
 
         <View style={styles.progressContainer}>
           {/* Row 1: Complete 3 Activities */}
@@ -662,7 +662,7 @@ export default function HomePage() {
 
                       <Text style={styles.moodDateRangeText}>
                         {barData.length > 0
-                          ? `${barData[0].date.toLocaleString("default", { month: "long" })} ${barData[0].label} - ${barData[barData.length - 1].date.toLocaleString("default", { month: "long" })} ${barData[barData.length - 1].label}, ${barData[0].date.getFullYear()}`
+                          ? `${barData[0].date.toLocaleString("default", { month: "long" })} ${barData[0].label} - ${barData[barData.length - 1].date.toLocaleString("default", { month: "long" })} ${barData[barData.length - 1].label}, ${barData[0].date.getFullYear().toString()}`
                           : "No data available"}
                       </Text>
 
@@ -720,9 +720,12 @@ export default function HomePage() {
 
                       <View style={styles.moodCalendarGrid}>
                         {weeks.map((weekDays, weekIndex) => (
-                          <View key={`week-${weekIndex}`} style={styles.moodWeekRow}>
+                          <View key={`week-${weekIndex.toString()}`} style={styles.moodWeekRow}>
                             {weekDays.map((day) => (
-                              <View key={`day-${day.day}`} style={styles.moodDayContainer}>
+                              <View
+                                key={`day-${day.day.toString()}`}
+                                style={styles.moodDayContainer}
+                              >
                                 <View
                                   style={[styles.moodDayCircle, { backgroundColor: day.moodColor }]}
                                 >
@@ -753,7 +756,7 @@ export default function HomePage() {
             <MoodCheckinPopup
               userId={mongoUser.uid}
               onMoodLogged={() => {
-                fetchMoods();
+                void fetchMoods();
                 setHasLoggedToday(true);
                 // setShowMoodPopup(false);
               }}
