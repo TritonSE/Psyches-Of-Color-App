@@ -361,7 +361,7 @@ export default function HomePage() {
     );
 
     for (let i = 1; i <= daysInMonth; i++) {
-      days.push({ day: i, moodColor: moodsByDay.get(i) ?? lightModeColors.background });
+      days.push({ day: i, moodColor: moodsByDay.get(i) ?? lightModeColors.progressBarBackground });
     }
 
     return days;
