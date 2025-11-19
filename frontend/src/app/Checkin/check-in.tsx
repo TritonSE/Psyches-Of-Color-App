@@ -10,6 +10,7 @@ import { Question } from "./Question";
 import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 import { lightModeColors } from "@/constants/colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type QuestionData = {
   type: "multipleChoice" | "shortAnswer";
@@ -93,7 +94,7 @@ const CheckIn: React.FC = () => {
   }
 
   return (
-    <>
+    <SafeAreaView style={styles.root}>
       <View style={styles.header}>
         {currentIndex >= 0 && (
           <Pressable onPress={handleBack} style={styles.backButton}>
@@ -120,13 +121,16 @@ const CheckIn: React.FC = () => {
           <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next" />
         </View>
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
 export default CheckIn;
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     paddingVertical: 40,

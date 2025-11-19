@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import env from "@/util/validateEnv";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Start() {
   const { firebaseUser, refreshMongoUser } = useAuth();
@@ -43,7 +44,7 @@ export default function Start() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.topSection}>
         <Mascots style={styles.logo} />
         <Text style={styles.title}>Thank You!</Text>
@@ -62,7 +63,7 @@ export default function Start() {
       </View>
 
       <StatusBar />
-    </View>
+    </SafeAreaView>
   );
 }
 

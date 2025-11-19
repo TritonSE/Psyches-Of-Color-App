@@ -4,6 +4,7 @@ import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-nati
 import FaceIcon from "@/assets/mood-illustration.svg";
 import { lightModeColors } from "@/constants/colors";
 import { logMood } from "@/lib/api";
+import { useAuth } from "@/contexts/userContext";
 
 // Update color map to match mood values
 const moodColorMap = {
@@ -36,19 +37,14 @@ const { width: screenWidth } = Dimensions.get("window");
 
 type CheckInPopupProps = {
   userId: string;
-  onMoodLogged: () => void;
   // Parent-controlled flag indicating whether the user has logged today
   visible: boolean;
   // Setter from parent to mark the user as having logged today
   onClose: () => void;
 };
 
-export default function CheckInPopup({
-  userId,
-  onMoodLogged,
-  visible,
-  onClose,
-}: CheckInPopupProps) {
+export default function CheckInPopup({ userId, visible, onClose }: CheckInPopupProps) {
+  const { refreshMongoUser } = useAuth();
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -65,10 +61,9 @@ export default function CheckInPopup({
 
     try {
       await logMood(userId, selectedMood);
+      await refreshMongoUser();
 
       setShowConfirmation(true);
-
-      onMoodLogged();
     } catch (error) {
       console.error("Failed to log mood:", error);
     }

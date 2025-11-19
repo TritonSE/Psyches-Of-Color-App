@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import { deleteAccount } from "@/lib/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -59,35 +60,37 @@ export default function SettingsScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={navigateBack}>
-            <Ionicons name="arrow-back-outline" size={24} color="#B4B4B4" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Settings</Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={navigateBack}>
+              <Ionicons name="arrow-back-outline" size={24} color="#B4B4B4" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Settings</Text>
+          </View>
 
-        <Text style={styles.sectionTitle}>Account</Text>
-        <View style={[styles.card, styles.topRoundedCard]}>
-          <TouchableOpacity style={styles.row} onPress={navigateToChangePassword}>
-            <Text style={styles.cardTitle}>Change Password</Text>
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
-        </View>
+          <Text style={styles.sectionTitle}>Account</Text>
+          <View style={[styles.card, styles.topRoundedCard]}>
+            <TouchableOpacity style={styles.row} onPress={navigateToChangePassword}>
+              <Text style={styles.cardTitle}>Change Password</Text>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+          </View>
 
-        <View style={[styles.card, styles.bottomRoundedCard]}>
-          <TouchableOpacity style={styles.row} onPress={handleDeleteAccount}>
-            <Text style={[styles.cardTitle, styles.deleteText]}>Delete Account</Text>
-            <Ionicons name="chevron-forward" size={20} color="#c13d2f" />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <View style={[styles.card, styles.bottomRoundedCard]}>
+            <TouchableOpacity style={styles.row} onPress={handleDeleteAccount}>
+              <Text style={[styles.cardTitle, styles.deleteText]}>Delete Account</Text>
+              <Ionicons name="chevron-forward" size={20} color="#c13d2f" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
@@ -97,8 +100,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingTop: 70,
-    paddingBottom: 176,
   },
   header: {
     flexDirection: "row",

@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { UserContext } from "../contexts/userContext";
 
@@ -115,11 +115,11 @@ type DayInfo = {
 
 // Map mood strings to numeric values for the chart
 const moodToValue = {
-  Happy: 100,
-  Good: 80,
-  Okay: 60,
-  Meh: 40,
-  Bad: 20,
+  Happy: 80,
+  Good: 65,
+  Okay: 45,
+  Meh: 25,
+  Bad: 10,
 };
 
 // Map mood strings to colors
@@ -271,6 +271,7 @@ export default function HomePage() {
         const lastCheck = mongoUser?.lastCompletedDailyCheckIn ?? null;
         if (!lastCheck) {
           setHasLoggedToday(false);
+          setShowMoodPopup(true);
         } else {
           const lastDate = new Date(lastCheck);
           today = new Date();
@@ -280,6 +281,9 @@ export default function HomePage() {
             lastDate.getDate() === today.getDate();
 
           setHasLoggedToday(isSameDay);
+          if (!isSameDay) {
+            setShowMoodPopup(true);
+          }
         }
       } catch (err) {
         console.warn(
@@ -752,15 +756,10 @@ export default function HomePage() {
             )}
           </View>
 
-          {(!hasLoggedToday || showMoodPopup) && mongoUser && (
+          {showMoodPopup && mongoUser && (
             <MoodCheckinPopup
               userId={mongoUser.uid}
-              onMoodLogged={() => {
-                void fetchMoods();
-                setHasLoggedToday(true);
-                // setShowMoodPopup(false);
-              }}
-              visible={showMoodPopup || !hasLoggedToday}
+              visible={showMoodPopup}
               onClose={() => {
                 setShowMoodPopup(false);
               }}

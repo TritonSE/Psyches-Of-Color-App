@@ -5,11 +5,12 @@ import Mascots from "@/assets/Poc_Mascots.svg";
 import BackArrow from "@/assets/back.svg";
 import Button from "@/components/Button";
 import { lightModeColors } from "@/constants/colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Start() {
   const router = useRouter();
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Pressable
           onPress={() => {
@@ -37,7 +38,7 @@ export default function Start() {
       </View>
 
       <StatusBar />
-    </View>
+    </SafeAreaView>
   );
 }
 
