@@ -50,8 +50,8 @@ export default function Start() {
         <Mascots style={styles.logo} />
         <Text style={styles.title}>Thank You!</Text>
         <Text style={styles.text}>
-          Lorem ipsum odor amet, consectetuer adipiscing elit. Curae phasellus laoreet nullam in
-          bibendum ante nec. Blandit sit nunc luctus molestie, sed enim habitasse?{" "}
+          Nice job checking in. Take a moment to appreciate that you showed up for yourself today.
+          Little moments of reflection can make a big difference.{" "}
         </Text>
       </View>
 

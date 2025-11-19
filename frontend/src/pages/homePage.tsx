@@ -144,6 +144,7 @@ export default function HomePage() {
   const [showCheckinPopup, setShowCheckinPopup] = useState(false);
   const [showMoodPopup, setShowMoodPopup] = useState(false);
   const [currentMood, setCurrentMood] = useState<keyof typeof moodToColor | null>(null);
+  const [weeklyCheckInCompleted, setWeeklyCheckInCompleted] = useState(false);
 
   // Mood tracker states moved from app/(tabs)/index.tsx
   const [viewMode, setViewMode] = useState("weekly");
@@ -214,8 +215,27 @@ export default function HomePage() {
     }
   };
 
+  const initialWeeklyCheckInState = () => {
+    if (mongoUser) {
+      const last = mongoUser.lastCompletedWeeklyCheckIn ?? null;
+      if (!last) {
+        setWeeklyCheckInCompleted(false);
+      } else {
+        const lastDate = new Date(last);
+        if (isDateInCurrentWeek(lastDate)) {
+          setWeeklyCheckInCompleted(true);
+        } else {
+          setWeeklyCheckInCompleted(false);
+        }
+      }
+    } else {
+      setWeeklyCheckInCompleted(false);
+    }
+  };
+
   useEffect(() => {
     void fetchMoods();
+    initialWeeklyCheckInState();
   }, [mongoUser]);
 
   const isDateInCurrentWeek = (d: Date) => {
@@ -245,13 +265,16 @@ export default function HomePage() {
       const last = mongoUser.lastCompletedWeeklyCheckIn ?? null;
       if (!last) {
         router.push("/Checkin/Start");
+        setWeeklyCheckInCompleted(false);
         return;
       }
 
       const lastDate = new Date(last);
       if (isDateInCurrentWeek(lastDate)) {
         setShowCheckinPopup(true);
+        setWeeklyCheckInCompleted(true);
       } else {
+        setWeeklyCheckInCompleted(false);
         router.push("/Checkin/Start");
       }
     } catch (err) {
@@ -452,17 +475,17 @@ export default function HomePage() {
           <View style={styles.divider} />
 
           {/* TODO: link to weekly check-in page */}
-          <TouchableOpacity style={styles.progressRow}>
+          <TouchableOpacity style={styles.progressRow} onPress={handleCheckinPress}>
             <Image source={IMG.wateringCan} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
               <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
               {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
               <ProgressBar
-                progress={0 / 1}
+                progress={weeklyCheckInCompleted ? 1 : 0 / 1}
                 style={styles.progressBar}
                 fillColor={styles.progressBarColor}
               ></ProgressBar>
-              <Text style={styles.taskCount}>0/1</Text>
+              <Text style={styles.taskCount}>{weeklyCheckInCompleted ? "1/1" : "0/1"}</Text>
             </View>
           </TouchableOpacity>
         </View>

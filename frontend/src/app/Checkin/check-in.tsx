@@ -82,6 +82,8 @@ const CheckIn: React.FC = () => {
   const handleBack = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
+    } else if (currentIndex === 0) {
+      router.back();
     }
   };
 
@@ -94,7 +96,7 @@ const CheckIn: React.FC = () => {
   return (
     <>
       <View style={styles.header}>
-        {currentIndex > 0 && (
+        {currentIndex >= 0 && (
           <Pressable onPress={handleBack} style={styles.backButton}>
             <BackArrow width={20} height={20} />
           </Pressable>

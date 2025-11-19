@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -128,24 +127,6 @@ export default function CheckInPopup({
           </View>
         </Pressable>
       </Modal>
-
-      {/* Note: using this for testing purposes */}
-      {__DEV__ && (
-        <Pressable
-          onPress={() => {
-            void (async () => {
-              const today = new Date().toISOString().split("T")[0];
-              const key = `moodCheckin-${userId}-${today}`;
-              await AsyncStorage.removeItem(key);
-              setShowConfirmation(false);
-              setSelectedMood(null);
-            })();
-          }}
-          style={styles.resetButton}
-        >
-          <Text style={styles.resetButtonText}>Reset Today&apos;s Mood</Text>
-        </Pressable>
-      )}
     </>
   );
 }

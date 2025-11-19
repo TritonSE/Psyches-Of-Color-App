@@ -1,19 +1,27 @@
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, StyleSheet, Text, View, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
+import BackArrow from "@/assets/back.svg";
 import Button from "@/components/Button";
 
 import { lightModeColors } from "@/constants/colors";
 
 export default function Start() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <BackArrow width={20} height={20} />
+        </Pressable>
+      </View>
       <View style={styles.topSection}>
         <Mascots style={styles.logo} />
         <Text style={styles.title}>Let's check in on you</Text>
         <Text style={styles.text}>
-          Lorem ipsum odor amet, consectetuer adipiscing elit. Curae phasellus laoreet nullam in
-          bibendum ante nec. Blandit sit nunc luctus molestie, sed enim habitasse?{" "}
+          Let's take a moment to check in with yourself. These quick questions can help you reflect
+          on how you've been feeling this week. When you're ready, click Next.{" "}
         </Text>
       </View>
 
@@ -75,5 +83,19 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignSelf: "center",
     justifyContent: "center",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    paddingHorizontal: 20,
+    paddingTop: 80,
+    marginBottom: 10,
+  },
+  backButton: {
+    position: "absolute",
+    left: 20,
+    padding: 8,
   },
 });

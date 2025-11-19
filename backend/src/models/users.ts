@@ -16,9 +16,6 @@ type UserInterface = {
   character: string;
   completedLessons: string[];
   currLesson: string;
-  age: number;
-  gender: string;
-  residence: string;
   lastCompletedWeeklyCheckIn?: Date | null;
   lastCompletedDailyCheckIn?: Date | null;
   onboardingInfo: OnboardingInfo;
@@ -32,9 +29,6 @@ type UserDoc = {
   character: string;
   completedLessons: string[];
   currLesson: string;
-  age: number;
-  gender: string;
-  residence: string;
   lastCompletedWeeklyCheckIn?: Date | null;
   lastCompletedDailyCheckIn?: Date | null;
   onboardingInfo: OnboardingInfo;

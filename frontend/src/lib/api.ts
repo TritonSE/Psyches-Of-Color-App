@@ -1,11 +1,8 @@
+import env from "@/util/validateEnv";
 import { Platform } from "react-native";
 
 // Base URL for the API
-const API_BASE_URL = Platform.select({
-  ios: "http://localhost:3000",
-  android: "http://10.0.2.2:3000", // Special IP for Android emulator to access localhost
-  default: "http://localhost:3000",
-});
+const API_BASE_URL = env.EXPO_PUBLIC_BACKEND_URI || "http://localhost:3000";
 
 // Interface for the mood object
 export type Mood = {
