@@ -55,7 +55,7 @@ export default function Start() {
 
       <View style={styles.bottomSection}>
         <View style={styles.nextButtonContainer}>
-          <Button onPress={handleFinish} href="/">
+          <Button onPress={void handleFinish} href="/">
             GO TO HOME
           </Button>
         </View>

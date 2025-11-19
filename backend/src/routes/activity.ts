@@ -4,7 +4,8 @@ import createHttpError from "http-errors";
 
 const router = express.Router();
 
-router.get("/:id", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// GET single activity by id
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
@@ -20,7 +21,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction): Prom
   }
 });
 
-// Uncomment these routes if needed for admin portal in future, but add auth checks first!
+// For admin portal, add auth checks first
 // // POST route to create a new activity
 // router.post(
 //   "/",

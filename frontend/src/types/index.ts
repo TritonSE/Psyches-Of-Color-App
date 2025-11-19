@@ -1,4 +1,4 @@
-type ActivityType = "reflection" | "mcq" | "wwyd";
+type ActivityType = "reflection" | "mcq" | "wwyd" | "text";
 
 export type CompletedLesson = {
   lessonId: string;
