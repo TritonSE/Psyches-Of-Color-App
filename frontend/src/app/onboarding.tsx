@@ -1,5 +1,6 @@
 import { Redirect } from "expo-router";
-import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import Onboarding from "@/components/Onboarding/Onboarding";
 import { useAuth } from "@/contexts/userContext";

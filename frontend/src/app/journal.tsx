@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { ImageSourcePropType } from "react-native";
 
@@ -18,6 +19,7 @@ import { getJournalEntries } from "@/lib/journalEntries";
 import { JournalEntry } from "@/types";
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
   pageContainer: {
     flex: 1,
     flexDirection: "column",
@@ -164,61 +166,63 @@ export default function Journal() {
   };
 
   return (
-    <View style={styles.pageContainer}>
-      <ScrollView>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => {
-              router.back();
-            }}
-          >
-            <Ionicons name="arrow-back-outline" size={24} color="gray" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Journal</Text>
-        </View>
-        <View style={styles.time}>
-          <Button style={styles.timeButton} onPress={handleDecrease}>
-            <LeftIcon />
-          </Button>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.pageContainer}>
+        <ScrollView>
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => {
+                router.back();
+              }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="gray" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Journal</Text>
+          </View>
+          <View style={styles.time}>
+            <Button style={styles.timeButton} onPress={handleDecrease}>
+              <LeftIcon />
+            </Button>
 
-          <Text style={styles.timeText}>
-            {months[month]} {year}
-          </Text>
-          <Button style={styles.timeButton} onPress={handleIncrease}>
-            <RightIcon />
-          </Button>
-        </View>
-        <View style={styles.body}>
-          {journalEntries?.map((entry) => (
-            <JournalCard
-              key={entry._id}
-              title={entry.title}
-              preview={entry.paragraph.slice(0, 100)}
-              time={format(entry.createdAt, "h:mm a")}
-              date={format(entry.createdAt, "MMMM d, yyyy")}
-              imageSourceUrl={entry.imageUrl}
-            />
-          ))}
+            <Text style={styles.timeText}>
+              {months[month]} {year}
+            </Text>
+            <Button style={styles.timeButton} onPress={handleIncrease}>
+              <RightIcon />
+            </Button>
+          </View>
+          <View style={styles.body}>
+            {journalEntries?.map((entry) => (
+              <JournalCard
+                key={entry._id}
+                title={entry.title}
+                preview={entry.paragraph.slice(0, 100)}
+                time={format(entry.createdAt, "h:mm a")}
+                date={format(entry.createdAt, "MMMM d, yyyy")}
+                imageSourceUrl={entry.imageUrl}
+              />
+            ))}
 
-          {journalEntries && journalEntries.length === 0 ? (
-            <View>
-              <Image source={JournalIcon as ImageSourcePropType} style={styles.mascot} />
-              <Text style={styles.noEntryMessage}>
-                Looks like you haven&apos;t wrote an entry this month.
-              </Text>
-            </View>
-          ) : null}
-        </View>
-      </ScrollView>
+            {journalEntries && journalEntries.length === 0 ? (
+              <View>
+                <Image source={JournalIcon as ImageSourcePropType} style={styles.mascot} />
+                <Text style={styles.noEntryMessage}>
+                  Looks like you haven&apos;t wrote an entry this month.
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        </ScrollView>
 
-      <TouchableOpacity
-        style={styles.edit}
-        onPress={() => {
-          router.push("/createJournal");
-        }}
-      >
-        <Pencil />
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={styles.edit}
+          onPress={() => {
+            router.push("/createJournal");
+          }}
+        >
+          <Pencil />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }

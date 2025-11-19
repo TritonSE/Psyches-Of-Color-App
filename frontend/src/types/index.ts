@@ -11,6 +11,8 @@ export type User = {
   email: string;
   uid: string;
   character: string;
+  lastCompletedWeeklyCheckIn?: string | null;
+  lastCompletedDailyCheckIn?: string | null;
   completedLessons: CompletedLesson[];
   currLesson: Lesson;
   onboardingInfo: OnboardingInfo;

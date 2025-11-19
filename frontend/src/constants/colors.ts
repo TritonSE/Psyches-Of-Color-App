@@ -16,8 +16,11 @@ type Colors = {
   error: string;
   success: string;
   profileBackground: string;
-  onboardingGreen: string;
-  progressBarBackground: string;
+  moodAccent: string;
+  moodGood: string;
+  moodOkay: string;
+  moodMeh: string;
+  moodBad: string;
   selectedBorder: string;
   title: string;
   backArrow: string;
@@ -28,7 +31,6 @@ type Colors = {
   primaryGreen: string;
   primaryYellow: string;
 };
-
 export const lightModeColors: Colors = {
   buttonFill: "#2E563C",
   darkFont: "#000000",
@@ -46,9 +48,12 @@ export const lightModeColors: Colors = {
   tabsIcon: "#241E40",
   error: "#B93B3B",
   success: "#3BB966",
+  moodAccent: "#2E563C",
+  moodGood: "#7CAB4C",
+  moodOkay: "#EFB116",
+  moodMeh: "#D38718",
+  moodBad: "#C13D2F",
   profileBackground: "#f2f2d2ff",
-  onboardingGreen: "#2e563c",
-  progressBarBackground: "#ebebeb",
   selectedBorder: "#d38718",
   title: "#6c6c6c",
   backArrow: "#b4b4b4",

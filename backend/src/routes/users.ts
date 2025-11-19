@@ -139,6 +139,37 @@ router.put(
   },
 );
 
+// PUT: Update the user's lastCompletedWeeklyCheckIn to the current date/time
+router.put(
+  "/api/users/last-completed-weekly",
+  verifyAuthToken,
+  async (req: PsychesRequest, res: Response): Promise<void> => {
+    try {
+      const { userUid } = req;
+
+      const user = await User.findOne({ uid: userUid });
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      user.lastCompletedWeeklyCheckIn = new Date();
+      await user.save();
+
+      res.status(200).json({
+        message: "Weekly check-in timestamp updated",
+        lastCompletedWeeklyCheckIn: user.lastCompletedWeeklyCheckIn,
+      });
+      return;
+    } catch (error) {
+      console.error("Error updating lastCompletedWeeklyCheckIn:", error);
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
+      return;
+    }
+  },
+);
+
 // DELETE route to delete a user account
 router.delete(
   "/users/:uid",

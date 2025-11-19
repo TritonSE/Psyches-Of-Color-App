@@ -21,6 +21,8 @@ type UserInterface = {
   character: string;
   completedLessons: CompletedLesson[];
   currLesson: string;
+  lastCompletedWeeklyCheckIn?: Date | null;
+  lastCompletedDailyCheckIn?: Date | null;
   onboardingInfo: OnboardingInfo;
   completedOnboarding: boolean;
 };
@@ -32,6 +34,8 @@ type UserDoc = {
   character: string;
   completedLessons: CompletedLesson[];
   currLesson: string;
+  lastCompletedWeeklyCheckIn?: Date | null;
+  lastCompletedDailyCheckIn?: Date | null;
   onboardingInfo: OnboardingInfo;
   completedOnboarding: boolean;
 } & mongoose.Document;
@@ -109,6 +113,14 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  lastCompletedWeeklyCheckIn: {
+    type: Date,
+    default: null,
+  },
+  lastCompletedDailyCheckIn: {
+    type: Date,
+    default: null,
   },
 });
 
