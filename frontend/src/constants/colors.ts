@@ -53,7 +53,7 @@ export const lightModeColors: Colors = {
   moodOkay: "#EFB116",
   moodMeh: "#D38718",
   moodBad: "#C13D2F",
-  profileBackground: "#c13d2f",
+  profileBackground: "#f2f2d2ff",
   selectedBorder: "#d38718",
   title: "#6c6c6c",
   backArrow: "#b4b4b4",

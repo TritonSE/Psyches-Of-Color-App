@@ -9,12 +9,17 @@ type OnboardingInfo = {
   residence: string;
 };
 
+type CompletedLesson = {
+  lessonId: mongoose.Schema.Types.ObjectId;
+  completedAt: Date;
+};
+
 type UserInterface = {
   name: string;
   email: string;
   uid: string;
   character: string;
-  completedLessons: string[];
+  completedLessons: CompletedLesson[];
   currLesson: string;
   lastCompletedWeeklyCheckIn?: Date | null;
   lastCompletedDailyCheckIn?: Date | null;
@@ -27,7 +32,7 @@ type UserDoc = {
   email: string;
   uid: string;
   character: string;
-  completedLessons: string[];
+  completedLessons: CompletedLesson[];
   currLesson: string;
   lastCompletedWeeklyCheckIn?: Date | null;
   lastCompletedDailyCheckIn?: Date | null;
@@ -59,8 +64,23 @@ const userSchema = new mongoose.Schema({
     default: "Fire",
   },
   completedLessons: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "Lesson",
+    type: [
+      new mongoose.Schema(
+        {
+          lessonId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Lesson",
+            required: true,
+          },
+          completedAt: {
+            type: Date,
+            required: true,
+            default: Date.now,
+          },
+        },
+        { _id: false },
+      ),
+    ],
     default: [],
   },
   currLesson: {

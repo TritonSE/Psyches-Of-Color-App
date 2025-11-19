@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useContext } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -13,19 +13,92 @@ import {
 import { UserContext } from "../contexts/userContext";
 
 import BiFire from "@/assets/bi_fire.png";
-import Frog from "@/assets/frog.png";
 import Media from "@/assets/media.png";
 import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
+import { characters } from "@/components/CharacterCarousel";
 import ButtonItem from "@/components/ProfileButton";
 import { lightModeColors } from "@/constants/colors";
+import { getJournalEntries } from "@/lib/journalEntries";
 
 // import SGDemiBold from "@/assets/fonts/Social-Gothic-DemiBold.otf";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { mongoUser } = useContext(UserContext);
+  const { mongoUser, firebaseUser } = useContext(UserContext);
+  const selectedCharacter =
+    characters.find((c) => c.character === mongoUser?.character) ?? characters[1];
+  const lessonsCompletedCount = mongoUser?.completedLessons?.length ?? 0;
 
+  const [journalEntries, setJournalEntries] = useState<{ createdAt: string }[]>([]);
+
+  useEffect(() => {
+    const fetchJournals = async () => {
+      if (!firebaseUser) {
+        setJournalEntries([]);
+        return;
+      }
+      try {
+        const token = await firebaseUser.getIdToken();
+        const entries = await getJournalEntries(token);
+        setJournalEntries(entries ?? []);
+      } catch (err) {
+        console.error("Error fetching journal entries:", err);
+        setJournalEntries([]);
+      }
+    };
+
+    void fetchJournals();
+  }, [firebaseUser]);
+
+  const streakDays = useMemo(() => {
+    const completed = mongoUser?.completedLessons ?? [];
+    const journals = journalEntries ?? [];
+
+    if ((!completed || completed.length === 0) && (!journals || journals.length === 0)) return 0;
+
+    const formatDate = (d: Date): string => {
+      const year = d.getFullYear().toString();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return year + "-" + month + "-" + day;
+    };
+
+    const daySet = new Set<string>();
+    // Add lesson completion dates
+    for (const c of completed) {
+      try {
+        const d = new Date(c.completedAt);
+        if (!Number.isNaN(d.getTime())) {
+          daySet.add(formatDate(d));
+        }
+      } catch {
+        // ignore malformed dates
+      }
+    }
+
+    // Add journal entry dates
+    for (const j of journals) {
+      try {
+        const d = new Date(j.createdAt);
+        if (!Number.isNaN(d.getTime())) {
+          daySet.add(formatDate(d));
+        }
+      } catch {
+        // ignore malformed dates
+      }
+    }
+
+    let streak = 0;
+    const cursor = new Date();
+    // Count consecutive days including today where at least one lesson or journal entry was completed
+    while (daySet.has(formatDate(cursor))) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    return streak;
+  }, [mongoUser?.completedLessons, journalEntries]);
   // State for achievements and streaks
   // const [achievementsCompleted, setAchievementsCompleted] = useState(3);
   // const [daysOfStreaks, setDaysOfStreaks] = useState(3);
@@ -63,7 +136,10 @@ export default function ProfilePage() {
             </TouchableOpacity>
           </View>
 
-          <Image source={Frog} style={styles.profileImage} />
+          <Image
+            source={selectedCharacter.characterIcon}
+            style={[styles.profileImage, { backgroundColor: selectedCharacter.color }]}
+          />
 
           {/* White Box at Bottom*/}
           <View style={styles.bottomSection}>
@@ -93,16 +169,16 @@ export default function ProfilePage() {
                 <View style={styles.achievementCard}>
                   <View style={styles.imageNumberContainer}>
                     <Image source={Trophy} style={styles.achievementIcon} />
-                    <Text style={styles.number}>3</Text>
+                    <Text style={styles.number}>{lessonsCompletedCount}</Text>
                   </View>
-                  <Text style={styles.label}>Activities Completed</Text>
+                  <Text style={styles.label}>Lessons Completed</Text>
                 </View>
                 <View style={styles.achievementCard}>
                   <View style={styles.imageNumberContainer}>
                     <Image source={BiFire} style={styles.achievementIcon} />
-                    <Text style={styles.number}>3</Text>
+                    <Text style={styles.number}>{streakDays}</Text>
                   </View>
-                  <Text style={styles.label}>Days of Streaks</Text>
+                  <Text style={styles.label}>Current Streak</Text>
                 </View>
               </View>
             </View>
@@ -167,11 +243,12 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 194,
     height: 194,
-    borderRadius: 50,
+    borderRadius: 100,
     position: "absolute",
     top: 70,
     alignSelf: "center",
     zIndex: 2,
+    padding: 20,
   },
   scrollContainer: {
     flex: 1,

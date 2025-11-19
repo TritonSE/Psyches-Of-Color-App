@@ -116,14 +116,19 @@ router.put(
 
       if (!user.completedLessons) user.completedLessons = [];
 
-      const lessonExists = user.completedLessons.some((id) => id.toString() === lessonId);
+      const lessonExists = user.completedLessons.some(
+        (lesson) => lesson.lessonId.toString() === lessonId,
+      );
 
       if (lessonExists) {
         res.status(200).json({ message: "Lesson already marked as completed", user });
         return;
       }
 
-      user.completedLessons.push(lessonId);
+      user.completedLessons.push({
+        lessonId: lessonId as unknown as (typeof user.completedLessons)[0]["lessonId"],
+        completedAt: new Date(),
+      });
       await user.save();
 
       res.status(200).json({ message: "Lesson marked as completed", user });
