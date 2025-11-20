@@ -8,7 +8,7 @@ type JournalCardProps = {
   preview: string;
   time: string;
   date: string;
-  imageSourceUrl: string;
+  imageSourceUrl?: string;
 };
 
 export default function JournalCard({

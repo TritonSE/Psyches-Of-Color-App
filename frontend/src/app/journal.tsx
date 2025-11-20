@@ -1,22 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { router } from "expo-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { ImageSourcePropType } from "react-native";
-
-import JournalIcon from "@/assets/journalIcon.png";
 import LeftIcon from "@/assets/left.svg";
 import Pencil from "@/assets/pencil.svg";
 import RightIcon from "@/assets/right.svg";
 import Button from "@/components/Button";
+import { characters } from "@/components/CharacterCarousel";
 import JournalCard from "@/components/JournalCard";
 import { lightModeColors } from "@/constants/colors";
 import { UserContext } from "@/contexts/userContext";
-import { getJournalEntries } from "@/lib/journalEntries";
-import { JournalEntry } from "@/types";
+import { useGetJournalEntries } from "@/lib/journalEntries";
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -38,6 +35,12 @@ const styles = StyleSheet.create({
     width: 159,
     height: 159,
     backgroundColor: lightModeColors.background,
+  },
+  emptyStateContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
   },
   noEntryMessage: {
     width: 306,
@@ -63,8 +66,8 @@ const styles = StyleSheet.create({
     fontWeight: 600,
   },
   timeButton: {
-    width: 8,
-    height: 16,
+    width: 12,
+    height: 24,
     backgroundColor: "transparent",
   },
   time: {
@@ -134,18 +137,21 @@ const months = [
 export default function Journal() {
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
-  const { firebaseUser } = useContext(UserContext);
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[] | null>(null);
+  const { mongoUser } = useContext(UserContext);
 
-  useEffect(() => {
-    if (!firebaseUser) return;
-    firebaseUser
-      .getIdToken()
-      .then((token) => getJournalEntries(token).then(setJournalEntries))
-      .catch((error: unknown) => {
-        console.error(`Error loading journal entries: ${error as string}`);
-      });
-  }, [firebaseUser]);
+  const [monthStart, monthEnd] = useMemo(() => {
+    const monthStartLocal = new Date(year, month, 0, 0, 0, 0, 0);
+    const monthEndLocal = new Date(monthStartLocal);
+    monthEndLocal.setMonth(monthStartLocal.getMonth() + 1);
+    if (month === 11) {
+      monthEndLocal.setFullYear(monthStartLocal.getFullYear() + 1);
+    }
+    return [monthStartLocal, monthEndLocal];
+  }, [month, year]);
+
+  const { data: journalEntries } = useGetJournalEntries(monthStart.toString(), monthEnd.toString());
+  const selectedCharacter =
+    characters.find((c) => c.character === mongoUser?.character) ?? characters[1];
 
   const handleIncrease = () => {
     if (month === 11) {
@@ -204,10 +210,11 @@ export default function Journal() {
             ))}
 
             {journalEntries && journalEntries.length === 0 ? (
-              <View>
-                <Image source={JournalIcon as ImageSourcePropType} style={styles.mascot} />
+              <View style={styles.emptyStateContainer}>
+                <Image source={selectedCharacter.characterIcon} style={styles.mascot} />
+
                 <Text style={styles.noEntryMessage}>
-                  Looks like you haven&apos;t wrote an entry this month.
+                  Looks like you haven&apos;t written an entry this month yet.
                 </Text>
               </View>
             ) : null}

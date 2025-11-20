@@ -21,7 +21,7 @@ import Button from "@/components/Button";
 import ExitJournal from "@/components/ExitJournal";
 import { lightModeColors } from "@/constants/colors";
 import { UserContext } from "@/contexts/userContext";
-import { createJournalEntry } from "@/lib/journalEntries";
+import { useCreateJournalEntry } from "@/lib/journalEntries";
 
 export default function CreateJournal() {
   const [titleText, setTitleText] = useState("");
@@ -48,15 +48,16 @@ export default function CreateJournal() {
 
   const [image, setImage] = useState<string | null>(null);
   const { firebaseUser } = useContext(UserContext);
+  const { mutateAsync: createJournalEntry } = useCreateJournalEntry();
 
-  const requestCameraPermission = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert("Permission required", "Camera permission is needed to take a photo.");
-      return false;
-    }
-    return true;
-  };
+  // const requestCameraPermission = async () => {
+  //   const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  //   if (status !== ImagePicker.PermissionStatus.GRANTED) {
+  //     Alert.alert("Permission required", "Camera permission is needed to take a photo.");
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const requestMediaLibraryPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -67,19 +68,21 @@ export default function CreateJournal() {
     return true;
   };
 
-  const handleTakePhoto = async () => {
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) return;
+  // Commenting-out take photo functionality because we couldn't get it working
+  // Uncomment this if we figure it out later one
+  // const handleTakePhoto = async () => {
+  //   const hasPermission = await requestCameraPermission();
+  //   if (!hasPermission) return;
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: "images",
-      quality: 1,
-    });
+  //   const result = await ImagePicker.launchCameraAsync({
+  //     mediaTypes: "images",
+  //     quality: 1,
+  //   });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
+  //   if (!result.canceled) {
+  //     setImage(result.assets[0].uri);
+  //   }
+  // };
 
   const handleChoosePhoto = async () => {
     const hasPermission = await requestMediaLibraryPermission();
@@ -97,14 +100,24 @@ export default function CreateJournal() {
 
   const onSaveJournal = async () => {
     // TODO error handling
-    try {
-      if (!firebaseUser) return;
-      const token = await firebaseUser.getIdToken();
-      await createJournalEntry(token, titleText, paragraphText, image ?? undefined);
-      router.back();
-    } catch (error) {
-      console.error(`Error saving journal: ${error as string}`);
-    }
+    if (!firebaseUser) return;
+    const token = await firebaseUser.getIdToken();
+    await createJournalEntry(
+      {
+        idToken: token,
+        title: titleText,
+        paragraph: paragraphText,
+        imageUrl: image ?? undefined,
+      },
+      {
+        onSuccess: () => {
+          router.back();
+        },
+        onError: (error) => {
+          console.error(`Error saving journal: ${String(error)}`);
+        },
+      },
+    );
   };
 
   const [showExitModal, setShowExitModal] = useState(false);
@@ -179,6 +192,13 @@ export default function CreateJournal() {
             <Text style={styles.subheadText}>Add Photo</Text>
           </View>
 
+          <View style={styles.subheader}>
+            <Text style={styles.caption}>
+              Note: images are stored on your local device only and will not be available if you log
+              in on another device or delete and reinstall the app!
+            </Text>
+          </View>
+
           {image ? (
             <View style={styles.imageContainer}>
               <Image source={{ uri: image }} style={styles.image} />
@@ -188,7 +208,7 @@ export default function CreateJournal() {
           )}
 
           <View style={styles.imageButtons}>
-            <Button
+            {/* <Button
               onPress={() => {
                 void handleTakePhoto();
               }}
@@ -196,7 +216,7 @@ export default function CreateJournal() {
               textStyle={styles.imageButtonText}
             >
               Take Photo
-            </Button>
+            </Button> */}
             <Button
               onPress={() => {
                 void handleChoosePhoto();
@@ -250,6 +270,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     gap: 8,
+    marginLeft: 24,
+    marginRight: "auto",
   },
   submitButton: {
     backgroundColor: "#2E563C",
@@ -292,6 +314,12 @@ const styles = StyleSheet.create({
     fontFamily: "Social Gothic",
     fontSize: 16,
     fontWeight: 600,
+  },
+  caption: {
+    fontFamily: "Social Gothic",
+    fontSize: 14,
+    fontWeight: 500,
+    paddingRight: 24,
   },
   date: {
     color: "#2E563C",
