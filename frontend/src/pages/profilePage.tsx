@@ -1,5 +1,5 @@
 import { Link, useRouter } from "expo-router";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -10,7 +10,7 @@ import Settings from "@/assets/settings.png";
 import Trophy from "@/assets/trophy.png";
 import { characters } from "@/components/CharacterCarousel";
 import { lightModeColors } from "@/constants/colors";
-import { getJournalEntries } from "@/lib/journalEntries";
+import { useGetJournalEntries } from "@/lib/journalEntries";
 
 const resourcesPhoneNumbers = [
   {
@@ -37,31 +37,12 @@ const resourcesPhoneNumbers = [
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { mongoUser, firebaseUser } = useContext(UserContext);
+  const { mongoUser } = useContext(UserContext);
   const selectedCharacter =
     characters.find((c) => c.character === mongoUser?.character) ?? characters[1];
   const lessonsCompletedCount = mongoUser?.completedLessons?.length ?? 0;
 
-  const [journalEntries, setJournalEntries] = useState<{ createdAt: string }[]>([]);
-
-  useEffect(() => {
-    const fetchJournals = async () => {
-      if (!firebaseUser) {
-        setJournalEntries([]);
-        return;
-      }
-      try {
-        const token = await firebaseUser.getIdToken();
-        const entries = await getJournalEntries(token);
-        setJournalEntries(entries ?? []);
-      } catch (err) {
-        console.error("Error fetching journal entries:", err);
-        setJournalEntries([]);
-      }
-    };
-
-    void fetchJournals();
-  }, [firebaseUser]);
+  const { data: journalEntries } = useGetJournalEntries();
 
   const streakDays = useMemo(() => {
     const completed = mongoUser?.completedLessons ?? [];

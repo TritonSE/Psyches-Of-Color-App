@@ -21,7 +21,22 @@ router.get(
         return;
       }
 
-      const entries = await JournalEntry.find({ author: user._id });
+      const filterObject: {
+        author: string;
+        createdAt?: {
+          $gte: Date;
+          $lte: Date;
+        };
+      } = { author: user._id as string };
+      // Optionally filter by time range
+      if (req.query.createdAtGte && req.query.createdAtLte) {
+        filterObject.createdAt = {
+          $gte: new Date(req.query.createdAtGte as string),
+          $lte: new Date(req.query.createdAtLte as string),
+        };
+      }
+
+      const entries = await JournalEntry.find(filterObject);
 
       res.status(200).json({
         entries: entries.map((entry) => ({

@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
@@ -45,15 +46,17 @@ const RootLayout = () => {
   }
 
   return (
-    <UserContextProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="characterSelection" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="settings" />
-        <Stack.Screen name="changePassword" />
-      </Stack>
-    </UserContextProvider>
+    <QueryClientProvider client={new QueryClient()}>
+      <UserContextProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="characterSelection" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="settings" />
+          <Stack.Screen name="changePassword" />
+        </Stack>
+      </UserContextProvider>
+    </QueryClientProvider>
   );
 };
 

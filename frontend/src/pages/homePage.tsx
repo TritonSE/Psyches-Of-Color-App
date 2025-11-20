@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -34,7 +34,7 @@ import Button from "@/components/Button";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
 import { lightModeColors } from "@/constants/colors";
 import { Mood, getUserMoods } from "@/lib/api";
-import { getJournalEntries } from "@/lib/journalEntries";
+import { useGetJournalEntries } from "@/lib/journalEntries";
 import MoodCheckinPopup from "@/pages/checkInPopup";
 
 // Ensure Image receives the correct source type when PNG modules are typed as string
@@ -140,10 +140,23 @@ const moodToText = {
 };
 
 export default function HomePage() {
-  const { mongoUser, firebaseUser } = useContext(UserContext);
+  const { mongoUser } = useContext(UserContext);
 
   const [lessonCompletedToday, setLessonCompletedToday] = useState(false);
-  const [journalCompletedToday, setJournalCompletedToday] = useState(false);
+  const [dayStart, dayEnd] = useMemo(() => {
+    const now = new Date();
+    const dayStartLocal = new Date(now);
+    dayStartLocal.setHours(0);
+    dayStartLocal.setMinutes(0);
+    dayStartLocal.setSeconds(0);
+    const dayEndLocal = new Date(dayStartLocal.getTime() + 1000 * 60 * 60 * 24);
+    return [dayStartLocal, dayEndLocal];
+  }, []);
+  const { data: journalEntries } = useGetJournalEntries(dayStart.toString(), dayEnd.toString());
+  const journalCompletedToday = useMemo(
+    () => journalEntries && journalEntries.length > 0,
+    [journalEntries],
+  );
 
   useEffect(() => {
     const checkLessonToday = () => {
@@ -177,50 +190,6 @@ export default function HomePage() {
 
     checkLessonToday();
   }, [mongoUser]);
-
-  useEffect(() => {
-    const checkJournalToday = async () => {
-      if (!firebaseUser) {
-        setJournalCompletedToday(false);
-        return;
-      }
-
-      try {
-        const token = await firebaseUser.getIdToken();
-        const entries = await getJournalEntries(token);
-        if (!entries || entries.length === 0) {
-          setJournalCompletedToday(false);
-          return;
-        }
-
-        const today = new Date();
-
-        const isSameLocalDate = (dateLike: string | Date) => {
-          const d = new Date(dateLike);
-          return (
-            d.getFullYear() === today.getFullYear() &&
-            d.getMonth() === today.getMonth() &&
-            d.getDate() === today.getDate()
-          );
-        };
-
-        const found = entries.some((e) => {
-          try {
-            return isSameLocalDate(e.createdAt);
-          } catch {
-            return false;
-          }
-        });
-
-        setJournalCompletedToday(!!found);
-      } catch (err) {
-        console.error("Error checking journal entries:", err);
-        setJournalCompletedToday(false);
-      }
-    };
-
-    void checkJournalToday();
-  }, [firebaseUser]);
 
   const [showCheckinPopup, setShowCheckinPopup] = useState(false);
   const [showMoodPopup, setShowMoodPopup] = useState(false);
@@ -850,7 +819,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   progressBar: {
-    width: 233,
+    width: "100%",
   },
   progressBarColor: {
     backgroundColor: "#C13D2F",
