@@ -267,6 +267,13 @@ export default function DashboardPage() {
   );
 }
 
+// Helper to format month number to short name
+function formatMonth(monthStr: string): string {
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNum = parseInt(monthStr, 10) - 1; // Convert "01" to 0, "12" to 11
+  return monthNames[monthNum] || monthStr;
+}
+
 // Simple Line Chart Component
 function SimpleLineChart({
   data,
@@ -349,18 +356,29 @@ function SimpleLineChart({
         )}
 
         {/* X-axis labels */}
-        {data.map((d, i) => (
-          <text
-            key={i}
-            x={50 + i * (500 / (data.length - 1))}
-            y="195"
-            textAnchor="middle"
-            fontSize="12"
-            fill="#6c6c6c"
-          >
-            {xAxisKey ? d[xAxisKey] : d.month?.split("-")[1] || i}
-          </text>
-        ))}
+        {data.map((d, i) => {
+          let label: string;
+          if (xAxisKey) {
+            label = d[xAxisKey];
+          } else if (d.month) {
+            const monthNum = d.month.split("-")[1];
+            label = formatMonth(monthNum);
+          } else {
+            label = String(i);
+          }
+          return (
+            <text
+              key={i}
+              x={50 + i * (500 / (data.length - 1))}
+              y="195"
+              textAnchor="middle"
+              fontSize="12"
+              fill="#6c6c6c"
+            >
+              {label}
+            </text>
+          );
+        })}
       </svg>
     </div>
   );
