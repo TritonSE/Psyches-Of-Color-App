@@ -285,14 +285,31 @@ function SimpleLineChart({
     ...data.map((d) => Math.max(d[dataKey1] || 0, dataKey2 ? d[dataKey2] || 0 : 0)),
   );
 
+  // Generate Y-axis labels (5 evenly spaced values from maxValue to 0)
+  const yAxisLabels = [0, 1, 2, 3, 4].map((i) => Math.round(maxValue - (i * maxValue) / 4));
+
   return (
     <div className={styles.lineChart}>
       <svg viewBox="0 0 600 200" className={styles.chartSvg}>
+        {/* Y-axis labels */}
+        {yAxisLabels.map((label, i) => (
+          <text
+            key={`y-${i}`}
+            x="35"
+            y={40 + i * 35 + 4}
+            textAnchor="end"
+            fontSize="12"
+            fill="#6c6c6c"
+          >
+            {label}
+          </text>
+        ))}
+
         {/* Grid lines */}
         {[0, 1, 2, 3, 4].map((i) => (
           <line
             key={i}
-            x1="0"
+            x1="45"
             y1={40 + i * 35}
             x2="600"
             y2={40 + i * 35}
