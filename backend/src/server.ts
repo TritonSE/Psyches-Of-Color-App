@@ -10,6 +10,7 @@ import { unitRouter } from "../src/routes/unit";
 import { activityRouter } from "../src/routes/activity";
 import { journalEntriesRouter } from "../src/routes/journalEntry";
 import { lessonRouter } from "../src/routes/lesson";
+import { statsRouter } from "../src/routes/stats";
 import errorHandler from "../src/middleware/errorHandler";
 import { Request, Response } from "express";
 
@@ -20,7 +21,12 @@ const MONGODB_URI = process.env.MONGODB_URI ?? "";
 // Enable CORS with specific options
 app.use(
   cors({
-    origin: ["http://localhost:8081", "http://localhost:19006", "exp://localhost:19000"],
+    origin: [
+      "http://localhost:8081",
+      "http://localhost:19006",
+      "exp://localhost:19000",
+      "http://localhost:3001",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
@@ -36,6 +42,7 @@ app.use("/api/units", unitRouter);
 app.use("/api/lessons", lessonRouter);
 app.use("/api/activities", activityRouter);
 app.use("/api/journalEntries", journalEntriesRouter);
+app.use("/api/stats", statsRouter);
 
 app.use(errorHandler);
 

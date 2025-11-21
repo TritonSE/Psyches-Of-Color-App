@@ -25,6 +25,7 @@ type UserInterface = {
   lastCompletedDailyCheckIn?: Date | null;
   onboardingInfo: OnboardingInfo;
   completedOnboarding: boolean;
+  isAdmin: boolean;
 };
 
 type UserDoc = {
@@ -38,6 +39,7 @@ type UserDoc = {
   lastCompletedDailyCheckIn?: Date | null;
   onboardingInfo: OnboardingInfo;
   completedOnboarding: boolean;
+  isAdmin: boolean;
 } & mongoose.Document;
 
 type UserModelInterface = {
@@ -121,6 +123,11 @@ const userSchema = new mongoose.Schema({
   lastCompletedDailyCheckIn: {
     type: Date,
     default: null,
+  },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 
