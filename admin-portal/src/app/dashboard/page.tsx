@@ -1,0 +1,531 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { useAuth } from "../../contexts/AuthContext";
+import { StatsResponse, fetchStats } from "../../lib/api";
+
+import styles from "./statistics.module.css";
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+  const [stats, setStats] = useState<StatsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [timeFilter, setTimeFilter] = useState("All Time");
+
+  useEffect(() => {
+    const loadStats = async () => {
+      if (!user) return;
+
+      try {
+        setLoading(true);
+        const data = await fetchStats(user.uid);
+        setStats(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load statistics");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <p>Loading statistics...</p>
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <div className={styles.errorContainer}>
+        <p>{error || "Failed to load statistics"}</p>
+      </div>
+    );
+  }
+
+  const { userActivity, monthlyActivity, retentionCurve, onboardingAnalytics, lessonMetrics } =
+    stats;
+
+  // Calculate percentages for demographics
+  const totalUsers = userActivity.totalUserCount;
+  const calculatePercentage = (count: number) => {
+    return totalUsers > 0 ? Math.round((count / totalUsers) * 100) : 0;
+  };
+
+  // Convert data for charts
+  const ageRangeData = Object.entries(onboardingAnalytics.ageRange).map(([label, count]) => ({
+    label,
+    count,
+    percentage: calculatePercentage(count),
+  }));
+
+  const ethnicityData = Object.entries(onboardingAnalytics.ethnicity).map(([label, count]) => ({
+    label,
+    count,
+    percentage: calculatePercentage(count),
+  }));
+
+  const genderData = Object.entries(onboardingAnalytics.gender).map(([label, count]) => ({
+    label,
+    count,
+    percentage: calculatePercentage(count),
+  }));
+
+  const counselingData = Object.entries(onboardingAnalytics.counseling).map(([label, count]) => ({
+    label,
+    count,
+    percentage: calculatePercentage(count),
+  }));
+
+  return (
+    <div className={styles.container}>
+      {/* Header */}
+      <div className={styles.header}>
+        <h1 className={styles.title}>Statistics</h1>
+        <div className={styles.filters}>
+          <button className={styles.filterButton}>All Time</button>
+          <button className={styles.filterButton}>Demographics</button>
+          <button className={styles.filterButton}>Content Findings</button>
+          <select className={styles.dropdown}>
+            <option>John Doe</option>
+          </select>
+          <button className={styles.downloadButton}>DOWNLOAD</button>
+        </div>
+      </div>
+
+      {/* User Activity Section */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>USER ACTIVITY</h2>
+
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>Total User Count</div>
+            <div className={styles.statValue}>{userActivity.totalUserCount.toLocaleString()}</div>
+            {/* DUMMY DATA: Percentage change is hardcoded. To make real, backend needs to store/compare previous month's data */}
+            <div className={styles.statChange}>
+              <span className={styles.changePositive}>↑ 100% vs. Last Month</span>
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>New Accounts Created</div>
+            {/* DUMMY DATA: Backend returns 0 because User model lacks createdAt timestamp. Add timestamps: true to schema to fix */}
+            <div className={styles.statValue}>
+              {userActivity.newAccountsCreated.toLocaleString()}
+            </div>
+            {/* DUMMY DATA: Percentage change is hardcoded */}
+            <div className={styles.statChange}>
+              <span className={styles.changePositive}>↑ 100% vs. Last Month</span>
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>Avg Check-Ins/User</div>
+            <div className={styles.statValue}>{userActivity.avgCheckInsPerUser}</div>
+            {/* DUMMY DATA: Percentage change is hardcoded */}
+            <div className={styles.statChange}>
+              <span className={styles.changeNegative}>↓ 100% vs. Last Month</span>
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>Avg Time App Opened</div>
+            {/* DUMMY DATA: Using newAccountsCreated as placeholder. Real implementation needs app open tracking in mobile app */}
+            <div className={styles.statValue}>
+              {userActivity.newAccountsCreated.toLocaleString()}
+            </div>
+            {/* DUMMY DATA: Percentage change is hardcoded */}
+            <div className={styles.statChange}>
+              <span className={styles.changePositive}>↑ 100% vs. Last Month</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Monthly Activities Chart */}
+        <div className={styles.chartCard}>
+          <div className={styles.chartHeader}>
+            <h3 className={styles.chartTitle}>Average Monthly User Activities</h3>
+            <div className={styles.legend}>
+              <span className={styles.legendItem}>
+                <span className={`${styles.legendDot} ${styles.dotCheckIns}`}></span>
+                Check-ins
+              </span>
+              <span className={styles.legendItem}>
+                <span className={`${styles.legendDot} ${styles.dotEntries}`}></span>
+                Entries Written
+              </span>
+            </div>
+          </div>
+          <div className={styles.statsRow}>
+            <div className={styles.stat}>
+              <div className={styles.statNum}>
+                {Math.round(userActivity.avgCheckInsPerUser * 100)}
+              </div>
+              <div className={styles.statLabel}>Check-ins</div>
+            </div>
+            <div className={styles.stat}>
+              <div className={styles.statNum}>
+                {Math.round(userActivity.avgEntriesPerUser * 100)}
+              </div>
+              <div className={styles.statLabel}>Entries Written</div>
+            </div>
+          </div>
+          <SimpleLineChart data={monthlyActivity} dataKey1="checkIns" dataKey2="entries" />
+        </div>
+
+        {/* User Retention Curve */}
+        <div className={styles.chartCard}>
+          <div className={styles.chartHeader}>
+            <h3 className={styles.chartTitle}>User Retention Curve</h3>
+            <div className={styles.timeRange}>
+              <span>Nov 29</span>
+              <span>Dec 06</span>
+            </div>
+          </div>
+          <SimpleLineChart data={retentionCurve} dataKey1="activeUsers" xAxisKey="day" />
+        </div>
+      </section>
+
+      {/* Onboarding Analytics Section */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>ONBOARDING ANALYTICS</h2>
+
+        <div className={styles.chartsRow}>
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Age</h3>
+            <DonutChart data={ageRangeData} />
+          </div>
+
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Ethnicity</h3>
+            <DonutChart data={ethnicityData} />
+          </div>
+        </div>
+
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Gender Distribution</h3>
+          <BarChart data={genderData} isUserCount={true} />
+        </div>
+
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Counseling</h3>
+          <HorizontalBarChart data={counselingData} />
+        </div>
+      </section>
+
+      {/* Lesson Ratings Section */}
+      {/* DUMMY DATA: All lesson ratings are hardcoded because no rating system exists in the app.
+          To make real: 
+          1. Create Rating model in backend
+          2. Add rating UI after lesson completion in mobile app
+          3. Update /api/stats endpoint to aggregate ratings by unit
+          4. Backend currently returns: { averageRating: 4.37, ratingsByUnit: [] } */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>LESSON RATINGS</h2>
+
+        <div className={styles.chartCard}>
+          <div className={styles.ratingHeader}>
+            <h3 className={styles.chartTitle}>Ratings</h3>
+            <select className={styles.unitSelect}>
+              <option>All Lessons</option>
+            </select>
+          </div>
+          <div className={styles.averageRating}>
+            {/* DUMMY DATA: Backend hardcodes 4.37 */}
+            <div className={styles.ratingValue}>{lessonMetrics.averageRating}</div>
+            <div className={styles.stars}>★★★★☆</div>
+          </div>
+          <div className={styles.ratingBars}>
+            {/* DUMMY DATA: These numbers are hardcoded - no rating data exists in database */}
+            <RatingBar unit="Unit 1" rating={130} maxRating={130} />
+            <RatingBar unit="Unit 2" rating={90} maxRating={130} />
+            <RatingBar unit="Unit 3" rating={97} maxRating={130} />
+          </div>
+        </div>
+
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Average Rating by Unit</h3>
+          {/* DUMMY DATA: These ratings are hardcoded because backend returns empty ratingsByUnit array */}
+          <BarChart
+            data={[
+              { label: "Unit 1", count: 4, percentage: 80 },
+              { label: "Unit 2", count: 4, percentage: 80 },
+              { label: "Unit 3", count: 5, percentage: 100 },
+              { label: "Unit 4", count: 3, percentage: 60 },
+              { label: "Unit 5", count: 5, percentage: 100 },
+            ]}
+          />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// Simple Line Chart Component
+function SimpleLineChart({
+  data,
+  dataKey1,
+  dataKey2,
+  xAxisKey,
+}: {
+  data: any[];
+  dataKey1: string;
+  dataKey2?: string;
+  xAxisKey?: string;
+}) {
+  if (data.length === 0) return <div className={styles.noData}>No data available</div>;
+
+  const maxValue = Math.max(
+    ...data.map((d) => Math.max(d[dataKey1] || 0, dataKey2 ? d[dataKey2] || 0 : 0)),
+  );
+
+  return (
+    <div className={styles.lineChart}>
+      <svg viewBox="0 0 600 200" className={styles.chartSvg}>
+        {/* Grid lines */}
+        {[0, 1, 2, 3, 4].map((i) => (
+          <line
+            key={i}
+            x1="0"
+            y1={40 + i * 35}
+            x2="600"
+            y2={40 + i * 35}
+            stroke="#ebebeb"
+            strokeWidth="1"
+          />
+        ))}
+
+        {/* Data line 1 */}
+        <polyline
+          points={data
+            .map((d, i) => {
+              const x = 50 + i * (500 / (data.length - 1));
+              const y = 180 - (d[dataKey1] / maxValue) * 140;
+              return `${x},${y}`;
+            })
+            .join(" ")}
+          fill="none"
+          stroke="#1a4d2e"
+          strokeWidth="2"
+        />
+
+        {/* Data line 2 (if provided) */}
+        {dataKey2 && (
+          <polyline
+            points={data
+              .map((d, i) => {
+                const x = 50 + i * (500 / (data.length - 1));
+                const y = 180 - (d[dataKey2] / maxValue) * 140;
+                return `${x},${y}`;
+              })
+              .join(" ")}
+            fill="none"
+            stroke="#f39c12"
+            strokeWidth="2"
+          />
+        )}
+
+        {/* X-axis labels */}
+        {data.map((d, i) => (
+          <text
+            key={i}
+            x={50 + i * (500 / (data.length - 1))}
+            y="195"
+            textAnchor="middle"
+            fontSize="12"
+            fill="#6c6c6c"
+          >
+            {xAxisKey ? d[xAxisKey] : d.month?.split("-")[1] || i}
+          </text>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+// Donut Chart Component
+function DonutChart({
+  data,
+}: {
+  data: Array<{ label: string; count: number; percentage: number }>;
+}) {
+  const colors = ["#1a4d2e", "#f39c12", "#c0392b", "#e67e22", "#f1c40f"];
+  let currentAngle = 0;
+
+  return (
+    <div className={styles.donutContainer}>
+      <svg viewBox="0 0 200 200" className={styles.donutSvg}>
+        {data.map((item, index) => {
+          const angle = (item.percentage / 100) * 360;
+          const startAngle = currentAngle;
+          currentAngle += angle;
+
+          return (
+            <DonutSlice
+              key={item.label}
+              cx={100}
+              cy={100}
+              radius={80}
+              innerRadius={50}
+              startAngle={startAngle}
+              endAngle={currentAngle}
+              fill={colors[index % colors.length]}
+            />
+          );
+        })}
+      </svg>
+      <div className={styles.donutLegend}>
+        {data.slice(0, 5).map((item, index) => (
+          <div key={item.label} className={styles.legendRow}>
+            <span
+              className={styles.legendDot}
+              style={{ backgroundColor: colors[index % colors.length] }}
+            ></span>
+            <span className={styles.legendLabel}>{item.label}</span>
+            <span className={styles.legendValue}>{item.percentage}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Helper for Donut Slice
+function DonutSlice({
+  cx,
+  cy,
+  radius,
+  innerRadius,
+  startAngle,
+  endAngle,
+  fill,
+}: {
+  cx: number;
+  cy: number;
+  radius: number;
+  innerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+}) {
+  const start = polarToCartesian(cx, cy, radius, endAngle);
+  const end = polarToCartesian(cx, cy, radius, startAngle);
+  const innerStart = polarToCartesian(cx, cy, innerRadius, endAngle);
+  const innerEnd = polarToCartesian(cx, cy, innerRadius, startAngle);
+
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+  const d = [
+    `M ${start.x} ${start.y}`,
+    `A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+    `L ${innerEnd.x} ${innerEnd.y}`,
+    `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 1 ${innerStart.x} ${innerStart.y}`,
+    "Z",
+  ].join(" ");
+
+  return <path d={d} fill={fill} />;
+}
+
+function polarToCartesian(cx: number, cy: number, radius: number, angle: number) {
+  const angleInRadians = ((angle - 90) * Math.PI) / 180;
+  return {
+    x: cx + radius * Math.cos(angleInRadians),
+    y: cy + radius * Math.sin(angleInRadians),
+  };
+}
+
+// Bar Chart Component
+function BarChart({
+  data,
+  isUserCount = false,
+}: {
+  data: Array<{ label: string; count: number; percentage: number }>;
+  isUserCount?: boolean;
+}) {
+  const colors = ["#f39c12", "#1a4d2e", "#e67e22", "#c0392b", "#f1c40f"];
+
+  // For ratings: fixed scale 0-5
+  // For user counts: dynamic scale based on max value
+  const maxValue = isUserCount ? Math.max(...data.map((d) => d.count)) : 5;
+  const yAxisLabels = isUserCount
+    ? Array.from({ length: 6 }, (_, i) => Math.ceil(maxValue - (i * maxValue) / 5))
+    : [5, 4, 3, 2, 1, 0];
+
+  return (
+    <div className={styles.barChart}>
+      {/* Y-axis labels */}
+      <div className={styles.yAxis}>
+        {yAxisLabels.map((label, index) => (
+          <div key={index} className={styles.yAxisLabel}>
+            {label}
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.bars}>
+        {data.map((item, index) => (
+          <div key={item.label} className={styles.barWrapper}>
+            <div
+              className={styles.bar}
+              style={{
+                height: `${Math.min((item.count / maxValue) * 240, 240)}px`,
+                backgroundColor: colors[index % colors.length],
+              }}
+            ></div>
+            <div className={styles.barLabel}>{item.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Horizontal Bar Chart
+function HorizontalBarChart({
+  data,
+}: {
+  data: Array<{ label: string; count: number; percentage: number }>;
+}) {
+  return (
+    <div className={styles.horizontalBarChart}>
+      {data.map((item) => (
+        <div key={item.label} className={styles.horizontalBarRow}>
+          <div className={styles.barLabel}>{item.label}</div>
+          <div className={styles.barTrack}>
+            <div className={styles.barFill} style={{ width: `${item.percentage}%` }}></div>
+          </div>
+          <div className={styles.barValue}>{item.percentage}%</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Rating Bar Component
+function RatingBar({
+  unit,
+  rating,
+  maxRating,
+}: {
+  unit: string;
+  rating: number;
+  maxRating: number;
+}) {
+  const percentage = (rating / maxRating) * 100;
+
+  return (
+    <div className={styles.ratingBarRow}>
+      <div className={styles.ratingLabel}>{unit}</div>
+      <div className={styles.ratingTrack}>
+        <div className={styles.ratingFill} style={{ width: `${percentage}%` }}></div>
+      </div>
+      <div className={styles.ratingValue}>{rating}</div>
+    </div>
+  );
+}
