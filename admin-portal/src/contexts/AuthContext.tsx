@@ -1,20 +1,21 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
 import { verifyAdmin } from "../lib/api";
+import { auth } from "../lib/firebase";
 
 // DEV ONLY: Set to true to bypass authentication during development
 const DEV_BYPASS_AUTH = process.env.NEXT_PUBLIC_DEV_BYPASS_AUTH === "true";
 
-interface AuthContextType {
+type AuthContextType = {
   user: User | null;
   isAdmin: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-}
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -33,12 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+    const onUserUpdated = async (newUser: User | null) => {
+      setUser(newUser);
 
-      if (user) {
+      if (newUser) {
         // Check if user is admin
-        const token = await user.getIdToken();
+        const token = await newUser.getIdToken();
         const adminStatus = await verifyAdmin(token);
         setIsAdmin(adminStatus);
       } else {
@@ -46,9 +47,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setLoading(false);
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (newUser) => {
+      void onUserUpdated(newUser);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {

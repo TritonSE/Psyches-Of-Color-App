@@ -1,9 +1,11 @@
 "use client";
 
-import { useAuth } from "../../contexts/AuthContext";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import Image from "next/image";
+
+import { useAuth } from "../../contexts/AuthContext";
+
 import styles from "./dashboard.module.css";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -57,7 +59,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
         </nav>
 
-        <button className={styles.logoutButton} onClick={handleLogout}>
+        <button
+          className={styles.logoutButton}
+          onClick={() => {
+            void handleLogout();
+          }}
+        >
           Log Out
         </button>
       </aside>

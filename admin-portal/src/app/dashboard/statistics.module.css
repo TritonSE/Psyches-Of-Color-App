@@ -399,18 +399,6 @@
   color: #f39c12;
 }
 
-.ratingBars {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.ratingBarRow {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
 .ratingLabel {
   width: 80px;
   font-size: 14px;
@@ -430,14 +418,6 @@
   height: 100%;
   background: #f39c12;
   transition: width 0.3s ease;
-}
-
-.ratingBarRow .ratingValue {
-  width: 60px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #000000;
-  text-align: right;
 }
 
 .timeRange {

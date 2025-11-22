@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../contexts/AuthContext";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+
+import { useAuth } from "../../contexts/AuthContext";
+
 import styles from "./login.module.css";
 
 export default function LoginPage() {
@@ -47,7 +49,12 @@ export default function LoginPage() {
         <h1 className={styles.title}>Admin Portal</h1>
         <p className={styles.subtitle}>Sign in to access the dashboard</p>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form
+          onSubmit={(e) => {
+            void handleSubmit(e);
+          }}
+          className={styles.form}
+        >
           <div className={styles.inputGroup}>
             <label htmlFor="email" className={styles.label}>
               Email
@@ -56,7 +63,9 @@ export default function LoginPage() {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
               className={styles.input}
               placeholder="Enter email"
               required
@@ -73,7 +82,9 @@ export default function LoginPage() {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               className={styles.input}
               placeholder="Enter password"
               required

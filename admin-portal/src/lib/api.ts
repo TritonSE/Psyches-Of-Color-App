@@ -1,35 +1,40 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
 
 // DEV ONLY: Use mock data when enabled
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
-export interface UserActivityStats {
+export type User = {
+  _id: string;
+  isAdmin: boolean;
+};
+
+export type UserActivityStats = {
   totalUserCount: number;
   newAccountsCreated: number;
   avgCheckInsPerUser: number;
   avgEntriesPerUser: number;
-}
+};
 
-export interface MonthlyActivity {
+export type MonthlyActivity = {
   month: string;
   checkIns: number;
   entries: number;
-}
+};
 
-export interface OnboardingAnalytics {
-  ageRange: { [key: string]: number };
-  ethnicity: { [key: string]: number };
-  gender: { [key: string]: number };
-  counseling: { [key: string]: number };
-  education: { [key: string]: number };
-  residence: { [key: string]: number };
-}
+export type OnboardingAnalytics = {
+  ageRange: Record<string, number>;
+  ethnicity: Record<string, number>;
+  gender: Record<string, number>;
+  counseling: Record<string, number>;
+  education: Record<string, number>;
+  residence: Record<string, number>;
+};
 
-export interface StatsResponse {
+export type StatsResponse = {
   userActivity: UserActivityStats;
   monthlyActivity: MonthlyActivity[];
   onboardingAnalytics: OnboardingAnalytics;
-}
+};
 
 /**
  * Generates mock data for development
@@ -82,7 +87,7 @@ function generateMockData(): StatsResponse {
         "Some College": 680,
         "Bachelor's Degree": 1340,
         "Master's Degree": 620,
-        "Doctorate": 180,
+        Doctorate: 180,
       },
       residence: {
         Urban: 1840,
@@ -102,7 +107,6 @@ export async function fetchStats(idToken: string): Promise<StatsResponse> {
   // DEV ONLY: Return mock data
   if (USE_MOCK_DATA) {
     console.warn("⚠️  DEV MODE: Using mock statistics data!");
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
     return generateMockData();
   }
 
@@ -117,7 +121,7 @@ export async function fetchStats(idToken: string): Promise<StatsResponse> {
     throw new Error("Failed to fetch statistics");
   }
 
-  return response.json();
+  return (await response.json()) as StatsResponse;
 }
 
 /**
@@ -128,19 +132,17 @@ export async function fetchStats(idToken: string): Promise<StatsResponse> {
 export async function verifyAdmin(idToken: string): Promise<boolean> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/whoami`, {
-
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`,
-    },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
     });
     if (!response.ok) return false;
-    
-    const user = await response.json();
-    return user.isAdmin === true;
+
+    const user = (await response.json()) as User;
+    return user.isAdmin;
   } catch (error) {
     console.error("Error verifying admin status:", error);
     return false;
   }
 }
-

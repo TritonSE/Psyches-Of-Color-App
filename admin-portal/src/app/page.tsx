@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Home() {
@@ -19,14 +20,16 @@ export default function Home() {
   }, [user, isAdmin, loading, router]);
 
   return (
-    <div style={{ 
-      display: "flex", 
-      justifyContent: "center", 
-      alignItems: "center", 
-      minHeight: "100vh",
-      fontSize: "18px",
-      color: "#6c6c6c"
-    }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        fontSize: "18px",
+        color: "#6c6c6c",
+      }}
+    >
       Loading...
     </div>
   );
