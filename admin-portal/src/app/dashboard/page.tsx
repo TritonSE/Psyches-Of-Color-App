@@ -20,7 +20,8 @@ export default function DashboardPage() {
 
       try {
         setLoading(true);
-        const data = await fetchStats(user.uid);
+        const token = await user.getIdToken();
+        const data = await fetchStats(token);
         setStats(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load statistics");
@@ -49,8 +50,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { userActivity, monthlyActivity, retentionCurve, onboardingAnalytics, lessonMetrics } =
-    stats;
+  const { userActivity, monthlyActivity, onboardingAnalytics } = stats;
 
   // Calculate percentages for demographics
   const totalUsers = userActivity.totalUserCount;
@@ -178,18 +178,6 @@ export default function DashboardPage() {
           </div>
           <SimpleLineChart data={monthlyActivity} dataKey1="checkIns" dataKey2="entries" />
         </div>
-
-        {/* User Retention Curve */}
-        <div className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <h3 className={styles.chartTitle}>User Retention Curve</h3>
-            <div className={styles.timeRange}>
-              <span>Nov 29</span>
-              <span>Dec 06</span>
-            </div>
-          </div>
-          <SimpleLineChart data={retentionCurve} dataKey1="activeUsers" xAxisKey="day" />
-        </div>
       </section>
 
       {/* Onboarding Analytics Section */}
@@ -218,58 +206,26 @@ export default function DashboardPage() {
           <HorizontalBarChart data={counselingData} />
         </div>
       </section>
-
-      {/* Lesson Ratings Section */}
-      {/* DUMMY DATA: All lesson ratings are hardcoded because no rating system exists in the app.
-          To make real: 
-          1. Create Rating model in backend
-          2. Add rating UI after lesson completion in mobile app
-          3. Update /api/stats endpoint to aggregate ratings by unit
-          4. Backend currently returns: { averageRating: 4.37, ratingsByUnit: [] } */}
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>LESSON RATINGS</h2>
-
-        <div className={styles.chartCard}>
-          <div className={styles.ratingHeader}>
-            <h3 className={styles.chartTitle}>Ratings</h3>
-            <select className={styles.unitSelect}>
-              <option>All Lessons</option>
-            </select>
-          </div>
-          <div className={styles.averageRating}>
-            {/* DUMMY DATA: Backend hardcodes 4.37 */}
-            <div className={styles.ratingValue}>{lessonMetrics.averageRating}</div>
-            <div className={styles.stars}>★★★★☆</div>
-          </div>
-          <div className={styles.ratingBars}>
-            {/* DUMMY DATA: These numbers are hardcoded - no rating data exists in database */}
-            <RatingBar unit="Unit 1" rating={130} maxRating={130} />
-            <RatingBar unit="Unit 2" rating={90} maxRating={130} />
-            <RatingBar unit="Unit 3" rating={97} maxRating={130} />
-          </div>
-        </div>
-
-        <div className={styles.chartCard}>
-          <h3 className={styles.chartTitle}>Average Rating by Unit</h3>
-          {/* DUMMY DATA: These ratings are hardcoded because backend returns empty ratingsByUnit array */}
-          <BarChart
-            data={[
-              { label: "Unit 1", count: 4, percentage: 80 },
-              { label: "Unit 2", count: 4, percentage: 80 },
-              { label: "Unit 3", count: 5, percentage: 100 },
-              { label: "Unit 4", count: 3, percentage: 60 },
-              { label: "Unit 5", count: 5, percentage: 100 },
-            ]}
-          />
-        </div>
-      </section>
     </div>
   );
 }
 
 // Helper to format month number to short name
 function formatMonth(monthStr: string): string {
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const monthNum = parseInt(monthStr, 10) - 1; // Convert "01" to 0, "12" to 11
   return monthNames[monthNum] || monthStr;
 }

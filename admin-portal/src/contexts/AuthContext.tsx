@@ -38,7 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (user) {
         // Check if user is admin
-        const adminStatus = await verifyAdmin(user.uid);
+        const token = await user.getIdToken();
+        const adminStatus = await verifyAdmin(token);
         setIsAdmin(adminStatus);
       } else {
         setIsAdmin(false);
@@ -58,7 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const adminStatus = await verifyAdmin(userCredential.user.uid);
+    const token = await userCredential.user.getIdToken();
+    const adminStatus = await verifyAdmin(token);
 
     if (!adminStatus) {
       await signOut(auth);
@@ -84,4 +86,3 @@ export function useAuth() {
   }
   return context;
 }
-

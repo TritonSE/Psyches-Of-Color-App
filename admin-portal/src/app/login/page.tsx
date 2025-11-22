@@ -23,7 +23,9 @@ export default function LoginPage() {
       await login(email, password);
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to login. Please check your credentials.");
+      setError(
+        err instanceof Error ? err.message : "Failed to login. Please check your credentials.",
+      );
     } finally {
       setLoading(false);
     }
@@ -34,14 +36,14 @@ export default function LoginPage() {
       <div className={styles.loginCard}>
         <div className={styles.logoContainer}>
           <Image
-            src="/Primary-Liberation.svg"
+            src="/Primary-Liberation-Dark.svg"
             alt="Psyches of Color Logo"
             width={200}
             height={73}
             priority
           />
         </div>
-        
+
         <h1 className={styles.title}>Admin Portal</h1>
         <p className={styles.subtitle}>Sign in to access the dashboard</p>
 
@@ -90,4 +92,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

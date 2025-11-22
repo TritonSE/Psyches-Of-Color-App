@@ -16,11 +16,6 @@ export interface MonthlyActivity {
   entries: number;
 }
 
-export interface RetentionPoint {
-  day: string;
-  activeUsers: number;
-}
-
 export interface OnboardingAnalytics {
   ageRange: { [key: string]: number };
   ethnicity: { [key: string]: number };
@@ -30,17 +25,10 @@ export interface OnboardingAnalytics {
   residence: { [key: string]: number };
 }
 
-export interface LessonMetrics {
-  averageRating: number;
-  ratingsByUnit: Array<{ unit: string; rating: number }>;
-}
-
 export interface StatsResponse {
   userActivity: UserActivityStats;
   monthlyActivity: MonthlyActivity[];
-  retentionCurve: RetentionPoint[];
   onboardingAnalytics: OnboardingAnalytics;
-  lessonMetrics: LessonMetrics;
 }
 
 /**
@@ -61,16 +49,6 @@ function generateMockData(): StatsResponse {
       { month: "2024-10", checkIns: 225, entries: 145 },
       { month: "2024-11", checkIns: 280, entries: 180 },
       { month: "2024-12", checkIns: 315, entries: 210 },
-    ],
-    retentionCurve: [
-      { day: "Day 0", activeUsers: 100 },
-      { day: "Day 1", activeUsers: 85 },
-      { day: "Day 2", activeUsers: 72 },
-      { day: "Day 3", activeUsers: 68 },
-      { day: "Day 4", activeUsers: 58 },
-      { day: "Day 5", activeUsers: 62 },
-      { day: "Day 6", activeUsers: 75 },
-      { day: "Day 7", activeUsers: 82 },
     ],
     onboardingAnalytics: {
       ageRange: {
@@ -112,14 +90,6 @@ function generateMockData(): StatsResponse {
         Rural: 420,
       },
     },
-    lessonMetrics: {
-      averageRating: 4.37,
-      ratingsByUnit: [
-        { unit: "Unit 1", rating: 4.2 },
-        { unit: "Unit 2", rating: 4.5 },
-        { unit: "Unit 3", rating: 4.4 },
-      ],
-    },
   };
 }
 
@@ -128,7 +98,7 @@ function generateMockData(): StatsResponse {
  * @param uid - User ID from Firebase auth
  * @returns Promise with statistics data
  */
-export async function fetchStats(uid: string): Promise<StatsResponse> {
+export async function fetchStats(idToken: string): Promise<StatsResponse> {
   // DEV ONLY: Return mock data
   if (USE_MOCK_DATA) {
     console.warn("⚠️  DEV MODE: Using mock statistics data!");
@@ -137,10 +107,9 @@ export async function fetchStats(uid: string): Promise<StatsResponse> {
   }
 
   const response = await fetch(`${API_BASE_URL}/api/stats`, {
-    method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${uid}`,
+      Authorization: `Bearer ${idToken}`,
     },
   });
 
@@ -156,9 +125,15 @@ export async function fetchStats(uid: string): Promise<StatsResponse> {
  * @param uid - User ID from Firebase auth
  * @returns Promise with admin status
  */
-export async function verifyAdmin(uid: string): Promise<boolean> {
+export async function verifyAdmin(idToken: string): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/users/${uid}`);
+    const response = await fetch(`${API_BASE_URL}/api/whoami`, {
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    });
     if (!response.ok) return false;
     
     const user = await response.json();

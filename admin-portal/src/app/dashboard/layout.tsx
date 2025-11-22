@@ -55,14 +55,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Image src="/statistics.svg" alt="Statistics" width={20} height={20} />
             <span>Statistics</span>
           </button>
-          <button className={styles.navButton} disabled>
-            <Image src="/editor.svg" alt="Editor" width={20} height={20} />
-            <span>Editor</span>
-          </button>
-          <button className={styles.navButton} disabled>
-            <Image src="/user-settings.svg" alt="User Settings" width={20} height={20} />
-            <span>User Settings</span>
-          </button>
         </nav>
 
         <button className={styles.logoutButton} onClick={handleLogout}>

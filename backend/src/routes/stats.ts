@@ -149,35 +149,6 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
     const avgCheckInsPerUser = totalUsers > 0 ? totalCheckIns / totalUsers : 0;
     const avgEntriesPerUser = totalUsers > 0 ? totalEntries / totalUsers : 0;
 
-    // Calculate user retention curve (simplified - days since last activity)
-    const retentionData: { [key: string]: number } = {};
-    for (let day = 0; day <= 7; day++) {
-      retentionData[`Day ${day}`] = 0;
-    }
-
-    // For each user, find their last activity
-    for (const user of users) {
-      const lastMood = await Mood.findOne({ uid: user.uid }).sort({ createdAt: -1 });
-      const lastEntry = await JournalEntry.findOne({ author: user._id }).sort({ createdAt: -1 });
-
-      let lastActivity: Date | null = null;
-      if (lastMood && lastEntry) {
-        lastActivity =
-          lastMood.createdAt > lastEntry.createdAt ? lastMood.createdAt : lastEntry.createdAt;
-      } else if (lastMood) {
-        lastActivity = lastMood.createdAt;
-      } else if (lastEntry) {
-        lastActivity = lastEntry.createdAt;
-      }
-
-      if (lastActivity) {
-        const daysSince = Math.floor((Date.now() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
-        if (daysSince <= 7) {
-          retentionData[`Day ${daysSince}`]++;
-        }
-      }
-    }
-
     // Return all statistics
     res.json({
       userActivity: {
@@ -191,10 +162,6 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
         checkIns: data.checkIns,
         entries: data.entries,
       })),
-      retentionCurve: Object.entries(retentionData).map(([day, count]) => ({
-        day,
-        activeUsers: count,
-      })),
       onboardingAnalytics: {
         ageRange: ageRangeStats,
         ethnicity: ethnicityStats,
@@ -202,16 +169,6 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
         counseling: counselingStats,
         education: educationStats,
         residence: residenceStats,
-      },
-      lessonMetrics: {
-        // DUMMY DATA: All lesson rating data is hardcoded
-        // TO FIX: Requires implementing rating system:
-        // 1. Create Rating model with fields: userId, lessonId, unitId, rating (1-5), createdAt
-        // 2. Add rating UI in mobile app after lesson completion
-        // 3. Query ratings here and calculate averages by unit
-        // 4. Return real data instead of hardcoded values
-        averageRating: 4.37, // Hardcoded placeholder
-        ratingsByUnit: [], // Empty because no ratings exist
       },
     });
   } catch (error) {
