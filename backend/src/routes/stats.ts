@@ -80,7 +80,10 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
         : Math.round(((newAccountsCount - prevNewAccountsCount) / prevNewAccountsCount) * 100);
 
     // Total users percent change vs 30 days ago
-    const totalUsersAtPrev = await User.countDocuments({ createdAt: { $lt: thirtyDaysAgo } });
+    const totalUsersAtPrev = await User.countDocuments({
+      createdAt: { $lt: thirtyDaysAgo },
+      isAdmin: false,
+    });
     const totalUsersChangePercent =
       totalUsersAtPrev === 0
         ? null
@@ -95,7 +98,10 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
     const totalCheckInsPrev = await Mood.countDocuments({
       createdAt: { $gte: prevThirtyStart, $lt: prevThirtyEnd },
     });
-    const totalUsersPrev = await User.countDocuments({ createdAt: { $lt: prevThirtyEnd } });
+    const totalUsersPrev = await User.countDocuments({
+      createdAt: { $lt: prevThirtyEnd },
+      isAdmin: false,
+    });
     const avgCheckInsPerUserPrev = totalUsersPrev > 0 ? totalCheckInsPrev / totalUsersPrev : 0;
     const avgCheckInsChangePercent =
       avgCheckInsPerUserPrev === 0
