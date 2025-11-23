@@ -335,6 +335,10 @@ export default function DashboardPage() {
 
   const { userActivity, monthlyActivity, onboardingAnalytics } = stats;
 
+  const newAccountsChangePercent = userActivity.newAccountsChangePercent ?? null;
+  const totalUsersChangePercent = userActivity.totalUsersChangePercent ?? null;
+  const avgCheckInsChangePercent = userActivity.avgCheckInsChangePercent ?? null;
+
   // Calculate percentages for demographics
   const totalUsers = userActivity.totalUserCount;
   const calculatePercentage = (count: number) => {
@@ -392,7 +396,19 @@ export default function DashboardPage() {
             <div className={styles.statValue}>{userActivity.totalUserCount.toLocaleString()}</div>
             {/* DUMMY DATA: Percentage change is hardcoded. To make real, backend needs to store/compare previous month's data */}
             <div className={styles.statChange}>
-              <span className={styles.changePositive}>↑ 100% vs. Last Month</span>
+              {totalUsersChangePercent === null ? (
+                <span>— vs. Last Month</span>
+              ) : totalUsersChangePercent > 0 ? (
+                <span className={styles.changePositive}>
+                  ↑ {totalUsersChangePercent}% vs. Last Month
+                </span>
+              ) : totalUsersChangePercent < 0 ? (
+                <span className={styles.changeNegative}>
+                  ↓ {Math.abs(Number(totalUsersChangePercent))}% vs. Last Month
+                </span>
+              ) : (
+                <span>— vs. Last Month</span>
+              )}
             </div>
           </div>
 
@@ -404,7 +420,19 @@ export default function DashboardPage() {
             </div>
             {/* DUMMY DATA: Percentage change is hardcoded */}
             <div className={styles.statChange}>
-              <span className={styles.changePositive}>↑ 100% vs. Last Month</span>
+              {newAccountsChangePercent === null ? (
+                <span>— vs. Last Month</span>
+              ) : newAccountsChangePercent > 0 ? (
+                <span className={styles.changePositive}>
+                  ↑ {newAccountsChangePercent}% vs. Last Month
+                </span>
+              ) : newAccountsChangePercent < 0 ? (
+                <span className={styles.changeNegative}>
+                  ↓ {Math.abs(Number(newAccountsChangePercent))}% vs. Last Month
+                </span>
+              ) : (
+                <span>— vs. Last Month</span>
+              )}
             </div>
           </div>
 
@@ -413,7 +441,19 @@ export default function DashboardPage() {
             <div className={styles.statValue}>{userActivity.avgCheckInsPerUser}</div>
             {/* DUMMY DATA: Percentage change is hardcoded */}
             <div className={styles.statChange}>
-              <span className={styles.changeNegative}>↓ 100% vs. Last Month</span>
+              {avgCheckInsChangePercent === null ? (
+                <span>— vs. Last Month</span>
+              ) : avgCheckInsChangePercent > 0 ? (
+                <span className={styles.changePositive}>
+                  ↑ {avgCheckInsChangePercent}% vs. Last Month
+                </span>
+              ) : avgCheckInsChangePercent < 0 ? (
+                <span className={styles.changeNegative}>
+                  ↓ {Math.abs(Number(avgCheckInsChangePercent))}% vs. Last Month
+                </span>
+              ) : (
+                <span>— vs. Last Month</span>
+              )}
             </div>
           </div>
 
@@ -425,7 +465,7 @@ export default function DashboardPage() {
             </div>
             {/* DUMMY DATA: Percentage change is hardcoded */}
             <div className={styles.statChange}>
-              <span className={styles.changePositive}>↑ 100% vs. Last Month</span>
+              <span>— vs. Last Month</span>
             </div>
           </div>
         </div>

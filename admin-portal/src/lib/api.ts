@@ -10,8 +10,11 @@ export type User = {
 
 export type UserActivityStats = {
   totalUserCount: number;
+  totalUsersChangePercent?: number | null;
   newAccountsCreated: number;
+  newAccountsChangePercent?: number | null;
   avgCheckInsPerUser: number;
+  avgCheckInsChangePercent?: number | null;
   avgEntriesPerUser: number;
 };
 
@@ -43,8 +46,11 @@ function generateMockData(): StatsResponse {
   return {
     userActivity: {
       totalUserCount: 3240,
+      totalUsersChangePercent: 12,
       newAccountsCreated: 486,
+      newAccountsChangePercent: 8,
       avgCheckInsPerUser: 150,
+      avgCheckInsChangePercent: 5,
       avgEntriesPerUser: 200,
     },
     monthlyActivity: [
