@@ -54,19 +54,64 @@ const adminMiddleware = async (
 router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
   try {
     // Get total user count
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ isAdmin: false });
 
     // Get new accounts created in the last 30 days
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // DUMMY DATA: Returns 0 because User model doesn't have createdAt timestamp
-    // TO FIX: Add `timestamps: true` to userSchema in backend/src/models/users.ts
-    // Then query: User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } })
-    const newAccountsCount = 0;
+    const newAccountsCount = await User.countDocuments({
+      createdAt: { $gte: thirtyDaysAgo },
+      isAdmin: false,
+    });
+
+    // Previous 30-day window (30-60 days ago)
+    const prevThirtyStart = new Date();
+    prevThirtyStart.setDate(prevThirtyStart.getDate() - 60);
+    const prevThirtyEnd = thirtyDaysAgo;
+
+    const prevNewAccountsCount = await User.countDocuments({
+      createdAt: { $gte: prevThirtyStart, $lt: prevThirtyEnd },
+      isAdmin: false,
+    });
+    const newAccountsChangePercent =
+      prevNewAccountsCount === 0
+        ? null
+        : Math.round(((newAccountsCount - prevNewAccountsCount) / prevNewAccountsCount) * 100);
+
+    // Total users percent change vs 30 days ago
+    const totalUsersAtPrev = await User.countDocuments({
+      createdAt: { $lt: thirtyDaysAgo },
+      isAdmin: false,
+    });
+    const totalUsersChangePercent =
+      totalUsersAtPrev === 0
+        ? null
+        : Math.round(((totalUsers - totalUsersAtPrev) / totalUsersAtPrev) * 100);
+
+    // Average check-ins per user: compare current 30-day window vs previous 30-day window
+    const totalCheckInsCurrent = await Mood.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
+    const totalUsersCurrent = totalUsers; // same as above (exclude admins)
+    const avgCheckInsPerUserCurrent =
+      totalUsersCurrent > 0 ? totalCheckInsCurrent / totalUsersCurrent : 0;
+
+    const totalCheckInsPrev = await Mood.countDocuments({
+      createdAt: { $gte: prevThirtyStart, $lt: prevThirtyEnd },
+    });
+    const totalUsersPrev = await User.countDocuments({
+      createdAt: { $lt: prevThirtyEnd },
+      isAdmin: false,
+    });
+    const avgCheckInsPerUserPrev = totalUsersPrev > 0 ? totalCheckInsPrev / totalUsersPrev : 0;
+    const avgCheckInsChangePercent =
+      avgCheckInsPerUserPrev === 0
+        ? null
+        : Math.round(
+            ((avgCheckInsPerUserCurrent - avgCheckInsPerUserPrev) / avgCheckInsPerUserPrev) * 100,
+          );
 
     // Get all users for onboarding analytics
-    const users = await User.find({});
+    const users = await User.find({ isAdmin: false });
 
     // Calculate onboarding analytics
     const ageRangeStats: { [key: string]: number } = {};
@@ -153,8 +198,11 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
     res.json({
       userActivity: {
         totalUserCount: totalUsers,
+        totalUsersChangePercent,
         newAccountsCreated: newAccountsCount,
+        newAccountsChangePercent,
         avgCheckInsPerUser: Math.round(avgCheckInsPerUser * 100) / 100,
+        avgCheckInsChangePercent,
         avgEntriesPerUser: Math.round(avgEntriesPerUser * 100) / 100,
       },
       monthlyActivity: Object.entries(monthlyActivity).map(([month, data]) => ({
