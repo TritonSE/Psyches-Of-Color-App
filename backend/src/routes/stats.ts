@@ -54,7 +54,7 @@ const adminMiddleware = async (
 router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
   try {
     // Get total user count
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ isAdmin: false });
 
     // Get new accounts created in the last 30 days
     const thirtyDaysAgo = new Date();
@@ -111,7 +111,7 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
           );
 
     // Get all users for onboarding analytics
-    const users = await User.find({});
+    const users = await User.find({ isAdmin: false });
 
     // Calculate onboarding analytics
     const ageRangeStats: { [key: string]: number } = {};
