@@ -55,12 +55,13 @@ export const getUserMoods = async (userId: string): Promise<Mood[]> => {
  * @param mood The mood to log
  * @returns The created mood object
  */
-export const logMood = async (userId: string, mood: string): Promise<Mood> => {
+export const logMood = async (userId: string, mood: string, idToken: string): Promise<Mood> => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/logmood`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         moodreported: mood,
