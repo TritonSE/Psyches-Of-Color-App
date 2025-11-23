@@ -60,10 +60,8 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // DUMMY DATA: Returns 0 because User model doesn't have createdAt timestamp
-    // TO FIX: Add `timestamps: true` to userSchema in backend/src/models/users.ts
-    // Then query: User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } })
-    const newAccountsCount = 0;
+    // Count new accounts created in the last 30 days (requires `timestamps: true` on User schema)
+    const newAccountsCount = await User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
 
     // Get all users for onboarding analytics
     const users = await User.find({});
