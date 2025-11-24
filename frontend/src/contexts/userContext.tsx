@@ -1,5 +1,6 @@
 import { FirebaseAuthTypes, getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 import { getMongoUser } from "@/lib/auth";
 import { User } from "@/types";
@@ -37,15 +38,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [mongoUser, setMongoUser] = useState<User | null>(null);
 
   const refreshMongoUser = async () => {
-    if (firebaseUser) {
-      const token = await firebaseUser.getIdToken();
-      const user = await getMongoUser(token);
+    setMongoUser(mongoUser);
+    try {
+      if (firebaseUser) {
+        const token = await firebaseUser.getIdToken();
+        const user = await getMongoUser(token);
 
-      setMongoUser(user);
-    } else {
-      setMongoUser(null);
+        setMongoUser(user);
+      } else {
+        setMongoUser(null);
+      }
+    } catch (error) {
+      Alert.alert(`Error fetching current user: ${String(error)}`);
+    } finally {
+      setLoadingUser(false);
     }
-    setLoadingUser(false);
   };
 
   useEffect(() => {

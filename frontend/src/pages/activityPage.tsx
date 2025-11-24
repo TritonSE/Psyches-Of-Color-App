@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ActivityButton from "@/components/ActivityButton";
@@ -34,10 +34,10 @@ export default function ActivitiesPage() {
         const fetchedUnits = (await res.json()) as Unit[];
         setUnits(fetchedUnits);
       } else {
-        console.error("Failed to fetch units");
+        throw new Error(`HTTP error! status: ${res.status.toString()}`);
       }
     } catch (err) {
-      console.error("Error fetching units:", err);
+      Alert.alert(`Error fetching units: ${String(err)}`);
     }
   };
 
@@ -99,7 +99,7 @@ export default function ActivitiesPage() {
 
   const handleComplete = async () => {
     if (!mongoUser?.uid || !currLesson?._id) {
-      alert("User or activity not found.");
+      Alert.alert("User or activity not found.");
       return;
     }
 
@@ -121,15 +121,13 @@ export default function ActivitiesPage() {
       );
 
       if (res.ok) {
-        alert("Activity completed!");
         void refreshMongoUser();
         setCurrLesson(null);
       } else {
-        alert("Failed to update activity progress.");
+        throw new Error(`HTTP error! status: ${res.status.toString()}`);
       }
     } catch (err) {
-      console.error(err);
-      alert("Error updating activity progress.");
+      Alert.alert(`Error updating activity progress: ${String(err)}`);
     }
   };
 

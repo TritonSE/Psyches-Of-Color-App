@@ -370,6 +370,12 @@ export default function DashboardPage() {
     percentage: calculatePercentage(count),
   }));
 
+  const educationData = Object.entries(onboardingAnalytics.education).map(([label, count]) => ({
+    label,
+    count,
+    percentage: calculatePercentage(count),
+  }));
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -522,6 +528,11 @@ export default function DashboardPage() {
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Gender Distribution</h3>
           <BarChart data={genderData} isUserCount={true} />
+        </div>
+
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Education Level</h3>
+          <HorizontalBarChart data={educationData} />
         </div>
 
         <div className={styles.chartCard}>

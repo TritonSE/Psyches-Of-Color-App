@@ -1,10 +1,9 @@
 import { Link, Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
-import AppleLogo from "@/assets/logo-apple.svg";
 import GoogleLogo from "@/assets/logo-google.svg";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
@@ -31,7 +30,7 @@ export default function Login() {
   const passwordValidator = z
     .string()
     .trim()
-    .min(8, { message: "Password must be 8 characters long." });
+    .min(8, { message: "Password must be at least 8 characters long." });
 
   useEffect(() => {
     // Clear errors when the user starts typing again
@@ -69,24 +68,28 @@ export default function Login() {
 
     setLoading(true);
 
-    const res = await signInWithGoogle();
-    if (res.success) {
-      const token = await res.user.getIdToken();
-      const user = await getMongoUser(token);
-      if (user === null && res.user.email !== null) {
-        // Create user if necessary because Google doesn't distinguish between signing in vs.
-        // signing up with Google, so we have to determine whether the user just signed up
-        const mongoUser = await createMongoUser({
-          name: res.user.displayName ?? "User",
-          email: res.user.email,
-        });
-        setMongoUser(mongoUser);
+    try {
+      const res = await signInWithGoogle();
+      if (res.success) {
+        const token = await res.user.getIdToken();
+        let user = await getMongoUser(token);
+        if (user === null && res.user.email !== null) {
+          // Create user if necessary because Google doesn't distinguish between signing in vs.
+          // signing up with Google, so we have to determine whether the user just signed up
+          user = await createMongoUser({
+            name: res.user.displayName ?? "User",
+            email: res.user.email,
+          });
+        }
+        setMongoUser(user);
+      } else {
+        Alert.alert(`Error signing in with Google: ${res.error.message}`);
       }
-    } else {
-      console.error(`Error signing in with Google: ${res.error.message}`);
+    } catch (error) {
+      Alert.alert(`Error signing in with Google: ${String(error)}`);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleLogin = async () => {
@@ -122,9 +125,7 @@ export default function Login() {
       setPasswordError(res.error.message);
     } else {
       // Unknown error
-      // TODO: maybe have a general error message at the top of the form
-      setPasswordError(res.error.message);
-      setEmailError(res.error.message);
+      Alert.alert(`Error signing in: ${res.error.message}`);
     }
   };
 
@@ -157,6 +158,7 @@ export default function Login() {
       />
       <View style={styles.bottomHalfContainer}>
         <Button
+          disabled={loading}
           style={styles.loginButton}
           onPress={() => {
             void handleLogin();
@@ -167,10 +169,11 @@ export default function Login() {
         </Button>
         <View style={styles.continueWithTextContainer}>
           <View style={styles.line}></View>
-          <Text style={styles.continueWithText}>Or continue with</Text>
+          <Text style={styles.continueWithText}>Or</Text>
           <View style={styles.line}></View>
         </View>
         <Button
+          disabled={loading}
           onPress={() => {
             void handleGoogleLogin();
           }}
@@ -188,7 +191,8 @@ export default function Login() {
             Continue with Google
           </Text>
         </Button>
-        <Button
+        {/* Commenting out Continue with Apple until we implement it if necessary for App Store release */}
+        {/* <Button
           onPress={() => {
             // TODO: implement Apple login
             console.log("Apple login!");
@@ -206,7 +210,7 @@ export default function Login() {
           >
             Continue with Apple
           </Text>
-        </Button>
+        </Button> */}
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don&apos;t have an account? </Text>
           <Link href="/signup" style={styles.signupLink}>

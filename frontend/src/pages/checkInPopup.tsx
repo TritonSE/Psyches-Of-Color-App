@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import FaceIcon from "@/assets/mood-illustration.svg";
 import { lightModeColors } from "@/constants/colors";
@@ -70,7 +70,7 @@ export default function CheckInPopup({ userId, visible, onClose }: CheckInPopupP
 
       setShowConfirmation(true);
     } catch (error) {
-      console.error("Failed to log mood:", error);
+      Alert.alert(`Failed to log mood: ${String(error)}`);
     }
   };
 

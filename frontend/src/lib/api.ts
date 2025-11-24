@@ -29,24 +29,14 @@ type LogMoodResponse = {
  * @returns An array of mood objects
  */
 export const getUserMoods = async (userId: string): Promise<Mood[]> => {
-  try {
-    console.log("Fetching moods for user:", userId);
-    console.log("API URL:", `${API_BASE_URL}/api/user/${userId}/moods`);
+  const response = await fetch(`${API_BASE_URL}/api/user/${userId}/moods`);
 
-    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/moods`);
-    console.log("Response status:", response.status);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status.toString()}`);
-    }
-
-    const data = (await response.json()) as MoodResponse;
-    console.log("Received data:", data);
-    return data.moods;
-  } catch (error) {
-    console.error("Error fetching user moods:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status.toString()}`);
   }
+
+  const data = (await response.json()) as MoodResponse;
+  return data.moods;
 };
 
 /**
@@ -56,27 +46,22 @@ export const getUserMoods = async (userId: string): Promise<Mood[]> => {
  * @returns The created mood object
  */
 export const logMood = async (userId: string, mood: string, idToken: string): Promise<Mood> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/logmood`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
-      },
-      body: JSON.stringify({
-        moodreported: mood,
-        uid: userId,
-      }),
-    });
+  const response = await fetch(`${API_BASE_URL}/api/logmood`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      moodreported: mood,
+      uid: userId,
+    }),
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status.toString()}`);
-    }
-
-    const data = (await response.json()) as LogMoodResponse;
-    return data.mood;
-  } catch (error) {
-    console.error("Error logging mood:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status.toString()}`);
   }
+
+  const data = (await response.json()) as LogMoodResponse;
+  return data.mood;
 };

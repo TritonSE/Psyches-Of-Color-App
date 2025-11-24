@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Button from "@/components/Button";
@@ -87,9 +87,13 @@ export default function EditCharacter() {
   }, [mongoUser]);
 
   const onSave = async () => {
-    const user = await updateUserCharacter(characters[selectedCharacterIndex].character);
-    setMongoUser(user);
-    router.back();
+    try {
+      const user = await updateUserCharacter(characters[selectedCharacterIndex].character);
+      setMongoUser(user);
+      router.back();
+    } catch (error) {
+      Alert.alert(`Failed to update character: ${String(error)}`);
+    }
   };
 
   const navigateBack = () => {
