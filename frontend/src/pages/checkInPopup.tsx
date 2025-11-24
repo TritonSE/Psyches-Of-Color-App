@@ -44,7 +44,7 @@ type CheckInPopupProps = {
 };
 
 export default function CheckInPopup({ userId, visible, onClose }: CheckInPopupProps) {
-  const { refreshMongoUser } = useAuth();
+  const { firebaseUser, refreshMongoUser } = useAuth();
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -60,7 +60,12 @@ export default function CheckInPopup({ userId, visible, onClose }: CheckInPopupP
     if (!selectedMood) return;
 
     try {
-      await logMood(userId, selectedMood);
+      const token = await firebaseUser?.getIdToken();
+      if (!firebaseUser || !token) {
+        return;
+      }
+
+      await logMood(userId, selectedMood, token);
       await refreshMongoUser();
 
       setShowConfirmation(true);

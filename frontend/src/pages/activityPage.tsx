@@ -17,7 +17,7 @@ import env from "@/util/validateEnv";
 
 export default function ActivitiesPage() {
   const router = useRouter();
-  const { mongoUser, refreshMongoUser } = useAuth();
+  const { mongoUser, firebaseUser, refreshMongoUser } = useAuth();
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
@@ -52,7 +52,7 @@ export default function ActivitiesPage() {
         statuses.push("incomplete");
         return;
       }
-      const isCompleted = mongoUser?.completedLessons?.some((les) => les?._id === lesson._id);
+      const isCompleted = mongoUser?.completedLessons?.some((les) => les?.lessonId === lesson._id);
       if (isCompleted) statuses.push("completed");
       else if (index === 0 || statuses[index - 1] === "completed") statuses.push("inProgress");
       else statuses.push("incomplete");
@@ -104,9 +104,20 @@ export default function ActivitiesPage() {
     }
 
     try {
+      const token = await firebaseUser?.getIdToken();
+      if (!firebaseUser || !token) {
+        return;
+      }
+
       const res = await fetch(
         `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${currLesson._id}`,
-        { method: "PUT", headers: { "Content-Type": "application/json" } },
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       if (res.ok) {
