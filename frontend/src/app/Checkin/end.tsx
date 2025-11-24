@@ -1,4 +1,4 @@
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import { Alert, StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
@@ -7,7 +7,7 @@ import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import env from "@/util/validateEnv";
 
-export default function Start() {
+export default function End() {
   const { firebaseUser, refreshMongoUser } = useAuth();
 
   const handleFinish = async () => {
@@ -28,7 +28,7 @@ export default function Start() {
       });
 
       if (!res.ok) {
-        console.warn("Failed to update weekly check-in timestamp", res.status);
+        throw new Error(`HTTP error! status: ${res.status.toString()}`);
       } else {
         // Refresh local mongo user so UI reflects updated timestamp
         try {
@@ -39,7 +39,7 @@ export default function Start() {
         }
       }
     } catch (e) {
-      console.error("Error updating weekly check-in:", e);
+      Alert.alert(`Error updating weekly check-in: ${String(e)}`);
     }
   };
 

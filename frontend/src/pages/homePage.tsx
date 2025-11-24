@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -200,7 +201,6 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState("weekly");
   const [moods, setMoods] = useState<Mood[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [hasLoggedToday, setHasLoggedToday] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
@@ -208,7 +208,6 @@ export default function HomePage() {
   const fetchMoods = async () => {
     try {
       setLoading(true);
-      setError(null);
       if (!mongoUser) {
         setMoods([]);
         setHasLoggedToday(false);
@@ -262,8 +261,7 @@ export default function HomePage() {
         setHasLoggedToday(false);
       }
     } catch (err) {
-      setError("Failed to fetch moods");
-      console.error("Error fetching moods:", err);
+      Alert.alert(`Error fetching moods: ${String(err)}`);
     } finally {
       setLoading(false);
     }
@@ -514,7 +512,6 @@ export default function HomePage() {
             <Image source={IMG.plantman} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
               <Text style={styles.taskLabel}>Complete Journal</Text>
-              {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
               <ProgressBar
                 progress={journalCompletedToday ? 1 : 0}
                 style={styles.progressBar}
@@ -527,12 +524,10 @@ export default function HomePage() {
           {/* Divider */}
           <View style={styles.divider} />
 
-          {/* TODO: link to weekly check-in page */}
           <TouchableOpacity style={styles.progressRow} onPress={handleCheckinPress}>
             <Image source={IMG.wateringCan} style={styles.progressIcon} />
             <View style={styles.progressTextWrapper}>
               <Text style={styles.taskLabel}>Complete Weekly Check-in</Text>
-              {/* <ProgressBar progress={0} width={null} color="#BF3B44" unfilledColor="#E5E5E5" borderWidth={0} height={10} /> */}
               <ProgressBar
                 progress={weeklyCheckInCompleted ? 1 : 0 / 1}
                 style={styles.progressBar}
@@ -619,10 +614,6 @@ export default function HomePage() {
             {loading ? (
               <View style={[styles.moodContainerCenter, styles.moodCenterContent]}>
                 <ActivityIndicator size="large" color={lightModeColors.moodAccent} />
-              </View>
-            ) : error ? (
-              <View style={[styles.moodContainerCenter, styles.moodCenterContent]}>
-                <Text style={styles.moodErrorText}>{error}</Text>
               </View>
             ) : (
               <>
@@ -822,7 +813,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   progressBarColor: {
-    backgroundColor: "#C13D2F",
+    backgroundColor: "#2E563C",
   },
   progressIcon: {
     width: 56,

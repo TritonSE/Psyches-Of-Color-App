@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import { DocumentDirectoryPath, readFile, writeFile } from "react-native-fs";
 
 import { useAuth } from "@/contexts/userContext";
@@ -30,13 +31,10 @@ export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: strin
           const data = (await response.json()) as { entries: JournalEntry[] };
           return data.entries;
         } else {
-          // TODO display error modal to user
-          console.error(`Error retrieving journal entries: HTTP ${response.status.toString()}`);
-          return null;
+          throw new Error(`HTTP error! status: ${response.status.toString()}`);
         }
       } catch (error) {
-        console.error("Error retrieving journal entries: ", error);
-
+        Alert.alert(`Error fetching journal entries: ${String(error)}`);
         return null;
       }
     },
@@ -85,6 +83,9 @@ export const useCreateJournalEntry = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["journalEntries"] });
+    },
+    onError: (error) => {
+      Alert.alert(`Error creating journal entry: ${String(error)}`);
     },
   });
 };

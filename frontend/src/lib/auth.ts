@@ -70,7 +70,7 @@ export const createMongoUser = async ({ name, email }: { name: string; email: st
     }),
   });
   if (!res.ok) {
-    return null;
+    throw new Error(`HTTP error! status: ${res.status.toString()}`);
   }
   return (await res.json()).user as User;
 };
@@ -93,9 +93,7 @@ export const updateUserCharacter = async (character: string) => {
   if (res.ok) {
     return (await res.json()).user as User;
   } else {
-    const text = await res.text().catch(() => "");
-    console.warn("Failed to update character: ", res.status, text);
-    return null;
+    throw new Error(`HTTP error! status: ${res.status.toString()}`);
   }
 };
 
@@ -156,23 +154,16 @@ export const loginEmailPassword = async (
  * If user doesn't exist in MongoDB, attempts to create one
  */
 export const getMongoUser = async (idToken: string): Promise<User | null> => {
-  try {
-    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
-    if (response.ok) {
-      const user = (await response.json()) as User;
-
-      return user;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error sending token to backend: ", error);
-
-    return null;
+  const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+  if (response.ok) {
+    const user = (await response.json()) as User;
+    return user;
+  } else {
+    throw new Error(`HTTP ${response.status.toString()}`);
   }
 };
 
@@ -214,7 +205,6 @@ export const signInWithGoogle = async (): Promise<AuthResponse> => {
     };
   } catch (error: unknown) {
     const err = error as Error;
-    console.log(err);
     return {
       success: false,
       error: {
@@ -278,7 +268,6 @@ export const deleteAccount = async (): Promise<{ success: boolean; error?: strin
     };
   } catch (error: unknown) {
     const err = error as Error;
-    console.error("Error deleting account:", err);
     return {
       success: false,
       error: err.message || "An error occurred while deleting the account",

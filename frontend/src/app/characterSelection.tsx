@@ -1,6 +1,6 @@
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 
 import Button from "@/components/Button";
 import { CharacterCarousel, characters } from "@/components/CharacterCarousel";
@@ -21,10 +21,10 @@ export default function CharacterSelection() {
     const choice = characters[selectedIndex].character;
     try {
       await updateUserCharacter(choice);
+      router.push("/onboarding");
     } catch (e) {
-      console.warn("Error updating user character: ", e);
+      Alert.alert(`Error saving user character: ${String(e)}`);
     }
-    router.push("/onboarding");
   };
 
   return (

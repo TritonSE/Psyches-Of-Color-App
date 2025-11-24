@@ -28,6 +28,6 @@ const styles = StyleSheet.create({
   fill: {
     borderRadius: 12,
     height: "100%",
-    backgroundColor: "#D35144",
+    backgroundColor: "#2E563C",
   },
 });

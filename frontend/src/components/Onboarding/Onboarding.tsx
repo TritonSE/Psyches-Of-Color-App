@@ -3,7 +3,7 @@
 import auth from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import NextButton from "../NextButton";
 
@@ -45,8 +45,7 @@ async function updateUserOnboardingInfo(onboardingInfo: OnboardingInfo) {
   });
 
   if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.warn("Failed to update onboarding info: ", res.status, text);
+    throw new Error(`HTTP error! status: ${res.status.toString()}`);
   }
 }
 
@@ -73,9 +72,12 @@ const Onboarding: React.FC = () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      console.log("All questions answered:", answers);
-      await handleSubmit();
-      router.push("/");
+      try {
+        await handleSubmit();
+        router.push("/");
+      } catch (error) {
+        Alert.alert(`Error saving onboarding info: ${String(error)}`);
+      }
     }
   };
 
