@@ -157,3 +157,7 @@ Pods/
 .idea
 .gradle
 local.properties
+
+# PR Planning Documents (local reference only)
+.github/PR*.md
+.github/PR_PLAN.md

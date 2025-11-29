@@ -1,0 +1,9 @@
+# .cursorignore in project root
+# Allow AI to access .env.example files for documentation
+!.env.example
+!**/.env.example
+
+# Keep actual .env files blocked for security
+.env
+.env.local
+.env.*.local
