@@ -1,7 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ActivityButton from "@/components/ActivityButton";
@@ -71,6 +79,25 @@ export default function ActivitiesPage() {
 
   const currentQuestion = currLesson?.activities[currentIndex];
   const currentAnswer = currentQuestion ? (answers[currentIndex] ?? "") : "";
+
+  // --- LOGIC START: Handle "Other" Selection Visualization ---
+  const options = currentQuestion?.options?.map((o) => o.content) ?? [];
+  const otherKeywords = ["Other", "Other (Please Specify)"];
+
+  // Find which "Other" label exists in this specific question (if any)
+  const existingOtherOption = options.find((opt) => otherKeywords.includes(opt));
+
+  // Determine what to pass to the Question component so the button stays highlighted
+  // even when the user types custom text (which doesn't exist in the options array).
+  let visuallySelectedOption = currentAnswer;
+
+  if (currentAnswer && !options.includes(currentAnswer) && existingOtherOption) {
+    visuallySelectedOption = existingOtherOption;
+  }
+
+  // Check if we need to show the text box
+  const showOtherInput = existingOtherOption && visuallySelectedOption === existingOtherOption;
+  // --- LOGIC END ---
 
   const handleAnswer = (answer: string) => {
     if (!currLesson) return;
@@ -210,15 +237,31 @@ export default function ActivitiesPage() {
 
           <View style={styles.main}>
             {currentQuestion && (
-              <Question
-                type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
-                question={currentQuestion.question}
-                options={currentQuestion.options?.map((o) => o.content) ?? []}
-                onAnswer={handleAnswer}
-                currentAnswer={currentAnswer}
-                placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
-                variant="activity"
-              />
+              <>
+                <Question
+                  type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
+                  question={currentQuestion.question}
+                  options={options}
+                  onAnswer={handleAnswer}
+                  // We pass the "Visual" selection here so the button stays highlighted
+                  currentAnswer={visuallySelectedOption}
+                  placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
+                  variant="activity"
+                />
+
+                {/* Render Text Input if "Other" is selected */}
+                {showOtherInput && (
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Please specify..."
+                    placeholderTextColor="#999"
+                    // If the current answer is exactly the "Other" label, show empty so they can type
+                    value={currentAnswer === existingOtherOption ? "" : currentAnswer}
+                    onChangeText={handleAnswer}
+                    autoFocus={true} // Focus automatically when "Other" is clicked
+                  />
+                )}
+              </>
             )}
           </View>
 
@@ -294,6 +337,20 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
   },
-  main: { justifyContent: "center", alignItems: "center", marginTop: 20 },
+  // Updated main style to ensure full width for the input
+  main: { justifyContent: "center", alignItems: "center", marginTop: 20, width: "100%" },
   nextButtonContainer: { marginTop: 16, alignSelf: "center", width: "100%" },
+
+  // New Style for the "Other" input
+  textInput: {
+    width: "100%",
+    marginTop: 15,
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    fontSize: 16,
+    color: "#333",
+  },
 });
