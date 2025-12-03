@@ -210,6 +210,7 @@ export default function Journal() {
                   router.push({
                     pathname: "/viewJournal",
                     params: {
+                      id: entry._id,
                       title: entry.title,
                       paragraph: entry.paragraph,
                       date: entry.updatedAt,

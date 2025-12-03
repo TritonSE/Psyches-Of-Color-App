@@ -4,14 +4,22 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "rea
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { lightModeColors } from "@/constants/colors";
+import Pencil from "@/assets/pencil.svg";
 
 export default function ViewJournal() {
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<{
+    id?: string;
+    title?: string;
+    paragraph?: string;
+    imageUrl?: string;
+    date: string;
+  }>();
 
-  const title = (params.title as string) || "Untitled Entry";
-  const paragraph = (params.paragraph as string) || "";
-  const imageUrl = (params.imageUrl as string) || null;
-  const dateParam = params.date ? new Date(params.date as string) : new Date();
+  const id = typeof params.id === "string" ? params.id : undefined;
+  const title = typeof params.title === "string" ? params.title : "Untitled Entry";
+  const paragraph = typeof params.paragraph === "string" ? params.paragraph : "";
+  const imageUrl = typeof params.imageUrl === "string" ? params.imageUrl : null;
+  const dateParam = typeof params.date === "string" ? new Date(params.date) : new Date();
 
   const months: string[] = [
     "Jan",
@@ -41,7 +49,7 @@ export default function ViewJournal() {
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => {
-                router.back();
+                router.push("/journal");
               }}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
@@ -74,6 +82,25 @@ export default function ViewJournal() {
           )}
         </View>
       </ScrollView>
+
+      <TouchableOpacity
+        style={styles.edit}
+        onPress={() => {
+          router.push({
+            pathname: "/createJournal",
+            params: {
+              mode: "edit",
+              id,
+              title,
+              paragraph,
+              imageUrl: imageUrl ?? "",
+              date: params.date as string | undefined,
+            },
+          });
+        }}
+      >
+        <Pencil />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -165,5 +192,18 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+  },
+  edit: {
+    width: 52,
+    height: 52,
+    backgroundColor: "#2E563C",
+    borderRadius: 50,
+    marginLeft: "auto",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 30,
+    right: 30,
   },
 });

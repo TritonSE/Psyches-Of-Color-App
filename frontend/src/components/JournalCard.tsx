@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, Pressable } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import CalendarIcon from "@/assets/calendar.svg";
 import ClockIcon from "@/assets/clock.svg";
