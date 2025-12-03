@@ -62,7 +62,7 @@ export default function Resources() {
     <View style={styles.container}>
       <Mascots style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
-      <Text style={styles.text}>slogan/mindful tip goes here</Text>
+      <Text style={styles.text}>Thank you! Make sure to check in tomorrow!</Text>
       <Button
         onPress={() => {
           void logout();
