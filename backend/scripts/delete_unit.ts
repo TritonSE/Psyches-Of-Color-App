@@ -11,7 +11,7 @@ const UNIT_TITLE_TO_DELETE = "Healing";
 
 const deleteUnit = async () => {
   if (!MONGO_URI) {
-    console.error("❌ Error: MONGODB_URI not found in .env file.");
+    console.error("ERROR: Error: MONGODB_URI not found in .env file.");
     process.exit(1);
   }
 
@@ -21,7 +21,7 @@ const deleteUnit = async () => {
     const unit = await Unit.findOne({ title: UNIT_TITLE_TO_DELETE });
 
     if (!unit) {
-      console.log(`⚠️ Unit "${UNIT_TITLE_TO_DELETE}" not found.`);
+      console.log(`ERROR: Unit "${UNIT_TITLE_TO_DELETE}" not found.`);
       process.exit(0);
     }
 
@@ -64,13 +64,13 @@ const deleteUnit = async () => {
         { $inc: { order: -1 } }, // Update: Decrease order by 1
       );
 
-      console.log(`✅ Reordered ${updateResult.modifiedCount} subsequent units.`);
+      console.log(`Reordered ${updateResult.modifiedCount} subsequent units.`);
     }
 
-    console.log(`✅ Successfully deleted "${UNIT_TITLE_TO_DELETE}" and all its contents.`);
+    console.log(`SUCCESS: Successfully deleted "${UNIT_TITLE_TO_DELETE}" and all its contents.`);
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error deleting unit:", error);
+    console.error("ERROR: Error deleting unit:", error);
     process.exit(1);
   }
 };

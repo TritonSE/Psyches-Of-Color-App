@@ -8,7 +8,7 @@ const MONGO_URI = process.env.MONGODB_URI;
 
 const addNewUnit = async () => {
   if (!MONGO_URI) {
-    console.error("❌ Error: MONGODB_URI not found in .env file.");
+    console.error("ERROR: MONGODB_URI not found in .env file.");
     process.exit(1);
   }
 
@@ -24,7 +24,7 @@ const addNewUnit = async () => {
     // Check for duplicates
     const existingUnit = await Unit.findOne({ title: UNIT_TITLE });
     if (existingUnit) {
-      console.log(`⚠️ Unit "${UNIT_TITLE}" already exists. Aborting.`);
+      console.log(`ERROR: Unit "${UNIT_TITLE}" already exists. Aborting.`);
       process.exit(0);
     }
 
@@ -218,10 +218,10 @@ const addNewUnit = async () => {
       { $set: { unit: newUnit._id } },
     );
 
-    console.log(`✅ Successfully added "${UNIT_TITLE}"`);
+    console.log(`SUCCESS: Successfully added "${UNIT_TITLE}"`);
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error adding unit:", error);
+    console.error("ERROR: Error adding unit:", error);
     process.exit(1);
   }
 };
