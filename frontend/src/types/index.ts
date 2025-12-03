@@ -31,12 +31,14 @@ export type OnboardingInfo = {
 export type Unit = {
   _id: string;
   title: string;
+  order?: number;
   lessons: Lesson[];
 };
 
 export type Lesson = {
   _id: string;
   title: string;
+  order?: number;
   description: string;
   activities: Activity[];
 };

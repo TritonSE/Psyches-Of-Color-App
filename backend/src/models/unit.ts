@@ -1,27 +1,15 @@
-import mongoose from "mongoose";
+import { InferSchemaType, Schema, model } from "mongoose";
 
-type UnitDoc = {
-  title: string;
-  lessons: string[];
-};
-
-const unitSchema = new mongoose.Schema(
+const unitSchema = new Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-    lessons: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Lesson",
-      required: true,
-    },
+    title: { type: String, required: true },
+    // 'order' is required for sorting units (1, 2, 3...)
+    order: { type: Number },
+    lessons: [{ type: Schema.Types.ObjectId, ref: "Lesson" }],
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-const Unit = mongoose.model<UnitDoc>("Unit", unitSchema);
+type Unit = InferSchemaType<typeof unitSchema>;
 
-export { Unit };
+export const Unit = model<Unit>("Unit", unitSchema);
