@@ -28,18 +28,60 @@ export const Question = ({
 }: QuestionProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showOtherDropdown, setShowOtherDropdown] = useState<boolean>(false);
+  const [isOtherSelected, setIsOtherSelected] = useState<boolean>(false);
 
+  // -----------------------------
+  // SYNC STATE FROM PARENT
+  // -----------------------------
   useEffect(() => {
     setSelectedAnswer(currentAnswer ?? "");
-    setShowOtherDropdown(false);
+
+    const otherKeywords = ["Other", ...otherOptions];
+    const isCustomOther =
+      currentAnswer && !options.includes(currentAnswer) && currentAnswer.trim() !== "";
+
+    if (otherKeywords.includes(currentAnswer ?? "") || isCustomOther) {
+      setIsOtherSelected(true);
+    } else {
+      setIsOtherSelected(false);
+      setShowOtherDropdown(false);
+    }
   }, [question, currentAnswer]);
 
+  // -----------------------------
+  // MAIN OPTION SELECTION
+  // -----------------------------
   const handleSelectOption = (option: string) => {
-    setSelectedAnswer(option);
-    onAnswer(option);
+    const selectingOther = option === "Other" || otherOptions.includes(option);
+
+    setIsOtherSelected(selectingOther);
+
+    if (selectingOther) {
+      // start empty when Other is selected
+      setSelectedAnswer("");
+      onAnswer(""); // notify parent
+    } else {
+      setSelectedAnswer(option);
+      onAnswer(option);
+      setShowOtherDropdown(false);
+    }
   };
 
+  // -----------------------------
+  // OTHER SUB-OPTION SELECTION
+  // -----------------------------
+  const handleSelectOtherOption = (otherOption: string) => {
+    setIsOtherSelected(true);
+    setShowOtherDropdown(false);
+    setSelectedAnswer(otherOption);
+    onAnswer(otherOption);
+  };
+
+  // -----------------------------
+  // FREE-TEXT INPUT HANDLER
+  // -----------------------------
   const handleChangeText = (text: string) => {
+    setIsOtherSelected(true);
     setSelectedAnswer(text);
     onAnswer(text);
   };
@@ -60,23 +102,19 @@ export const Question = ({
         <View style={styles.optionsContainer}>
           {options.map((option) => {
             if (option === "Other") {
-              const displayText =
-                selectedAnswer && otherOptions.includes(selectedAnswer) ? selectedAnswer : "Other";
               return (
                 <View key="other-wrapper">
                   <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      selectedAnswer &&
-                        otherOptions.includes(selectedAnswer) &&
-                        styles.optionButtonSelected,
-                    ]}
+                    style={[styles.optionButton, isOtherSelected && styles.optionButtonSelected]}
                     onPress={() => {
+                      setIsOtherSelected(true);
                       setShowOtherDropdown((prev) => !prev);
+                      handleSelectOption("Other");
                     }}
                   >
                     <View style={styles.otherRow}>
-                      <Text style={styles.optionText}>{displayText}</Text>
+                      <Text style={styles.optionText}>Other</Text>
+
                       {showOtherDropdown ? (
                         <UpVector style={styles.vector} />
                       ) : (
@@ -85,41 +123,54 @@ export const Question = ({
                     </View>
                   </TouchableOpacity>
 
+                  {/* OTHER SUB-OPTIONS */}
                   {showOtherDropdown && otherOptions.length > 0 && (
                     <View style={styles.dropdownContainer}>
                       {otherOptions.map((otherOption) => (
                         <TouchableOpacity
                           key={otherOption}
                           style={styles.dropdownOption}
-                          onPress={() => {
-                            setShowOtherDropdown(false);
-                            handleSelectOption(otherOption);
-                          }}
+                          onPress={() => handleSelectOtherOption(otherOption)}
                         >
                           <Text style={styles.optionText}>{otherOption}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
                   )}
+
+                  {/* FREE TEXT FIELD */}
+                  {isOtherSelected && (
+                    <View style={{ marginTop: 8 }}>
+                      <TextInput
+                        style={styles.textInput}
+                        placeholder="Please specify..."
+                        value={selectedAnswer}
+                        onChangeText={handleChangeText}
+                        multiline={true}
+                      />
+                    </View>
+                  )}
                 </View>
               );
-            } else {
-              return (
-                <TouchableOpacity
-                  key={option}
-                  style={[
-                    styles.optionButton,
-                    selectedAnswer === option && styles.optionButtonSelected,
-                  ]}
-                  onPress={() => {
-                    setShowOtherDropdown(false);
-                    handleSelectOption(option);
-                  }}
-                >
-                  <Text style={styles.optionText}>{option}</Text>
-                </TouchableOpacity>
-              );
             }
+
+            // NORMAL OPTIONS
+            return (
+              <TouchableOpacity
+                key={option}
+                style={[
+                  styles.optionButton,
+                  selectedAnswer === option && styles.optionButtonSelected,
+                ]}
+                onPress={() => {
+                  setIsOtherSelected(false);
+                  setShowOtherDropdown(false);
+                  handleSelectOption(option);
+                }}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            );
           })}
         </View>
       )}
@@ -195,15 +246,16 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   textInput: {
+    width: 358,
+    height: 75,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: lightModeColors.questionBorder,
-    borderRadius: 8,
-    padding: 12,
+    borderColor: "#2E563C",
+    backgroundColor: "#FFFFFF",
+    padding: 16,
     marginTop: 8,
-    fontSize: 16,
-    width: "100%",
-    minHeight: 80,
     textAlignVertical: "top",
+    alignSelf: "center",
   },
   longTextInput: {
     width: 358,
@@ -217,7 +269,6 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     alignSelf: "center",
   },
-
   dropdownContainer: {
     marginTop: 8,
     borderWidth: 1,

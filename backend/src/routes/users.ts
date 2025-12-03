@@ -133,7 +133,16 @@ router.put(
         return;
       }
 
-      if (!user.completedLessons) user.completedLessons = [];
+      // Initialize if missing
+      if (!user.completedLessons) {
+        user.completedLessons = [];
+      } else {
+        // --- FIX START: Sanitize the array ---
+        // Filter out any entries that are null or missing the lessonId
+        // This prevents the "ValidatorError" and the "TypeError"
+        user.completedLessons = user.completedLessons.filter((l) => l && l.lessonId);
+        // --- FIX END ---
+      }
 
       const lessonExists = user.completedLessons.some(
         (lesson) => lesson.lessonId.toString() === lessonId,
@@ -148,6 +157,7 @@ router.put(
         lessonId: lessonId as unknown as (typeof user.completedLessons)[0]["lessonId"],
         completedAt: new Date(),
       });
+
       await user.save();
 
       res.status(200).json({ message: "Lesson marked as completed", user });
@@ -164,14 +174,24 @@ router.put(
   verifyAuthToken,
   async (req: PsychesRequest, res: Response): Promise<void> => {
     try {
-      const { userUid } = req;
+      const { userUid } = req.params; // Note: Usually req.userUid comes from verifyAuthToken, checking usage below
+      // Correcting source based on your middleware usage in other routes:
+      const currentUserUid = req.userUid;
 
-      const user = await User.findOne({ uid: userUid });
+      const user = await User.findOne({ uid: currentUserUid });
 
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;
       }
+
+      // --- FIX START: Sanitize here too ---
+      // Even though we aren't adding a lesson, .save() validates the whole document.
+      // We must clean the array if it's dirty, otherwise this save will fail.
+      if (user.completedLessons && user.completedLessons.length > 0) {
+        user.completedLessons = user.completedLessons.filter((l) => l && l.lessonId);
+      }
+      // --- FIX END ---
 
       user.lastCompletedWeeklyCheckIn = new Date();
       await user.save();

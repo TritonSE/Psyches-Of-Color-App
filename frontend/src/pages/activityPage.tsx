@@ -80,25 +80,6 @@ export default function ActivitiesPage() {
   const currentQuestion = currLesson?.activities[currentIndex];
   const currentAnswer = currentQuestion ? (answers[currentIndex] ?? "") : "";
 
-  // --- LOGIC START: Handle "Other" Selection Visualization ---
-  const options = currentQuestion?.options?.map((o) => o.content) ?? [];
-  const otherKeywords = ["Other", "Other (Please Specify)"];
-
-  // Find which "Other" label exists in this specific question (if any)
-  const existingOtherOption = options.find((opt) => otherKeywords.includes(opt));
-
-  // Determine what to pass to the Question component so the button stays highlighted
-  // even when the user types custom text (which doesn't exist in the options array).
-  let visuallySelectedOption = currentAnswer;
-
-  if (currentAnswer && !options.includes(currentAnswer) && existingOtherOption) {
-    visuallySelectedOption = existingOtherOption;
-  }
-
-  // Check if we need to show the text box
-  const showOtherInput = existingOtherOption && visuallySelectedOption === existingOtherOption;
-  // --- LOGIC END ---
-
   const handleAnswer = (answer: string) => {
     if (!currLesson) return;
     const updated = [...answers];
@@ -241,26 +222,12 @@ export default function ActivitiesPage() {
                 <Question
                   type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
                   question={currentQuestion.question}
-                  options={options}
+                  options={currentQuestion?.options?.map((o) => o.content) ?? []}
                   onAnswer={handleAnswer}
-                  // We pass the "Visual" selection here so the button stays highlighted
-                  currentAnswer={visuallySelectedOption}
+                  currentAnswer={currentAnswer}
                   placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
                   variant="activity"
                 />
-
-                {/* Render Text Input if "Other" is selected */}
-                {showOtherInput && (
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Please specify..."
-                    placeholderTextColor="#999"
-                    // If the current answer is exactly the "Other" label, show empty so they can type
-                    value={currentAnswer === existingOtherOption ? "" : currentAnswer}
-                    onChangeText={handleAnswer}
-                    autoFocus={true} // Focus automatically when "Other" is clicked
-                  />
-                )}
               </>
             )}
           </View>
