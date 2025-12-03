@@ -37,7 +37,7 @@ const deleteUnit = async () => {
     const lessons = await Lesson.find({ _id: { $in: lessonIds } });
 
     // Flatten all activity IDs into one array
-    const activityIds: any[] = [];
+    const activityIds: (string | mongoose.Types.ObjectId)[] = [];
     lessons.forEach((lesson) => {
       if (lesson.activities) {
         activityIds.push(...lesson.activities);

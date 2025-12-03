@@ -201,7 +201,7 @@ const addNewUnit = async () => {
     // Find the last unit in the database (n) and make this unit n+1.
     // For example, if I already have 10 units (n=10) then this will be 11th
     // If no units exist, set n=0 so that this will be unit 1
-    const lastUnit = (await Unit.findOne().sort({ order: -1 })) as any;
+    const lastUnit = (await Unit.findOne().sort({ order: -1 })) as { order?: number } | null;
     const newOrder = (lastUnit?.order || 0) + 1;
 
     // Create the unit itself
