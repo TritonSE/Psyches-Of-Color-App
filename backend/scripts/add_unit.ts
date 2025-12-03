@@ -16,11 +16,10 @@ const addNewUnit = async () => {
     await mongoose.connect(MONGO_URI);
     console.log("🌱 Connected to MongoDB...");
 
-    // ---------------------------------------------------------
-    // UNIT 3: DEPRESSION
-    // ---------------------------------------------------------
-
-    const UNIT_TITLE = "Unit 3: Understanding Depression";
+    // UNIT: HEALING
+    const UNIT_TITLE = "Healing";
+    const UNIT_DESCRIPTION =
+      "Healing is described as a personal, nonlinear journey of recovering from emotional, mental, or physical distress. It involves self-awareness, self-compassion, and intentional efforts to rebuild strength and inner peace. Healing can take many forms, including seeking support, practicing self-care, and reframing negative thoughts.";
 
     // Check for duplicates
     const existingUnit = await Unit.findOne({ title: UNIT_TITLE });
@@ -30,178 +29,185 @@ const addNewUnit = async () => {
     }
 
     // ==========================================
-    // LESSON 1: IDENTIFYING THE SIGNS
+    // LESSON 1: UNDERSTANDING THE JOURNEY
     // ==========================================
 
+    // l1_a1 stands for Lesson 1, Activity 1
     const l1_a1 = await Activity.create({
       type: "mcq",
-      question: "How do you typically know when you’re depressed?",
+      question: "How do you respond when faced with emotional pain?",
       options: [
-        { content: "Loss of interest in activities", isCorrect: true },
-        { content: "Feeling sad or hopeless", isCorrect: true },
-        { content: "Difficulty concentrating", isCorrect: true },
-        { content: "Changes in appetite or sleep patterns", isCorrect: true },
-        { content: "Lack of energy or motivation", isCorrect: true },
-        { content: "Other", isCorrect: true },
+        { content: "I try to ignore it and move on", isCorrect: true },
+        { content: "I acknowledge it but struggle to process it", isCorrect: true },
+        { content: "I express my feelings through healthy outlets", isCorrect: true },
+        { content: "I seek support from loved ones or professionals", isCorrect: true },
       ],
     });
 
+    // l1_a1 stands for Lesson 1, Activity 2 and so on
     const l1_a2 = await Activity.create({
       type: "mcq",
-      question: "Are you able to recognize depression in others?",
+      question: "What does healing look like to you?",
       options: [
-        { content: "Yes, always", isCorrect: true },
-        { content: "Yes, sometimes", isCorrect: true },
-        { content: "No, not really", isCorrect: true },
-        { content: "No, never", isCorrect: true },
+        { content: "Forgetting the past and moving forward", isCorrect: true },
+        { content: "Allowing myself to feel and process emotions", isCorrect: true },
+        { content: "Becoming the best version of myself through growth", isCorrect: true },
+        { content: "Avoiding pain and discomfort", isCorrect: true },
       ],
     });
 
     const l1_a3 = await Activity.create({
       type: "mcq",
-      question: "On a typical day, how would you describe your energy levels?",
+      question: "When you experience setbacks in your healing journey, how do you react?",
       options: [
-        { content: "Low", isCorrect: true },
-        { content: "Average", isCorrect: true },
-        { content: "High", isCorrect: true },
-        { content: "Other", isCorrect: true },
+        { content: "I feel like giving up", isCorrect: true },
+        { content: "I remind myself that healing takes time", isCorrect: true },
+        { content: "I reflect on what I’ve learned so far", isCorrect: true },
+        { content: "I seek support and adjust my approach", isCorrect: true },
       ],
     });
 
-    const lesson1 = await Lesson.create({
-      title: "Identifying the Signs",
-      description: "Recognizing symptoms in yourself and others.",
-      order: 1,
-      activities: [l1_a1._id, l1_a2._id, l1_a3._id],
+    // Reflection for Lesson 1
+    const l1_a4 = await Activity.create({
+      type: "text",
+      question: "My healing journey is my own and I honor my progress.",
+      affirmation:
+        "There’s no universal timeline for healing. Every small step you take is a sign of strength and self-respect.",
     });
 
-    // Link activities back to lesson
+    // Creating the first lesson
+    const lesson1 = await Lesson.create({
+      title: "Understanding the Journey",
+      description: "Defining what healing looks like for you.",
+      // Needs to have order 1 because it is the first lesson in the unit
+      order: 1,
+      // List all the activities that should be in this lesson. Get the ids using ._id
+      activities: [l1_a1._id, l1_a2._id, l1_a3._id, l1_a4._id],
+    });
+
     await Activity.updateMany(
-      { _id: { $in: [l1_a1._id, l1_a2._id, l1_a3._id] } },
+      { _id: { $in: [l1_a1._id, l1_a2._id, l1_a3._id, l1_a4._id] } },
       { $set: { lesson: lesson1._id } },
     );
 
-    // ==========================================
-    // LESSON 2: NAVIGATING ISOLATION & COPING
-    // ==========================================
+    // LESSON 2: TOOLS FOR SELF-COMPASSION
 
+    // l2_a1 stands for Lesson 2, Activity 1 and so on
     const l2_a1 = await Activity.create({
       type: "mcq",
-      question: "What do you typically do to fight depression?",
+      question: "Which of the following helps you feel most at peace during difficult times?",
       options: [
-        { content: "Talk to a friend or family member", isCorrect: true },
-        { content: "Seek professional help (therapy or counseling)", isCorrect: true },
-        { content: "Engage in physical activity or exercise", isCorrect: true },
-        { content: "Take time to relax or meditate", isCorrect: true },
-        { content: "Avoid dealing with it", isCorrect: true }, // Technically 'incorrect' coping, but valid selection
-        { content: "Other", isCorrect: true },
+        { content: "Engaging in creative activities (writing, art, music)", isCorrect: true },
+        { content: "Practicing mindfulness or meditation", isCorrect: true },
+        { content: "Talking to someone I trust", isCorrect: true },
+        { content: "Spending time alone for self-reflection", isCorrect: true },
       ],
     });
 
     const l2_a2 = await Activity.create({
       type: "mcq",
-      question: "When feeling down, how often do you isolate yourself from friends or family?",
+      question: "How often do you give yourself grace when struggling?",
       options: [
         { content: "Never", isCorrect: true },
         { content: "Rarely", isCorrect: true },
         { content: "Sometimes", isCorrect: true },
         { content: "Often", isCorrect: true },
-        { content: "Always", isCorrect: true },
       ],
     });
 
     const l2_a3 = await Activity.create({
-      type: "wwyd",
-      question:
-        "Lately, you have been isolated and distant from people who matter to you. It feels hard to reach out. What is one small step you can take to reconnect today?",
+      type: "mcq",
+      question: "What is one thing you can do today to support your healing journey?",
       options: [
-        {
-          content: "Send a simple text that says “Hey, I’ve been thinking about you.”",
-          isCorrect: true,
-        },
-        { content: "Call or message someone and say “I miss you.”", isCorrect: true },
-        { content: "Share a funny video or lighthearted meme", isCorrect: true },
-        { content: "Sending a message and scheduling time for a meet up", isCorrect: true },
+        { content: "Set small, realistic goals for myself", isCorrect: true },
+        { content: "Identify and challenge negative self-talk", isCorrect: true },
+        { content: "Engage in self-care activities", isCorrect: true },
+        { content: "All of the above", isCorrect: true },
       ],
     });
 
-    const lesson2 = await Lesson.create({
-      title: "Navigating Isolation",
-      description: "Strategies for connection and coping.",
-      order: 2,
-      activities: [l2_a1._id, l2_a2._id, l2_a3._id],
+    const l2_a4 = await Activity.create({
+      type: "text",
+      question: "I am entitled to time, space and patience as I heal.",
+      affirmation:
+        "You don’t have to rush your recovery. Give yourself the same grace you’d offer someone you love.",
     });
 
+    // Create the second lesson. Note order 2 because it is the second lesson
+    const lesson2 = await Lesson.create({
+      title: "Tools for Self-Compassion",
+      description: "Practical ways to nurture your healing.",
+      order: 2,
+      activities: [l2_a1._id, l2_a2._id, l2_a3._id, l2_a4._id],
+    });
+
+    // Link activities to lesson
     await Activity.updateMany(
-      { _id: { $in: [l2_a1._id, l2_a2._id, l2_a3._id] } },
+      { _id: { $in: [l2_a1._id, l2_a2._id, l2_a3._id, l2_a4._id] } },
       { $set: { lesson: lesson2._id } },
     );
 
-    // ==========================================
-    // LESSON 3: HEALING & REFLECTION
-    // ==========================================
-
+    // LESSON 3: REFLECTION & RESILIENCE
     const l3_a1 = await Activity.create({
-      type: "reflection",
-      question: "Even on my hardest days, I am worthy of love, kindness, and compassion.",
-      affirmation:
-        "No matter what you're navigating—whether you're glowing or just getting by—you are still deserving of gentleness and grace. Treat yourself the way you’d treat a younger version of yourself.",
+      type: "wwyd",
+      question:
+        "You’ve been making progress, but today you feel emotionally drained. A friend invites you to talk, but you feel the urge to withdraw. What would you do?",
+      options: [
+        {
+          content: "Remind yourself that healing isn’t linear and give space for difficult days",
+          isCorrect: true,
+        },
+        { content: "Take a moment to name what I am feeling", isCorrect: true },
+        { content: "Engage in a grounding technique", isCorrect: true },
+        { content: "Talk to someone you trust", isCorrect: true },
+      ],
     });
 
     const l3_a2 = await Activity.create({
-      type: "reflection",
-      question:
-        "Small steps forward are still progress. Every action I take toward healing matters.",
+      type: "text",
+      question: "What does healing mean to you and how have you seen it show up in your life?",
       affirmation:
-        "No matter what you’re going through, your worth is never tied to how you feel or what you accomplish. Showing yourself love, kindness, and patience helps build resilience.",
+        "Taking time to reflect on what healing looks like for you helps you recognize moments of growth and resilience.",
     });
 
     const l3_a3 = await Activity.create({
-      type: "reflection",
-      question:
-        "Think of a time when you felt hopeful or joyful. What people, places, or activities contributed to that feeling? How can you invite more of those into your life?",
+      type: "text",
+      question: "What past experiences or thoughts do you need to release to continue healing?",
       affirmation:
-        "Joy is resistance. Find small ways to bring more of that into your life—it doesn’t have to be big to be powerful.",
+        "Identifying what no longer serves you is a crucial step toward emotional freedom.",
     });
 
     const l3_a4 = await Activity.create({
-      type: "reflection",
-      question:
-        "Write a letter to your future self on a day when you might be struggling. What words of encouragement would you want to hear?",
+      type: "text",
+      question: "I release what no longer serves me and choose peace.",
       affirmation:
-        "You deserve to be your own safe space. Talk to yourself the way you would to someone you love—and let those words sink in.",
-    });
-
-    const l3_a5 = await Activity.create({
-      type: "reflection",
-      question:
-        "Imagine a friend you deeply care about was feeling the way you are right now. What words of comfort or support would you offer them?",
-      affirmation:
-        "Sometimes we speak to others with more grace than we give ourselves. Offer yourself the same kindness you’d give a friend.",
+        "Letting go is a form of self-liberation. With each release, you make more room for calm, clarity, and comfort.",
     });
 
     const lesson3 = await Lesson.create({
-      title: "Healing & Reflection",
-      description: "Affirmations and prompts for self-compassion.",
+      title: "Reflection & Resilience",
+      description: "Deepening your understanding of your own journey.",
       order: 3,
-      activities: [l3_a1._id, l3_a2._id, l3_a3._id, l3_a4._id, l3_a5._id],
+      activities: [l3_a1._id, l3_a2._id, l3_a3._id, l3_a4._id],
     });
 
     await Activity.updateMany(
-      { _id: { $in: [l3_a1._id, l3_a2._id, l3_a3._id, l3_a4._id, l3_a5._id] } },
+      { _id: { $in: [l3_a1._id, l3_a2._id, l3_a3._id, l3_a4._id] } },
       { $set: { lesson: lesson3._id } },
     );
 
-    // ==========================================
-    // CREATE UNIT
-    // ==========================================
+    // CREATING UNIT
 
-    // Dynamic ordering: Place at the end
-    const lastUnit = await Unit.findOne().sort({ order: -1 });
+    // Find the last unit in the database (n) and make this unit n+1.
+    // For example, if I already have 10 units (n=10) then this will be 11th
+    // If no units exist, set n=0 so that this will be unit 1
+    const lastUnit = (await Unit.findOne().sort({ order: -1 })) as any;
     const newOrder = (lastUnit?.order || 0) + 1;
 
+    // Create the unit itself
     const newUnit = await Unit.create({
       title: UNIT_TITLE,
+      description: UNIT_DESCRIPTION,
       order: newOrder,
       lessons: [lesson1._id, lesson2._id, lesson3._id],
     });

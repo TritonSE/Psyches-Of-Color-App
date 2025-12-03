@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-type ActivityType = "reflection" | "mcq" | "wwyd" | "text" | "video"; // Added 'video' to match seed possibilities
+type ActivityType = "mcq" | "wwyd" | "text";
 
 type OptionDoc = {
   content: string;
@@ -20,7 +20,7 @@ const activitySchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["reflection", "mcq", "wwyd", "text", "video"],
+      enum: ["mcq", "wwyd", "text"],
       required: true,
     },
     question: {
@@ -56,13 +56,6 @@ const activitySchema = new mongoose.Schema(
         message: "Options are required for MCQ or WWYD activities.",
       },
       default: undefined,
-    },
-    // Only exists for reflection questions
-    affirmation: {
-      type: String,
-      required: function (this: ActivityDoc) {
-        return this.type === "reflection";
-      },
     },
     lesson: {
       type: mongoose.Schema.Types.ObjectId,
