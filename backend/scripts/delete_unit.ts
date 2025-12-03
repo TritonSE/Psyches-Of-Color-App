@@ -17,7 +17,7 @@ const deleteUnit = async () => {
 
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("🌱 Connected to MongoDB...");
+    console.log("Connected to MongoDB...");
     const unit = await Unit.findOne({ title: UNIT_TITLE_TO_DELETE });
 
     if (!unit) {

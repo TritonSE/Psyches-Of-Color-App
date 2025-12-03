@@ -14,7 +14,7 @@ const addNewUnit = async () => {
 
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("🌱 Connected to MongoDB...");
+    console.log("Connected to MongoDB...");
 
     // UNIT: HEALING
     const UNIT_TITLE = "Healing";
