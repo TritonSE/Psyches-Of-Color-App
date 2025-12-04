@@ -5,6 +5,18 @@ import { useAuth } from "@/contexts/userContext";
 import { JournalEntry } from "@/types";
 import env from "@/util/validateEnv";
 
+const persistImageToDocumentsDir = async (imageUrl: string): Promise<string> => {
+  const normalizedPath = imageUrl.replace("file://", "");
+  const content = await readFile(normalizedPath, "base64");
+  const pathParts = normalizedPath.split("/");
+  const originalFilename = pathParts[pathParts.length - 1];
+  const outputPath = `${DocumentDirectoryPath}/${originalFilename}`;
+
+  await writeFile(outputPath, content, "base64");
+
+  return `file://${outputPath}`;
+};
+
 export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: string) => {
   const { firebaseUser } = useAuth();
 
@@ -60,13 +72,7 @@ export const useCreateJournalEntry = () => {
     }) => {
       let persistentImageUrl: string | undefined = undefined;
       if (imageUrl) {
-        // Copy image file from image picker cache to persistent documents directory
-        const content = await readFile(imageUrl, "base64");
-        const pathParts = imageUrl.split("/");
-        const originalFilename = pathParts[pathParts.length - 1];
-        const outputPath = `${DocumentDirectoryPath}/${originalFilename}`;
-        await writeFile(outputPath, content, "base64");
-        persistentImageUrl = `file://${outputPath}`;
+        persistentImageUrl = await persistImageToDocumentsDir(imageUrl);
       }
 
       const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries`, {
@@ -116,13 +122,7 @@ export const useUpdateJournalEntry = () => {
         if (isAlreadyPersistent) {
           persistentImageUrl = imageUrl;
         } else {
-          // Copy image file from image picker cache to persistent documents directory
-          const content = await readFile(imageUrl.replace("file://", ""), "base64");
-          const pathParts = imageUrl.split("/");
-          const originalFilename = pathParts[pathParts.length - 1];
-          const outputPath = `${DocumentDirectoryPath}/${originalFilename}`;
-          await writeFile(outputPath, content, "base64");
-          persistentImageUrl = `file://${outputPath}`;
+          persistentImageUrl = await persistImageToDocumentsDir(imageUrl);
         }
       }
 
