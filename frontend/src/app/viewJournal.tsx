@@ -49,7 +49,7 @@ export default function ViewJournal() {
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => {
-                router.push("/journal");
+                router.back();
               }}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
