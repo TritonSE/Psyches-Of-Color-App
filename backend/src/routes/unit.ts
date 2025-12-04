@@ -6,10 +6,14 @@ const router = express.Router();
 // GET all units with lessons populated and their activities populated
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const units = await Unit.find().populate({
-      path: "lessons",
-      populate: { path: "activities" },
-    });
+    // ADD .sort('order') HERE
+    const units = await Unit.find()
+      .sort({ order: 1 }) // <--- 1 = Ascending (1, 2, 3), -1 = Descending
+      .populate({
+        path: "lessons",
+        options: { sort: { order: 1 } }, // <--- Sort lessons inside the unit too!
+        populate: { path: "activities" },
+      });
 
     res.status(200).json(units);
   } catch (e) {

@@ -5,6 +5,7 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "rea
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ActivityButton from "@/components/ActivityButton";
+import ActivityCompletedView from "@/components/ActivityCompletedView"; // Import the new view
 import ActivityPopup from "@/components/ActivityPopup";
 import NextButton from "@/components/NextButton";
 import ProgressBar from "@/components/Onboarding/ProgressBar";
@@ -23,8 +24,12 @@ export default function ActivitiesPage() {
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // 1. New State for completion view
+  const [isLessonCompleted, setIsLessonCompleted] = useState(false);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<(string | undefined)[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Fetch units
   const getAllSections = async () => {
@@ -67,6 +72,7 @@ export default function ActivitiesPage() {
     if (!currLesson) return;
     setAnswers(Array(currLesson.activities.length).fill(undefined));
     setCurrentIndex(0);
+    setIsLessonCompleted(false); // Reset completion state when opening a new lesson
   }, [currLesson]);
 
   const currentQuestion = currLesson?.activities[currentIndex];
@@ -104,6 +110,7 @@ export default function ActivitiesPage() {
     }
 
     try {
+      setIsLoading(true);
       const token = await firebaseUser?.getIdToken();
       if (!firebaseUser || !token) {
         return;
@@ -121,15 +128,30 @@ export default function ActivitiesPage() {
       );
 
       if (res.ok) {
-        void refreshMongoUser();
-        setCurrLesson(null);
+        await refreshMongoUser();
+        // 2. Instead of nulling currLesson immediately, show the completion screen
+        setIsLessonCompleted(true);
       } else {
         throw new Error(`HTTP error! status: ${res.status.toString()}`);
       }
     } catch (err) {
       Alert.alert(`Error updating activity progress: ${String(err)}`);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // 3. Handle closing the completion screen
+  const handleFinishExit = () => {
+    setIsLessonCompleted(false);
+    setCurrLesson(null);
+    setIsModalOpen(false);
+  };
+
+  // 4. Render Completion View if state is true
+  if (isLessonCompleted) {
+    return <ActivityCompletedView onFinish={handleFinishExit} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -210,22 +232,24 @@ export default function ActivitiesPage() {
 
           <View style={styles.main}>
             {currentQuestion && (
-              <Question
-                type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
-                question={currentQuestion.question}
-                options={currentQuestion.options?.map((o) => o.content) ?? []}
-                onAnswer={handleAnswer}
-                currentAnswer={currentAnswer}
-                placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
-                variant="activity"
-              />
+              <>
+                <Question
+                  type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
+                  question={currentQuestion.question}
+                  options={currentQuestion?.options?.map((o) => o.content) ?? []}
+                  onAnswer={handleAnswer}
+                  currentAnswer={currentAnswer}
+                  placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
+                  variant="activity"
+                />
+              </>
             )}
           </View>
 
           <View style={styles.nextButtonContainer}>
             <NextButton
               onPress={() => void handleNext()}
-              disabled={!currentAnswer}
+              disabled={!currentAnswer || isLoading}
               textOption={
                 currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
               }
@@ -245,8 +269,7 @@ export default function ActivitiesPage() {
           description={currLesson.description}
           onStart={() => {
             setIsModalOpen(false);
-            setAnswers(Array(currLesson.activities.length).fill(undefined));
-            setCurrentIndex(0);
+            // Answers are reset in useEffect based on currLesson
           }}
         />
       )}
@@ -294,6 +317,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
   },
-  main: { justifyContent: "center", alignItems: "center", marginTop: 20 },
+  main: { justifyContent: "center", alignItems: "center", marginTop: 20, width: "100%" },
   nextButtonContainer: { marginTop: 16, alignSelf: "center", width: "100%" },
+  textInput: {
+    width: "100%",
+    marginTop: 15,
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    fontSize: 16,
+    color: "#333",
+  },
 });
