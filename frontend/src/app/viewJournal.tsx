@@ -3,8 +3,8 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { lightModeColors } from "@/constants/colors";
 import Pencil from "@/assets/pencil.svg";
+import { lightModeColors } from "@/constants/colors";
 
 export default function ViewJournal() {
   const params = useLocalSearchParams<{
