@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import CalendarIcon from "@/assets/calendar.svg";
 import ClockIcon from "@/assets/clock.svg";
@@ -9,6 +9,7 @@ type JournalCardProps = {
   time: string;
   date: string;
   imageSourceUrl?: string;
+  onPress?: () => void;
 };
 
 export default function JournalCard({
@@ -17,9 +18,10 @@ export default function JournalCard({
   time,
   date,
   imageSourceUrl,
+  onPress,
 }: JournalCardProps) {
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={onPress}>
       <Image source={{ uri: imageSourceUrl }} style={styles.image} />
       <View style={styles.content}>
         <View style={styles.textGroup}>
@@ -39,7 +41,7 @@ export default function JournalCard({
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

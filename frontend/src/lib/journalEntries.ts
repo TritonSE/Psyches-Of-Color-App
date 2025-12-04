@@ -89,3 +89,66 @@ export const useCreateJournalEntry = () => {
     },
   });
 };
+
+export const useUpdateJournalEntry = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      idToken,
+      id,
+      title,
+      paragraph,
+      imageUrl,
+    }: {
+      idToken: string;
+      id: string;
+      title: string;
+      paragraph: string;
+      imageUrl?: string | null;
+    }) => {
+      let persistentImageUrl: string | undefined = undefined;
+
+      if (imageUrl) {
+        // If it's already a persistent file in DocumentDirectoryPath, reuse it
+        const isAlreadyPersistent =
+          imageUrl.startsWith("file://") && imageUrl.includes(DocumentDirectoryPath);
+
+        if (isAlreadyPersistent) {
+          persistentImageUrl = imageUrl;
+        } else {
+          // Copy image file from image picker cache to persistent documents directory
+          const content = await readFile(imageUrl.replace("file://", ""), "base64");
+          const pathParts = imageUrl.split("/");
+          const originalFilename = pathParts[pathParts.length - 1];
+          const outputPath = `${DocumentDirectoryPath}/${originalFilename}`;
+          await writeFile(outputPath, content, "base64");
+          persistentImageUrl = `file://${outputPath}`;
+        }
+      }
+
+      const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries/${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          paragraph,
+          imageUrl: persistentImageUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status.toString()}`);
+      }
+
+      return (await response.json()) as JournalEntry;
+    },
+    onSuccess: () => {
+      // Refetch lists so UI shows updated entry
+      void queryClient.invalidateQueries({ queryKey: ["journalEntries"] });
+    },
+  });
+};

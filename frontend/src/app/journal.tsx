@@ -206,6 +206,18 @@ export default function Journal() {
                 time={format(entry.createdAt, "h:mm a")}
                 date={format(entry.createdAt, "MMMM d, yyyy")}
                 imageSourceUrl={entry.imageUrl}
+                onPress={() => {
+                  router.push({
+                    pathname: "/viewJournal",
+                    params: {
+                      id: entry._id,
+                      title: entry.title,
+                      paragraph: entry.paragraph,
+                      date: entry.updatedAt,
+                      imageUrl: entry.imageUrl ?? "",
+                    },
+                  });
+                }}
               />
             ))}
 

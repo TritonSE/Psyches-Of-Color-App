@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useState } from "react";
 import {
   Alert,
@@ -21,12 +21,30 @@ import Button from "@/components/Button";
 import ExitJournal from "@/components/ExitJournal";
 import { lightModeColors } from "@/constants/colors";
 import { UserContext } from "@/contexts/userContext";
-import { useCreateJournalEntry } from "@/lib/journalEntries";
+import { useCreateJournalEntry, useUpdateJournalEntry } from "@/lib/journalEntries";
 
 export default function CreateJournal() {
-  const [titleText, setTitleText] = useState("");
-  const [paragraphText, setParagraphText] = useState("");
-  const currentDate = new Date();
+  const params = useLocalSearchParams<{
+    mode?: string;
+    id?: string;
+    title?: string;
+    paragraph?: string;
+    imageUrl?: string;
+    date?: string;
+  }>();
+
+  const isEditMode = params.mode === "edit";
+  const entryId = typeof params.id === "string" ? params.id : undefined;
+
+  const initialTitle = params.title ?? "";
+  const initialParagraph = params.paragraph ?? "";
+  const initialImageUrl = params.imageUrl ?? null;
+
+  const [titleText, setTitleText] = useState(initialTitle);
+  const [paragraphText, setParagraphText] = useState(initialParagraph);
+  const [image, setImage] = useState<string | null>(initialImageUrl);
+
+  const currentDate = params.date ? new Date(params.date) : new Date();
   const months: string[] = [
     "Jan",
     "Feb",
@@ -46,9 +64,9 @@ export default function CreateJournal() {
   const year = currentDate.getFullYear();
   const formattedDate = `${currMonth.toUpperCase()} ${String(day)}, ${String(year)}`;
 
-  const [image, setImage] = useState<string | null>(null);
   const { firebaseUser } = useContext(UserContext);
   const { mutateAsync: createJournalEntry } = useCreateJournalEntry();
+  const { mutateAsync: updateJournalEntry } = useUpdateJournalEntry();
 
   // const requestCameraPermission = async () => {
   //   const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -102,6 +120,32 @@ export default function CreateJournal() {
     // TODO error handling
     if (!firebaseUser) return;
     const token = await firebaseUser.getIdToken();
+
+    // Edit Mode
+    if (isEditMode && entryId) {
+      const updatedEntry = await updateJournalEntry({
+        idToken: token,
+        id: entryId,
+        title: titleText,
+        paragraph: paragraphText,
+        imageUrl: image ?? undefined,
+      });
+
+      router.replace({
+        pathname: "/viewJournal",
+        params: {
+          id: updatedEntry._id,
+          title: updatedEntry.title,
+          paragraph: updatedEntry.paragraph,
+          date: updatedEntry.updatedAt?.toString() ?? new Date().toString(),
+          imageUrl: updatedEntry.imageUrl ?? "",
+        },
+      });
+
+      return;
+    }
+
+    // Create Mode
     await createJournalEntry(
       {
         idToken: token,

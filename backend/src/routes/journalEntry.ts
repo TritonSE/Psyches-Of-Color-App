@@ -92,4 +92,49 @@ router.post(
   },
 );
 
+// Update a journal entry
+router.patch(
+  "/:id",
+  verifyAuthToken,
+  createJournalEntryValidator,
+  async (req: PsychesRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { userUid } = req;
+      const user = await User.findOne({ uid: userUid });
+      if (!user) {
+        res.status(400).json({ message: "User not found" });
+        return;
+      }
+
+      const entry = await JournalEntry.findOne({ _id: id, author: user._id });
+      if (!entry) {
+        res.status(404).json({ message: "Entry not found or unauthorized" });
+        return;
+      }
+
+      const { title, paragraph, imageUrl } = req.body;
+
+      if (title !== undefined) entry.title = title;
+      if (paragraph !== undefined) entry.paragraph = paragraph;
+      if (imageUrl !== undefined) entry.imageUrl = imageUrl;
+
+      entry.updatedAt = new Date();
+
+      const updatedEntry = await entry.save();
+
+      res.status(200).json({
+        _id: updatedEntry._id.toString(),
+        title: updatedEntry.title,
+        paragraph: updatedEntry.paragraph,
+        imageUrl: updatedEntry.imageUrl,
+        createdAt: updatedEntry.createdAt,
+        updatedAt: updatedEntry.updatedAt,
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
 export { router as journalEntriesRouter };
