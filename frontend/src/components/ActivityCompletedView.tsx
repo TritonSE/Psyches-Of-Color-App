@@ -1,13 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import NextButton from "@/components/NextButton";
 import { lightModeColors } from "@/constants/colors";
 
-interface ActivityCompletedViewProps {
+type ActivityCompletedViewProps = {
   onFinish: () => void;
-}
+};
 
 export default function ActivityCompletedView({ onFinish }: ActivityCompletedViewProps) {
   return (
@@ -18,7 +17,7 @@ export default function ActivityCompletedView({ onFinish }: ActivityCompletedVie
         </View>
 
         <Text style={styles.title}>Activity Complete!</Text>
-        <Text style={styles.subtitle}>Great job! You've finished this lesson.</Text>
+        <Text style={styles.subtitle}>{"Great job! Youve finished this lesson."}</Text>
       </View>
 
       <View style={styles.footer}>

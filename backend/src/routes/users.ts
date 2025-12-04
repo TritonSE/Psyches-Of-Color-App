@@ -174,8 +174,6 @@ router.put(
   verifyAuthToken,
   async (req: PsychesRequest, res: Response): Promise<void> => {
     try {
-      const { userUid } = req.params; // Note: Usually req.userUid comes from verifyAuthToken, checking usage below
-      // Correcting source based on your middleware usage in other routes:
       const currentUserUid = req.userUid;
 
       const user = await User.findOne({ uid: currentUserUid });

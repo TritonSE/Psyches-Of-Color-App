@@ -130,7 +130,9 @@ export const Question = ({
                         <TouchableOpacity
                           key={otherOption}
                           style={styles.dropdownOption}
-                          onPress={() => handleSelectOtherOption(otherOption)}
+                          onPress={() => {
+                            handleSelectOtherOption(otherOption);
+                          }}
                         >
                           <Text style={styles.optionText}>{otherOption}</Text>
                         </TouchableOpacity>
