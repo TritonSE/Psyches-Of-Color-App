@@ -123,24 +123,32 @@ export default function CreateJournal() {
 
     // Edit Mode
     if (isEditMode && entryId) {
-      const updatedEntry = await updateJournalEntry({
-        idToken: token,
-        id: entryId,
-        title: titleText,
-        paragraph: paragraphText,
-        imageUrl: image ?? undefined,
-      });
+      try {
+        const updatedEntry = await updateJournalEntry({
+          idToken: token,
+          id: entryId,
+          title: titleText,
+          paragraph: paragraphText,
+          imageUrl: image ?? undefined,
+        });
 
-      router.replace({
-        pathname: "/viewJournal",
-        params: {
-          id: updatedEntry._id,
-          title: updatedEntry.title,
-          paragraph: updatedEntry.paragraph,
-          date: updatedEntry.updatedAt?.toString() ?? new Date().toString(),
-          imageUrl: updatedEntry.imageUrl ?? "",
-        },
-      });
+        router.replace({
+          pathname: "/viewJournal",
+          params: {
+            id: updatedEntry._id,
+            title: updatedEntry.title,
+            paragraph: updatedEntry.paragraph,
+            date: updatedEntry.updatedAt?.toString() ?? new Date().toString(),
+            imageUrl: updatedEntry.imageUrl ?? "",
+          },
+        });
+      } catch (error) {
+        console.error(`Error updating journal: ${String(error)}`);
+        Alert.alert(
+          "Error saving changes",
+          "There was a problem updating your journal entry. Please try again.",
+        );
+      }
 
       return;
     }
@@ -159,6 +167,10 @@ export default function CreateJournal() {
         },
         onError: (error) => {
           console.error(`Error saving journal: ${String(error)}`);
+          Alert.alert(
+            "Error saving journal",
+            "There was a problem creating your journal entry. Please try again.",
+          );
         },
       },
     );
