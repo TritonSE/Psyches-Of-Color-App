@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 25.5,
     marginBottom: 16,
+    marginHorizontal: 20,
   },
   title: {
     color: "#000000",
