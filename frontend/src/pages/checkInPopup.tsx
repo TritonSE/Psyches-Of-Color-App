@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Dimensions, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import FaceIcon from "@/assets/mood-illustration.svg";
 import { lightModeColors } from "@/constants/colors";
@@ -44,7 +44,7 @@ type CheckInPopupProps = {
 };
 
 export default function CheckInPopup({ userId, visible, onClose }: CheckInPopupProps) {
-  const { refreshMongoUser } = useAuth();
+  const { firebaseUser, refreshMongoUser } = useAuth();
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -60,12 +60,17 @@ export default function CheckInPopup({ userId, visible, onClose }: CheckInPopupP
     if (!selectedMood) return;
 
     try {
-      await logMood(userId, selectedMood);
+      const token = await firebaseUser?.getIdToken();
+      if (!firebaseUser || !token) {
+        return;
+      }
+
+      await logMood(userId, selectedMood, token);
       await refreshMongoUser();
 
       setShowConfirmation(true);
     } catch (error) {
-      console.error("Failed to log mood:", error);
+      Alert.alert(`Failed to log mood: ${String(error)}`);
     }
   };
 

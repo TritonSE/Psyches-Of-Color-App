@@ -118,6 +118,9 @@ export const useCreateJournalEntry = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["journalEntries"] });
     },
+    onError: (error) => {
+      Alert.alert(`Error creating journal entry: ${String(error)}`);
+    },
   });
 };
 

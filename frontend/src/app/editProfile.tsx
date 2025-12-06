@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import auth from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Button from "@/components/Button";
@@ -83,30 +83,33 @@ export default function EditProfile() {
   const { mongoUser, setMongoUser } = useContext(UserContext);
 
   const onSave = async () => {
-    const firebaseUser = auth().currentUser;
-    const idToken = await firebaseUser?.getIdToken();
+    try {
+      const firebaseUser = auth().currentUser;
+      const idToken = await firebaseUser?.getIdToken();
 
-    if (!firebaseUser || !idToken) return;
+      if (!firebaseUser || !idToken) return;
 
-    // Update both Firebase and Mongo users' names
-    const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
-      },
-      body: JSON.stringify({ name }),
-    });
-
-    if (res.ok) {
-      setMongoUser(((await res.json()) as { user: User }).user);
-      await firebaseUser.updateProfile({
-        displayName: name,
+      // Update both Firebase and Mongo users' names
+      const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ name }),
       });
-      router.back();
-    } else {
-      const text = await res.text().catch(() => "");
-      console.warn("Failed to update name: ", res.status, text);
+
+      if (res.ok) {
+        setMongoUser(((await res.json()) as { user: User }).user);
+        await firebaseUser.updateProfile({
+          displayName: name,
+        });
+        router.back();
+      } else {
+        throw new Error(`HTTP error! status: ${res.status.toString()}`);
+      }
+    } catch (error) {
+      Alert.alert(`Failed to update profile: ${String(error)}`);
     }
   };
 

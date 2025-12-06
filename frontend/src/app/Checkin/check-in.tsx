@@ -74,7 +74,6 @@ const CheckIn: React.FC = () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      console.log("All questions answered:", answers);
       router.push("/Checkin/end");
     }
   };

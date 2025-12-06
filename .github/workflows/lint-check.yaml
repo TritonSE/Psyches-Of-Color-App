@@ -25,3 +25,13 @@ jobs:
         run: |
           npm ci
           npm run lint-check
+  admin-portal:
+    name: Admin portal lint and style check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - working-directory: admin-portal
+        run: |
+          npm ci
+          npm run lint-check
