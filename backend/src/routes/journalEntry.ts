@@ -54,6 +54,40 @@ router.get(
   },
 );
 
+// Get one journal entry by ID
+router.get(
+  "/:id",
+  verifyAuthToken,
+  async (req: PsychesRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { userUid } = req;
+      const user = await User.findOne({ uid: userUid });
+      if (!user) {
+        res.status(400).json({ message: "User not found" });
+        return;
+      }
+
+      const entry = await JournalEntry.findOne({ _id: id, author: user._id });
+      if (!entry) {
+        res.status(404).json({ message: "Entry not found or unauthorized" });
+        return;
+      }
+
+      res.status(200).json({
+        _id: entry._id.toString(),
+        title: entry.title,
+        paragraph: entry.paragraph,
+        imageUrl: entry.imageUrl,
+        createdAt: entry.createdAt,
+        updatedAt: entry.updatedAt,
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
 // Create a new journal entry
 router.post(
   "/",

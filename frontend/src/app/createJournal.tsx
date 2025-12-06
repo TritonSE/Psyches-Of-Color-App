@@ -124,7 +124,7 @@ export default function CreateJournal() {
     // Edit Mode
     if (isEditMode && entryId) {
       try {
-        const updatedEntry = await updateJournalEntry({
+        await updateJournalEntry({
           idToken: token,
           id: entryId,
           title: titleText,
@@ -132,16 +132,7 @@ export default function CreateJournal() {
           imageUrl: image ?? undefined,
         });
 
-        router.replace({
-          pathname: "/viewJournal",
-          params: {
-            id: updatedEntry._id,
-            title: updatedEntry.title,
-            paragraph: updatedEntry.paragraph,
-            date: updatedEntry.updatedAt?.toString() ?? new Date().toString(),
-            imageUrl: updatedEntry.imageUrl ?? "",
-          },
-        });
+        router.back();
       } catch (error) {
         console.error(`Error updating journal: ${String(error)}`);
         Alert.alert(

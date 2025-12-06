@@ -211,10 +211,6 @@ export default function Journal() {
                     pathname: "/viewJournal",
                     params: {
                       id: entry._id,
-                      title: entry.title,
-                      paragraph: entry.paragraph,
-                      date: entry.updatedAt,
-                      imageUrl: entry.imageUrl ?? "",
                     },
                   });
                 }}

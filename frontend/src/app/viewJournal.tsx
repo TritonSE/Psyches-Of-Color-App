@@ -5,21 +5,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import Pencil from "@/assets/pencil.svg";
 import { lightModeColors } from "@/constants/colors";
+import { useGetJournalEntryById } from "@/lib/journalEntries";
 
 export default function ViewJournal() {
   const params = useLocalSearchParams<{
     id?: string;
-    title?: string;
-    paragraph?: string;
-    imageUrl?: string;
-    date: string;
   }>();
 
   const id = typeof params.id === "string" ? params.id : undefined;
-  const title = typeof params.title === "string" ? params.title : "Untitled Entry";
-  const paragraph = typeof params.paragraph === "string" ? params.paragraph : "";
-  const imageUrl = typeof params.imageUrl === "string" ? params.imageUrl : null;
-  const dateParam = typeof params.date === "string" ? new Date(params.date) : new Date();
+  const { data: journalEntry } = useGetJournalEntryById(id);
 
   const months: string[] = [
     "Jan",
@@ -36,9 +30,15 @@ export default function ViewJournal() {
     "Dec",
   ];
 
-  const monthLabel = months[dateParam.getMonth()].toUpperCase();
-  const day = String(dateParam.getDate());
-  const year = String(dateParam.getFullYear());
+  if (!journalEntry) {
+    return null;
+  }
+
+  const date = new Date(journalEntry.updatedAt);
+
+  const monthLabel = months[date.getMonth()].toUpperCase();
+  const day = String(date.getDate());
+  const year = String(date.getFullYear());
 
   const formattedDate = `${monthLabel} ${day}, ${year}`;
 
@@ -60,15 +60,15 @@ export default function ViewJournal() {
           </View>
 
           <View style={styles.titleSection}>
-            <Text style={styles.titleText}>{title}</Text>
+            <Text style={styles.titleText}>{journalEntry.title}</Text>
             <Text style={styles.dateText}>{formattedDate}</Text>
           </View>
 
           <View style={styles.contentContainer}>
-            <Text style={styles.bodyText}>{paragraph}</Text>
+            <Text style={styles.bodyText}>{journalEntry.paragraph}</Text>
           </View>
 
-          {imageUrl && (
+          {journalEntry.imageUrl && (
             <>
               <View style={styles.subheader}>
                 <Ionicons name="image-outline" size={20} color="#2E563C" />
@@ -76,7 +76,11 @@ export default function ViewJournal() {
               </View>
 
               <View style={styles.imageContainer}>
-                <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+                <Image
+                  source={{ uri: journalEntry.imageUrl }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
               </View>
             </>
           )}
@@ -91,10 +95,10 @@ export default function ViewJournal() {
             params: {
               mode: "edit",
               id,
-              title,
-              paragraph,
-              imageUrl: imageUrl ?? "",
-              date: params.date as string | undefined,
+              title: journalEntry.title,
+              paragraph: journalEntry.paragraph,
+              imageUrl: journalEntry.imageUrl ?? "",
+              date: journalEntry.updatedAt,
             },
           });
         }}

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import { DocumentDirectoryPath, readFile, writeFile } from "react-native-fs";
 
 import { useAuth } from "@/contexts/userContext";
@@ -42,13 +43,38 @@ export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: strin
           const data = (await response.json()) as { entries: JournalEntry[] };
           return data.entries;
         } else {
-          // TODO display error modal to user
-          console.error(`Error retrieving journal entries: HTTP ${response.status.toString()}`);
-          return null;
+          throw new Error(`HTTP error! status: ${response.status.toString()}`);
         }
       } catch (error) {
-        console.error("Error retrieving journal entries: ", error);
+        Alert.alert(`Error retrieving journal entries: ${String(error)}`);
+        return null;
+      }
+    },
+  });
+};
 
+export const useGetJournalEntryById = (id?: string) => {
+  const { firebaseUser } = useAuth();
+
+  return useQuery({
+    queryKey: ["journalEntries", id],
+    queryFn: async () => {
+      if (!firebaseUser || !id) return null;
+      try {
+        const idToken = await firebaseUser?.getIdToken();
+        const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries/${id}`, {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        });
+        if (response.ok) {
+          const data = (await response.json()) as JournalEntry;
+          return data;
+        } else {
+          throw new Error(`HTTP error! status: ${response.status.toString()}`);
+        }
+      } catch (error) {
+        Alert.alert(`Error retrieving journal entry: ${String(error)}`);
         return null;
       }
     },
