@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 25.5,
     marginBottom: 16,
+    marginHorizontal: 20,
   },
   title: {
     color: "#000000",
@@ -62,7 +63,9 @@ export default function Resources() {
     <View style={styles.container}>
       <Mascots style={styles.logo} />
       <Text style={styles.title}>Psyches of Color</Text>
-      <Text style={styles.text}>slogan/mindful tip goes here</Text>
+      <Text style={styles.text}>
+        Celebrate one thing you handled well today, no matter how small.
+      </Text>
       <Button
         onPress={() => {
           void logout();

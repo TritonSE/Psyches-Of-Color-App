@@ -6,6 +6,18 @@ import { useAuth } from "@/contexts/userContext";
 import { JournalEntry } from "@/types";
 import env from "@/util/validateEnv";
 
+const persistImageToDocumentsDir = async (imageUrl: string): Promise<string> => {
+  const normalizedPath = imageUrl.replace("file://", "");
+  const content = await readFile(normalizedPath, "base64");
+  const pathParts = normalizedPath.split("/");
+  const originalFilename = pathParts[pathParts.length - 1];
+  const outputPath = `${DocumentDirectoryPath}/${originalFilename}`;
+
+  await writeFile(outputPath, content, "base64");
+
+  return `file://${outputPath}`;
+};
+
 export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: string) => {
   const { firebaseUser } = useAuth();
 
@@ -34,7 +46,35 @@ export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: strin
           throw new Error(`HTTP error! status: ${response.status.toString()}`);
         }
       } catch (error) {
-        Alert.alert(`Error fetching journal entries: ${String(error)}`);
+        Alert.alert(`Error retrieving journal entries: ${String(error)}`);
+        return null;
+      }
+    },
+  });
+};
+
+export const useGetJournalEntryById = (id?: string) => {
+  const { firebaseUser } = useAuth();
+
+  return useQuery({
+    queryKey: ["journalEntries", id],
+    queryFn: async () => {
+      if (!firebaseUser || !id) return null;
+      try {
+        const idToken = await firebaseUser?.getIdToken();
+        const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries/${id}`, {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        });
+        if (response.ok) {
+          const data = (await response.json()) as JournalEntry;
+          return data;
+        } else {
+          throw new Error(`HTTP error! status: ${response.status.toString()}`);
+        }
+      } catch (error) {
+        Alert.alert(`Error retrieving journal entry: ${String(error)}`);
         return null;
       }
     },
@@ -58,13 +98,7 @@ export const useCreateJournalEntry = () => {
     }) => {
       let persistentImageUrl: string | undefined = undefined;
       if (imageUrl) {
-        // Copy image file from image picker cache to persistent documents directory
-        const content = await readFile(imageUrl, "base64");
-        const pathParts = imageUrl.split("/");
-        const originalFilename = pathParts[pathParts.length - 1];
-        const outputPath = `${DocumentDirectoryPath}/${originalFilename}`;
-        await writeFile(outputPath, content, "base64");
-        persistentImageUrl = `file://${outputPath}`;
+        persistentImageUrl = await persistImageToDocumentsDir(imageUrl);
       }
 
       const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries`, {
@@ -86,6 +120,63 @@ export const useCreateJournalEntry = () => {
     },
     onError: (error) => {
       Alert.alert(`Error creating journal entry: ${String(error)}`);
+    },
+  });
+};
+
+export const useUpdateJournalEntry = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      idToken,
+      id,
+      title,
+      paragraph,
+      imageUrl,
+    }: {
+      idToken: string;
+      id: string;
+      title: string;
+      paragraph: string;
+      imageUrl?: string | null;
+    }) => {
+      let persistentImageUrl: string | undefined = undefined;
+
+      if (imageUrl) {
+        // If it's already a persistent file in DocumentDirectoryPath, reuse it
+        const isAlreadyPersistent =
+          imageUrl.startsWith("file://") && imageUrl.includes(DocumentDirectoryPath);
+
+        if (isAlreadyPersistent) {
+          persistentImageUrl = imageUrl;
+        } else {
+          persistentImageUrl = await persistImageToDocumentsDir(imageUrl);
+        }
+      }
+
+      const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries/${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          paragraph,
+          imageUrl: persistentImageUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status.toString()}`);
+      }
+
+      return (await response.json()) as JournalEntry;
+    },
+    onSuccess: () => {
+      // Refetch lists so UI shows updated entry
+      void queryClient.invalidateQueries({ queryKey: ["journalEntries"] });
     },
   });
 };
