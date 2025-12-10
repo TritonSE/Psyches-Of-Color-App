@@ -44,12 +44,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className={styles.page}>
       <aside className={styles.sidebar}>
         <div className={styles.logoWrapper}>
-          <Image
-            src="/Primary-Liberation.svg"
-            alt="Psyches of Color Logo"
-            width={163}
-            height={59}
-          />
+          <Image src="/poc-logo-white.png" alt="Psyches of Color Logo" width={180} height={21} />
         </div>
 
         <nav className={styles.navWrapper}>

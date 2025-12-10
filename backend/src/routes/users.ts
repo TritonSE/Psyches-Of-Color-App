@@ -2,6 +2,7 @@ import express, { NextFunction, Response } from "express";
 
 import { PsychesRequest, verifyAuthToken } from "../middleware/auth";
 import { User } from "../models/users";
+import { firebaseAuth } from "src/services/firebase";
 
 const router = express.Router();
 
@@ -229,6 +230,8 @@ router.delete(
       }
 
       await User.deleteOne({ uid });
+
+      await firebaseAuth.deleteUser(uid);
 
       res.status(200).json({ message: "User account deleted successfully" });
     } catch (error) {

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
+import Logo from "@/assets/poc-logo.png";
 import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
@@ -122,8 +123,8 @@ export default function Signup() {
         <View style={styles.container}>
           <BackButton path="./confirmBackToLogin" />
           <View style={styles.header}>
-            <Mascots style={styles.logo} />
-            <Text style={styles.title}>Psyches of Color</Text>
+            <Mascots style={styles.mascots} />
+            <Image style={styles.logo} source={Logo} />
           </View>
           <InputBox
             label="First Name"
@@ -198,10 +199,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: {
+  mascots: {
     width: 253,
     height: 116,
     marginBottom: 16,
+  },
+  logo: {
+    width: 300,
+    height: 36,
+    marginBottom: 24,
   },
   title: {
     color: lightModeColors.darkFont,

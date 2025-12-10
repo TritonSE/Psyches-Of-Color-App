@@ -37,13 +37,7 @@ export default function LoginPage() {
     <div className={styles.container}>
       <div className={styles.loginCard}>
         <div className={styles.logoContainer}>
-          <Image
-            src="/Primary-Liberation-Dark.svg"
-            alt="Psyches of Color Logo"
-            width={200}
-            height={73}
-            priority
-          />
+          <Image src="/poc-logo.png" alt="Psyches of Color Logo" width={300} height={36} priority />
         </div>
 
         <h1 className={styles.title}>Admin Portal</h1>

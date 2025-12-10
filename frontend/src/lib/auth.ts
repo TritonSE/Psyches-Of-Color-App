@@ -244,7 +244,7 @@ export const deleteAccount = async (): Promise<{ success: boolean; error?: strin
     // Get the user's ID token for backend authentication
     const idToken = await user.getIdToken();
 
-    // Delete user from MongoDB backend
+    // Delete user from MongoDB AND Firebase - backend takes care of both
     const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${user.uid}`, {
       method: "DELETE",
       headers: {
@@ -259,9 +259,6 @@ export const deleteAccount = async (): Promise<{ success: boolean; error?: strin
         error: errorData.message || "Failed to delete user from database",
       };
     }
-
-    // Delete user from Firebase Authentication
-    await user.delete();
 
     return {
       success: true,

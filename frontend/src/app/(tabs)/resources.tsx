@@ -1,7 +1,8 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
+import Logo from "@/assets/poc-logo.png";
 import Button from "@/components/Button";
 import { logout } from "@/lib/auth";
 
@@ -26,10 +27,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: {
+  mascots: {
     width: 253,
     height: 116,
     marginBottom: 16,
+  },
+  logo: {
+    width: 300,
+    height: 36,
+    marginBottom: 24,
   },
   text: {
     color: "#000000",
@@ -61,8 +67,8 @@ export default function Resources() {
   // );
   return (
     <View style={styles.container}>
-      <Mascots style={styles.logo} />
-      <Text style={styles.title}>Psyches of Color</Text>
+      <Mascots style={styles.mascots} />
+      <Image style={styles.logo} source={Logo} />
       <Text style={styles.text}>
         Celebrate one thing you handled well today, no matter how small.
       </Text>
