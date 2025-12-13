@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { useAuth } from "../../contexts/AuthContext";
-import { MonthlyActivity, StatsResponse, fetchStats } from "../../lib/api";
+import { useAuth } from "../../../contexts/AuthContext";
+import { MonthlyActivity, StatsResponse, fetchStats } from "../../../lib/api";
 
 import styles from "./statistics.module.css";
 
@@ -383,11 +383,6 @@ export default function DashboardPage() {
         <h1 className={styles.title}>Statistics</h1>
         <div className={styles.filters}>
           <button className={styles.filterButton}>All Time</button>
-          <button className={styles.filterButton}>Demographics</button>
-          <button className={styles.filterButton}>Content Findings</button>
-          <select className={styles.dropdown}>
-            <option>John Doe</option>
-          </select>
           <button className={styles.downloadButton}>DOWNLOAD</button>
         </div>
       </div>

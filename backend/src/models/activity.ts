@@ -41,7 +41,7 @@ const activitySchema = new mongoose.Schema(
           },
           isCorrect: {
             type: Boolean,
-            default: false, // Added default false
+            default: true,
           },
         },
       ],

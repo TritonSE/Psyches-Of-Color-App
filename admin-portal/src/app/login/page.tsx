@@ -2,19 +2,27 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
 
 import styles from "./login.module.css";
+
+import { TextInput } from "@/components/TextInput";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loading: userLoading, user } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!userLoading && user) {
+      router.push("/dashboard/statistics");
+    }
+  }, [user, userLoading, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,7 +31,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push("/dashboard");
+      router.push("/dashboard/statistics");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to login. Please check your credentials.",
@@ -53,14 +61,13 @@ export default function LoginPage() {
             <label htmlFor="email" className={styles.label}>
               Email
             </label>
-            <input
+            <TextInput
               id="email"
               type="email"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              className={styles.input}
               placeholder="Enter email"
               required
               disabled={loading}
@@ -72,14 +79,13 @@ export default function LoginPage() {
             <label htmlFor="password" className={styles.label}>
               Password
             </label>
-            <input
+            <TextInput
               id="password"
               type="password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
-              className={styles.input}
               placeholder="Enter password"
               required
               disabled={loading}

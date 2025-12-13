@@ -39,6 +39,37 @@ export type StatsResponse = {
   onboardingAnalytics: OnboardingAnalytics;
 };
 
+export type ActivityType = "mcq" | "wwyd" | "text";
+
+export type Unit = {
+  _id: string;
+  title: string;
+  order?: number;
+  lessons: Lesson[];
+};
+
+export type Lesson = {
+  _id: string;
+  title: string;
+  order?: number;
+  description: string;
+  activities: Activity[];
+  unit: string;
+};
+
+export type ActivityOption = {
+  content: string;
+  affirmation: string;
+};
+
+export type Activity = {
+  _id: string;
+  type: ActivityType;
+  question: string;
+  options?: ActivityOption[];
+  affirmation?: string;
+};
+
 /**
  * Generates mock data for development
  */
@@ -150,5 +181,206 @@ export async function verifyAdmin(idToken: string): Promise<boolean> {
   } catch (error) {
     console.error("Error verifying admin status:", error);
     return false;
+  }
+}
+
+// Units
+export async function fetchAllUnits(idToken: string): Promise<Unit[]> {
+  const response = await fetch(`${API_BASE_URL}/api/units`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch units");
+  }
+
+  return (await response.json()) as Unit[];
+}
+
+export async function createUnit(idToken: string, title: string): Promise<Unit> {
+  const response = await fetch(`${API_BASE_URL}/api/units`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create unit");
+  }
+
+  return (await response.json()) as Unit;
+}
+
+export async function updateUnit(
+  idToken: string,
+  unitId: string,
+  title?: string,
+  order?: number,
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/units/${unitId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+      order,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update unit");
+  }
+}
+
+export async function deleteUnit(idToken: string, unitId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/units/${unitId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete unit");
+  }
+}
+
+// Lessons
+export async function createLesson(
+  idToken: string,
+  title: string,
+  description: string,
+  unitId: string,
+): Promise<Lesson> {
+  const response = await fetch(`${API_BASE_URL}/api/lessons`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+      description,
+      unit: unitId,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create lesson");
+  }
+
+  return (await response.json()) as Lesson;
+}
+
+export async function updateLesson(
+  idToken: string,
+  lessonId: string,
+  title?: string,
+  description?: string,
+  order?: number,
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+      description,
+      order,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update lesson");
+  }
+}
+
+export async function deleteLesson(idToken: string, lessonId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete lesson");
+  }
+}
+
+// Activities
+export async function createActivity(
+  idToken: string,
+  activityType: ActivityType,
+  question: string,
+  lessonId: string,
+  options?: ActivityOption[],
+): Promise<Lesson> {
+  const response = await fetch(`${API_BASE_URL}/api/activities`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      type: activityType,
+      question,
+      lesson: lessonId,
+      options,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create activity");
+  }
+
+  return (await response.json()) as Lesson;
+}
+
+export async function updateActivity(
+  idToken: string,
+  activityId: string,
+  question: string,
+  options?: ActivityOption[],
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      question,
+      options,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update lesson");
+  }
+}
+
+export async function deleteActivity(idToken: string, activityId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete activity");
   }
 }

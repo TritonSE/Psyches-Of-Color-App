@@ -1,8 +1,8 @@
 import { body } from "express-validator";
 
 const validateType = body("type")
-  .isIn(["reflection", "mcq", "wwyd"])
-  .withMessage("type must be one of: reflection, mcq, wwyd");
+  .isIn(["text", "mcq", "wwyd"])
+  .withMessage("type must be one of: text, mcq, wwyd");
 
 const validateQuestion = body("question")
   .notEmpty()

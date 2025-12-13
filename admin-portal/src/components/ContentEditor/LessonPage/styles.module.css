@@ -1,0 +1,158 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2e563c;
+  letter-spacing: 0.5px;
+  margin: 0 0 24px 0;
+}
+
+.unitListRow {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.dropdownRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dropdownContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dropdownTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #101010;
+}
+
+.dropdown {
+  background-color: white;
+  color: #101010;
+  padding: 6px;
+}
+
+.subsectionTitle {
+  margin-top: 27px;
+  font-size: 24px;
+  font-weight: 600;
+  color: black;
+}
+
+.subsectionContainer {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background-color: white;
+  padding: 32px 24px;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.questionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.questionHeader {
+  width: "100%";
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #f2f0d3;
+  color: black;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 0;
+}
+
+.feedback {
+  margin-top: 12px;
+  margin-left: 16px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+}
+
+.cursorPointer {
+  cursor: pointer;
+}
+
+.addQuestionButton {
+  cursor: pointer;
+  width: 46px;
+  height: 46px;
+  border-radius: 23px;
+  background: #1a4d2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.addQuestionTooltip {
+  display: flex;
+  flex-direction: column;
+  background-color: white !important;
+  padding: 0 !important;
+}
+
+.questionTypeOption {
+  cursor: pointer;
+  color: black;
+  text-align: center;
+  padding: 12px 24px;
+}
+
+.buttonsRow {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+}

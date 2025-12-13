@@ -1,50 +1,11 @@
 import express from "express";
 
 import { JournalEntry } from "src/models/journalEntry";
-import { PsychesRequest, verifyAuthToken } from "src/middleware/auth";
+import { adminMiddleware, verifyAuthToken } from "src/middleware/auth";
 import { Mood } from "src/models/mood";
 import { User } from "src/models/users";
 
 const router = express.Router();
-
-// DEV ONLY: Skip admin check when auth is bypassed
-const DEV_SKIP_AUTH = process.env.DEV_SKIP_AUTH === "true";
-
-/**
- * Middleware to check if user is an admin
- */
-const adminMiddleware = async (
-  req: PsychesRequest,
-  res: express.Response,
-  next: express.NextFunction,
-): Promise<void> => {
-  try {
-    const uid = req.userUid;
-
-    if (!uid) {
-      res.status(401).json({ error: "Unauthorized: No user ID found" });
-      return;
-    }
-
-    // DEV ONLY: Skip admin verification
-    if (DEV_SKIP_AUTH) {
-      console.warn("⚠️  DEV MODE: Skipping admin verification");
-      next();
-      return;
-    }
-
-    const user = await User.findOne({ uid });
-
-    if (!user || !user.isAdmin) {
-      res.status(403).json({ error: "Access denied. Admin privileges required." });
-      return;
-    }
-
-    next();
-  } catch {
-    res.status(500).json({ error: "Failed to verify admin status" });
-  }
-};
 
 /**
  * GET /api/stats

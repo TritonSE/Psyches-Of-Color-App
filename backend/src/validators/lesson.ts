@@ -29,6 +29,11 @@ const validateUpdateActivities = body("activities")
     }
     return true;
   });
+const validateUpdateOrder = body("order")
+  .notEmpty()
+  .withMessage("order is required")
+  .isInt()
+  .withMessage("order must be an integer");
 
 export const createLessonValidator = [validateUnit, validateTitle, validateDescription];
 export const updateLessonValidator = [
@@ -36,4 +41,5 @@ export const updateLessonValidator = [
   validateTitle.optional(),
   validateDescription.optional(),
   validateUpdateActivities.optional(),
+  validateUpdateOrder.optional(),
 ];
