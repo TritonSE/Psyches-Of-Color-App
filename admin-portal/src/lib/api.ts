@@ -326,6 +326,7 @@ export async function createActivity(
   activityType: ActivityType,
   question: string,
   lessonId: string,
+  affirmation?: string,
   options?: ActivityOption[],
 ): Promise<Lesson> {
   const response = await fetch(`${API_BASE_URL}/api/activities`, {
@@ -339,6 +340,7 @@ export async function createActivity(
       question,
       lesson: lessonId,
       options,
+      affirmation,
     }),
   });
 
@@ -353,6 +355,7 @@ export async function updateActivity(
   idToken: string,
   activityId: string,
   question: string,
+  affirmation?: string,
   options?: ActivityOption[],
 ): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
@@ -364,6 +367,7 @@ export async function updateActivity(
     body: JSON.stringify({
       question,
       options,
+      affirmation,
     }),
   });
 

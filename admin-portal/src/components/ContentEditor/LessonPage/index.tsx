@@ -92,12 +92,14 @@ export const LessonPage = () => {
                 activity.type,
                 activity.question,
                 currentLesson._id,
+                activity.type === "text" ? activity.affirmation : undefined,
                 activity.type === "text" ? undefined : activity.options,
               )
             : updateActivity(
                 token,
                 activity._id,
                 activity.question,
+                activity.type === "text" ? activity.affirmation : undefined,
                 activity.type === "text" ? undefined : activity.options,
               ),
         ),
@@ -186,7 +188,7 @@ export const LessonPage = () => {
           </label>
           <TextInput
             id="title"
-            value={title}
+            value={title ?? ""}
             onChange={(e) => {
               setTitle(e.target.value);
             }}
@@ -200,7 +202,7 @@ export const LessonPage = () => {
           </label>
           <TextInput
             id="description"
-            value={description}
+            value={description ?? ""}
             onChange={(e) => {
               setDescription(e.target.value);
             }}
@@ -234,7 +236,7 @@ export const LessonPage = () => {
               </label>
               <TextInput
                 id="question"
-                value={activity.question}
+                value={activity.question ?? ""}
                 onChange={(e) => {
                   setActivities(
                     activities.map((curActivity) =>
@@ -248,7 +250,30 @@ export const LessonPage = () => {
               />
             </div>
 
-            {activity.type !== "text" && (
+            {activity.type === "text" ? (
+              <div>
+                <label htmlFor="affirmation" className={styles.label}>
+                  Affirmation
+                </label>
+                <TextInput
+                  id="affirmation"
+                  value={activity.affirmation ?? ""}
+                  onChange={(e) => {
+                    setActivities(
+                      activities.map((curActivity) =>
+                        curActivity.activity._id === activity._id
+                          ? {
+                              ...curActivity,
+                              activity: { ...activity, affirmation: e.target.value },
+                            }
+                          : curActivity,
+                      ),
+                    );
+                  }}
+                  placeholder="Enter Affirmation"
+                />
+              </div>
+            ) : (
               <>
                 {activity.options?.map((option, index) => (
                   <div key={index}>
@@ -280,7 +305,7 @@ export const LessonPage = () => {
                       </div>
                       <TextInput
                         id={`option ${index} content`}
-                        value={option.content}
+                        value={option.content ?? ""}
                         onChange={(e) => {
                           setActivities(
                             activities.map((curActivity) =>
@@ -313,7 +338,7 @@ export const LessonPage = () => {
                       </label>
                       <TextInput
                         id={`option ${index} affirmation`}
-                        value={option.affirmation}
+                        value={option.affirmation ?? ""}
                         onChange={(e) => {
                           setActivities(
                             activities.map((curActivity) =>

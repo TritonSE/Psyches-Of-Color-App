@@ -79,7 +79,10 @@ export default function ActivitiesPage() {
   const currentQuestion = currLesson?.activities[currentIndex];
   const currentAnswer = currentQuestion ? (answers[currentIndex] ?? "") : "";
   const currentAffirmation =
-    currentQuestion?.options?.find((option) => option.content === currentAnswer)?.affirmation ?? "";
+    currentQuestion?.type === "text"
+      ? currentQuestion?.affirmation
+      : (currentQuestion?.options?.find((option) => option.content === currentAnswer)
+          ?.affirmation ?? "");
 
   const handleAnswer = (answer: string) => {
     if (!currLesson) return;
@@ -252,7 +255,11 @@ export default function ActivitiesPage() {
           <View style={styles.nextButtonContainer}>
             <NextButton
               onPress={() => {
-                setIsFeedbackModalOpen(true);
+                if (currentAffirmation) {
+                  setIsFeedbackModalOpen(true);
+                } else {
+                  void handleNext();
+                }
               }}
               disabled={!currentAnswer || isLoading}
               textOption={

@@ -62,6 +62,10 @@ const activitySchema = new mongoose.Schema(
       ref: "Lesson",
       required: false, // Changed to false to allow circular creation in seed script
     },
+    affirmation: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
