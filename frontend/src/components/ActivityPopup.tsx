@@ -10,6 +10,7 @@ type ActivityPopupProps = {
   onStart?: () => void;
   color: "red" | "green" | "yellow";
   onClose: () => void;
+  startText: string;
 };
 
 /**
@@ -30,6 +31,7 @@ const ActivityPopup = ({
   color,
   isOpen,
   onClose,
+  startText,
 }: ActivityPopupProps) => {
   return (
     <>
@@ -63,7 +65,7 @@ const ActivityPopup = ({
                 }
               }}
             >
-              <Text style={styles.buttonText}>START</Text>
+              <Text style={styles.buttonText}>{startText}</Text>
             </TouchableOpacity>
           </View>
         </View>
