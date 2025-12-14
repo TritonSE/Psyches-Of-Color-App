@@ -78,11 +78,14 @@ export default function ActivitiesPage() {
 
   const currentQuestion = currLesson?.activities[currentIndex];
   const currentAnswer = currentQuestion ? (answers[currentIndex] ?? "") : "";
+  const chosenOption = currentQuestion?.options?.find((option) => option.content === currentAnswer);
   const currentAffirmation =
     currentQuestion?.type === "text"
       ? currentQuestion?.affirmation
-      : (currentQuestion?.options?.find((option) => option.content === currentAnswer)
-          ?.affirmation ?? "");
+      : // If we can't find our option in the list, assume the user chose "Other" and typed their own answer
+        chosenOption
+        ? chosenOption.affirmation
+        : currentQuestion?.options?.find((option) => option.content === "Other")?.affirmation;
 
   const handleAnswer = (answer: string) => {
     if (!currLesson) return;
