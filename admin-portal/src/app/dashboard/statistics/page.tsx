@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../../../contexts/AuthContext";
-import { MonthlyActivity, StatsResponse, fetchStats } from "../../../lib/api";
+import { MonthlyActivity, StatsResponse, User, fetchAllUsers, fetchStats } from "../../../lib/api";
 
 import styles from "./statistics.module.css";
+
+import { Button } from "@/components/Button";
 
 // Helper to format month number to short name
 function formatMonth(monthStr: string): string {
@@ -296,6 +298,8 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [allUsers, setAllUsers] = useState<User[]>();
+  const [emailsCopied, setEmailsCopied] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -313,7 +317,16 @@ export default function DashboardPage() {
       }
     };
 
+    const loadAllUsers = async () => {
+      if (!user) return;
+
+      const token = await user.getIdToken();
+      const data = await fetchAllUsers(token);
+      setAllUsers(data);
+    };
+
     void loadStats();
+    void loadAllUsers();
   }, [user]);
 
   if (loading) {
@@ -534,6 +547,46 @@ export default function DashboardPage() {
           <h3 className={styles.chartTitle}>Counseling</h3>
           <HorizontalBarChart data={counselingData} />
         </div>
+      </section>
+
+      {/* All Users Section */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>ALL USERS</h2>
+        <Button
+          variant="primary"
+          filled
+          onClick={() => {
+            const emails = allUsers?.map((u) => u.email).join(", ");
+            if (emails) {
+              navigator.clipboard
+                .writeText(emails)
+                .then(() => {
+                  setEmailsCopied(true);
+                })
+                .catch((errorMessage) => {
+                  alert(`Error copying emails: ${String(errorMessage)}`);
+                });
+            }
+          }}
+        >
+          {emailsCopied ? "Copied to Clipboard" : "Copy All Emails"}
+        </Button>
+        <table className={styles.usersTable}>
+          <thead>
+            <tr>
+              <th className={`${styles.usersTableCell} ${styles.usersTableHeaderCell}`}>Name</th>
+              <th className={`${styles.usersTableCell} ${styles.usersTableHeaderCell}`}>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allUsers?.map((currentUser) => (
+              <tr key={currentUser._id}>
+                <td className={styles.usersTableCell}>{currentUser.name}</td>
+                <td className={styles.usersTableCell}>{currentUser.email}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
     </div>
   );

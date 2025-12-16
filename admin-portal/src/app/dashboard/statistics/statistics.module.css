@@ -427,6 +427,25 @@
   color: #6c6c6c;
 }
 
+.usersTable {
+  margin-top: 24px;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #000;
+  color: #000;
+}
+
+.usersTableCell {
+  border: 1px solid #000;
+  padding: 8px 12px;
+  text-align: left;
+  color: #000;
+}
+
+.usersTableHeaderCell {
+  font-weight: 600;
+}
+
 @media (max-width: 1200px) {
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);

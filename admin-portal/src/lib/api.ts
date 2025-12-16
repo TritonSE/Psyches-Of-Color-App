@@ -5,6 +5,8 @@ const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
 export type User = {
   _id: string;
+  name: string;
+  email: string;
   isAdmin: boolean;
 };
 
@@ -159,6 +161,21 @@ export async function fetchStats(idToken: string): Promise<StatsResponse> {
   }
 
   return (await response.json()) as StatsResponse;
+}
+
+export async function fetchAllUsers(idToken: string): Promise<User[]> {
+  const response = await fetch(`${API_BASE_URL}/api/users/all`, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch users");
+  }
+
+  const data = (await response.json()) as { users: User[] };
+  return data.users;
 }
 
 /**
