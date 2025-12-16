@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../../../contexts/AuthContext";
-import { ActivityGroup, StatsResponse, User, fetchAllUsers, fetchStats } from "../../../lib/api";
+import {
+  ActivityGroup,
+  StatsResponse,
+  User,
+  downloadData,
+  fetchAllUsers,
+  fetchStats,
+} from "../../../lib/api";
 
 import styles from "./statistics.module.css";
 
@@ -422,6 +429,29 @@ export default function DashboardPage() {
     void loadAllUsers();
   }, [user]);
 
+  const downloadStats = async () => {
+    if (!user) return;
+
+    try {
+      const token = await user.getIdToken();
+      const blob = await downloadData(token);
+
+      const objectUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = "psyches_of_color_all_data.csv";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(objectUrl);
+    } catch (errorMessage) {
+      alert(`Error downloading data: ${String(errorMessage)}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -498,7 +528,9 @@ export default function DashboardPage() {
       <div className={styles.header}>
         <h1 className={styles.title}>Statistics</h1>
         <div className={styles.filters}>
-          <button className={styles.downloadButton}>DOWNLOAD</button>
+          <button className={styles.downloadButton} onClick={() => void downloadStats()}>
+            DOWNLOAD
+          </button>
         </div>
       </div>
 

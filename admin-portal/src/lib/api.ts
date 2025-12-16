@@ -194,6 +194,20 @@ export async function fetchAllUsers(idToken: string): Promise<User[]> {
   return data.users;
 }
 
+export async function downloadData(idToken: string): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/stats/export_all`, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to download file");
+  }
+
+  return await response.blob();
+}
+
 /**
  * Verifies if a user is an admin
  * @param uid - User ID from Firebase auth

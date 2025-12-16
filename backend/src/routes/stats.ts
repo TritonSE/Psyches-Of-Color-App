@@ -1,3 +1,4 @@
+import { stringify } from "csv-stringify/sync";
 import express from "express";
 
 import { JournalEntry } from "src/models/journalEntry";
@@ -342,6 +343,69 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Error fetching statistics:", error);
     res.status(500).json({ error: "Failed to fetch statistics" });
+  }
+});
+
+/**
+ * GET /api/stats/export_all
+ * Exports all data to a CSV file
+ * Requires admin authentication
+ */
+router.get("/export_all", verifyAuthToken, adminMiddleware, async (req, res, next) => {
+  try {
+    const allUsers = await User.find({ isAdmin: false });
+    const csvColumns = [
+      "Name",
+      "Email",
+      "Date Joined",
+      "Check-ins Completed",
+      "Journal Entries Written",
+      "Character",
+      "Lessons Completed",
+      "Age",
+      "Gender",
+      "Ethnicity",
+      "Education Level",
+      "Counseling Experience",
+      "Residence",
+      "Last Weekly Check-in",
+      "Last Daily Check-in",
+    ];
+
+    // Format dates as YYYY-MM-DD
+    const formatDateField = (date: Date) => date.toISOString().slice(0, 10);
+
+    const csvData = await Promise.all(
+      allUsers.map(async (user) => {
+        return [
+          user.name,
+          user.email,
+          user.createdAt ? formatDateField(user.createdAt) : "Unknown",
+          await Mood.countDocuments({ uid: user.uid }),
+          await JournalEntry.countDocuments({ uid: user.uid }),
+          user.character,
+          user.completedLessons.length,
+          user.onboardingInfo.ageRange,
+          user.onboardingInfo.gender,
+          user.onboardingInfo.ethnicity,
+          user.onboardingInfo.educationLevel,
+          user.onboardingInfo.counselingExperience,
+          user.onboardingInfo.residence,
+          user.lastCompletedWeeklyCheckIn
+            ? formatDateField(user.lastCompletedWeeklyCheckIn)
+            : "Never",
+          user.lastCompletedDailyCheckIn
+            ? formatDateField(user.lastCompletedDailyCheckIn)
+            : "Never",
+        ];
+      }),
+    );
+
+    res.header("Content-Type", "text/csv");
+    res.attachment("psyches_of_color_app_data.csv");
+    res.send(stringify([csvColumns, ...csvData]));
+  } catch (e) {
+    next(e);
   }
 });
 
