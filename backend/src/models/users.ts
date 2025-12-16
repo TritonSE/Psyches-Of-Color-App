@@ -40,6 +40,8 @@ type UserDoc = {
   onboardingInfo: OnboardingInfo;
   completedOnboarding: boolean;
   isAdmin: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 } & mongoose.Document;
 
 type UserModelInterface = {

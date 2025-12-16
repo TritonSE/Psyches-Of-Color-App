@@ -3,31 +3,11 @@
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../../../contexts/AuthContext";
-import { MonthlyActivity, StatsResponse, User, fetchAllUsers, fetchStats } from "../../../lib/api";
+import { ActivityGroup, StatsResponse, User, fetchAllUsers, fetchStats } from "../../../lib/api";
 
 import styles from "./statistics.module.css";
 
 import { Button } from "@/components/Button";
-
-// Helper to format month number to short name
-function formatMonth(monthStr: string): string {
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const monthNum = parseInt(monthStr, 10) - 1; // Convert "01" to 0, "12" to 11
-  return monthNames[monthNum] || monthStr;
-}
 
 function polarToCartesian(cx: number, cy: number, radius: number, angle: number) {
   const angleInRadians = ((angle - 90) * Math.PI) / 180;
@@ -190,10 +170,10 @@ function SimpleLineChart({
   dataKey2,
   xAxisKey,
 }: {
-  data: MonthlyActivity[];
+  data: ActivityGroup[];
   dataKey1: "checkIns" | "entries";
   dataKey2?: "checkIns" | "entries";
-  xAxisKey?: "month";
+  xAxisKey?: "group";
 }) {
   if (data.length === 0) return <div className={styles.noData}>No data available</div>;
 
@@ -202,12 +182,14 @@ function SimpleLineChart({
   );
 
   // Generate Y-axis labels (5 evenly spaced values from maxValue to 0)
-  const yAxisLabels = [0, 1, 2, 3, 4].map((i) => Math.round(maxValue - (i * maxValue) / 4));
+  const yAxisLabels = [0, 1, 2, 3, 4].map(
+    (i) => Math.round((maxValue - (i * maxValue) / 4) * 100) / 100,
+  );
 
   return (
     <div className={styles.lineChart}>
       <svg viewBox="0 0 600 200" className={styles.chartSvg}>
-        {/* Y-axis labels */}
+        Y-axis labels
         {yAxisLabels.map((label, i) => (
           <text
             key={`y-${i}`}
@@ -220,7 +202,6 @@ function SimpleLineChart({
             {label}
           </text>
         ))}
-
         {/* Grid lines */}
         {[0, 1, 2, 3, 4].map((i) => (
           <line
@@ -233,12 +214,11 @@ function SimpleLineChart({
             strokeWidth="1"
           />
         ))}
-
         {/* Data line 1 */}
         <polyline
           points={data
             .map((d, i) => {
-              const x = 50 + i * (500 / (data.length - 1));
+              const x = 50 + i * (500 / Math.max(data.length - 1, 1));
               const y = 180 - (d[dataKey1] / maxValue) * 140;
               return `${x},${y}`;
             })
@@ -247,13 +227,12 @@ function SimpleLineChart({
           stroke="#1a4d2e"
           strokeWidth="2"
         />
-
         {/* Data line 2 (if provided) */}
         {dataKey2 && (
           <polyline
             points={data
               .map((d, i) => {
-                const x = 50 + i * (500 / (data.length - 1));
+                const x = 50 + i * (500 / Math.max(data.length - 1, 1));
                 const y = 180 - (d[dataKey2] / maxValue) * 140;
                 return `${x},${y}`;
               })
@@ -263,22 +242,88 @@ function SimpleLineChart({
             strokeWidth="2"
           />
         )}
-
         {/* X-axis labels */}
         {data.map((d, i) => {
           let label: string;
           if (xAxisKey) {
             label = d[xAxisKey];
-          } else if (d.month) {
-            const monthNum = d.month.split("-")[1];
-            label = formatMonth(monthNum);
+          } else if (d.group) {
+            label = d.group;
           } else {
             label = String(i);
           }
           return (
             <text
               key={i}
-              x={50 + i * (500 / (data.length - 1))}
+              x={50 + i * (500 / Math.max(data.length - 1, 1))}
+              y="195"
+              textAnchor="middle"
+              fontSize="12"
+              fill="#6c6c6c"
+            >
+              {label}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+function UserRetentionChart({ data }: { data: number[] }) {
+  if (data.length === 0) return <div className={styles.noData}>No data available</div>;
+
+  // Generate Y-axis labels (5 evenly spaced values from 0 to 1)
+  const yAxisLabels = [0, 1, 2, 3, 4].map((i) => (4 - i) / 4.0);
+
+  return (
+    <div className={styles.lineChart}>
+      <svg viewBox="0 0 600 200" className={styles.chartSvg}>
+        {yAxisLabels.map((label, i) => (
+          <text
+            key={`y-${i}`}
+            x="35"
+            y={40 + i * 35 + 4}
+            textAnchor="end"
+            fontSize="12"
+            fill="#6c6c6c"
+          >
+            {label}
+          </text>
+        ))}
+        {/* Grid lines */}
+        {[0, 1, 2, 3, 4].map((i) => (
+          <line
+            key={i}
+            x1="45"
+            y1={40 + i * 35}
+            x2="600"
+            y2={40 + i * 35}
+            stroke="#ebebeb"
+            strokeWidth="1"
+          />
+        ))}
+        {/* Data line */}
+        <polyline
+          points={data
+            .map((d, i) => {
+              const x = 50 + i * (500 / Math.max(data.length - 1, 1));
+              const y = 180 - d * 140;
+              return `${x},${y}`;
+            })
+            .join(" ")}
+          fill="none"
+          stroke="#1a4d2e"
+          strokeWidth="2"
+        />
+        {/* X-axis labels */}
+        {data.map((d, i) => {
+          if (data.length >= 10 && i % 5 !== 0) return null;
+
+          const label = `Day ${i}`;
+          return (
+            <text
+              key={i}
+              x={50 + i * (500 / Math.max(data.length - 1, 1))}
               y="195"
               textAnchor="middle"
               fontSize="12"
@@ -293,6 +338,18 @@ function SimpleLineChart({
   );
 }
 
+const TIME_RANGE_OPTIONS = [
+  "All Time",
+  "Past Week",
+  "Past Month",
+  "Past Year",
+  "Custom Range",
+] as const;
+type TimeRangeOption = (typeof TIME_RANGE_OPTIONS)[number];
+
+const ACTIVITY_GROUP_OPTIONS = ["Yearly", "Monthly", "Daily"] as const;
+type ActivityGroupOption = (typeof ACTIVITY_GROUP_OPTIONS)[number];
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<StatsResponse | null>(null);
@@ -300,23 +357,60 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>();
   const [emailsCopied, setEmailsCopied] = useState(false);
+  const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRangeOption>("All Time");
+  const [filterStartDate, setFilterStartDate] = useState("");
+  const [filterEndDate, setFilterEndDate] = useState("");
+  const [activityGroupOption, setActivityGroupOption] = useState<ActivityGroupOption>("Monthly");
+
+  const loadStats = async () => {
+    if (!user) return;
+
+    let startDate = "",
+      endDate = "";
+    switch (selectedTimeRange) {
+      case "All Time":
+        // All time - don't filter at all
+        break;
+      case "Past Year":
+        startDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 365)
+          .toISOString()
+          .slice(0, 10);
+        break;
+      case "Past Month":
+        startDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30)
+          .toISOString()
+          .slice(0, 10);
+        break;
+      case "Past Week":
+        startDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)
+          .toISOString()
+          .slice(0, 10);
+        break;
+      case "Custom Range":
+      default:
+        startDate = filterStartDate;
+        endDate = filterEndDate;
+    }
+
+    try {
+      setLoading(true);
+      const token = await user.getIdToken();
+      const data = await fetchStats(token, startDate, endDate, activityGroupOption);
+      setStats(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load statistics");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadStats = async () => {
-      if (!user) return;
+    if (selectedTimeRange === "Custom Range") return;
 
-      try {
-        setLoading(true);
-        const token = await user.getIdToken();
-        const data = await fetchStats(token);
-        setStats(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load statistics");
-      } finally {
-        setLoading(false);
-      }
-    };
+    void loadStats();
+  }, [user, selectedTimeRange, activityGroupOption]);
 
+  useEffect(() => {
     const loadAllUsers = async () => {
       if (!user) return;
 
@@ -325,7 +419,6 @@ export default function DashboardPage() {
       setAllUsers(data);
     };
 
-    void loadStats();
     void loadAllUsers();
   }, [user]);
 
@@ -346,11 +439,12 @@ export default function DashboardPage() {
     );
   }
 
-  const { userActivity, monthlyActivity, onboardingAnalytics } = stats;
+  const { userActivity, activityGroups, onboardingAnalytics } = stats;
 
   const newAccountsChangePercent = userActivity.newAccountsChangePercent ?? null;
   const totalUsersChangePercent = userActivity.totalUsersChangePercent ?? null;
   const avgCheckInsChangePercent = userActivity.avgCheckInsChangePercent ?? null;
+  const avgEntriesChangePercent = userActivity.avgEntriesChangePercent ?? null;
 
   // Calculate percentages for demographics
   const totalUsers = userActivity.totalUserCount;
@@ -389,15 +483,75 @@ export default function DashboardPage() {
     percentage: calculatePercentage(count),
   }));
 
+  const timePeriodName =
+    selectedTimeRange === "Past Month"
+      ? "Month"
+      : selectedTimeRange === "Past Year"
+        ? "Year"
+        : selectedTimeRange === "Past Week"
+          ? "Week"
+          : "Period";
+
   return (
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
         <h1 className={styles.title}>Statistics</h1>
         <div className={styles.filters}>
-          <button className={styles.filterButton}>All Time</button>
           <button className={styles.downloadButton}>DOWNLOAD</button>
         </div>
+      </div>
+
+      {/* Time range filter */}
+      <div className={styles.timeRangeFilterRow}>
+        <select
+          value={selectedTimeRange}
+          onChange={(e) => {
+            setSelectedTimeRange(e.target.value as TimeRangeOption);
+          }}
+          className={styles.dropdown}
+        >
+          {TIME_RANGE_OPTIONS.map((timeRange) => (
+            <option key={timeRange} value={timeRange}>
+              {timeRange}
+            </option>
+          ))}
+        </select>
+        {selectedTimeRange === "Custom Range" && (
+          <>
+            <label className={styles.dateInputLabel} htmlFor="start-date">
+              Start date
+            </label>
+            <input
+              className={styles.dropdown}
+              type="date"
+              id="start-date"
+              name="start_date"
+              value={filterStartDate}
+              onChange={(e) => {
+                setFilterStartDate(e.target.value);
+              }}
+            />
+
+            <label className={styles.dateInputLabel} htmlFor="end-date">
+              End date
+            </label>
+            <input
+              className={styles.dropdown}
+              type="date"
+              id="end-date"
+              name="end_date"
+              value={filterEndDate}
+              onChange={(e) => {
+                setFilterEndDate(e.target.value);
+              }}
+            />
+
+            <Button variant="primary" filled={false} onClick={() => void loadStats()}>
+              Apply Changes
+            </Button>
+          </>
+        )}
       </div>
 
       {/* User Activity Section */}
@@ -408,78 +562,82 @@ export default function DashboardPage() {
           <div className={styles.statCard}>
             <div className={styles.statLabel}>Total User Count</div>
             <div className={styles.statValue}>{userActivity.totalUserCount.toLocaleString()}</div>
-            {/* DUMMY DATA: Percentage change is hardcoded. To make real, backend needs to store/compare previous month's data */}
             <div className={styles.statChange}>
               {totalUsersChangePercent === null ? (
-                <span>— vs. Last Month</span>
+                <span>— vs. Last {timePeriodName}</span>
               ) : totalUsersChangePercent > 0 ? (
                 <span className={styles.changePositive}>
-                  ↑ {totalUsersChangePercent}% vs. Last Month
+                  ↑ {totalUsersChangePercent}% vs. Last {timePeriodName}
                 </span>
               ) : totalUsersChangePercent < 0 ? (
                 <span className={styles.changeNegative}>
-                  ↓ {Math.abs(Number(totalUsersChangePercent))}% vs. Last Month
+                  ↓ {Math.abs(Number(totalUsersChangePercent))}% vs. Last {timePeriodName}
                 </span>
               ) : (
-                <span>— vs. Last Month</span>
+                <span>— vs. Last {timePeriodName}</span>
               )}
             </div>
           </div>
 
           <div className={styles.statCard}>
             <div className={styles.statLabel}>New Accounts Created</div>
-            {/* DUMMY DATA: Backend returns 0 because User model lacks createdAt timestamp. Add timestamps: true to schema to fix */}
             <div className={styles.statValue}>
               {userActivity.newAccountsCreated.toLocaleString()}
             </div>
-            {/* DUMMY DATA: Percentage change is hardcoded */}
             <div className={styles.statChange}>
               {newAccountsChangePercent === null ? (
-                <span>— vs. Last Month</span>
+                <span>— vs. Last {timePeriodName}</span>
               ) : newAccountsChangePercent > 0 ? (
                 <span className={styles.changePositive}>
-                  ↑ {newAccountsChangePercent}% vs. Last Month
+                  ↑ {newAccountsChangePercent}% vs. Last {timePeriodName}
                 </span>
               ) : newAccountsChangePercent < 0 ? (
                 <span className={styles.changeNegative}>
-                  ↓ {Math.abs(Number(newAccountsChangePercent))}% vs. Last Month
+                  ↓ {Math.abs(Number(newAccountsChangePercent))}% vs. Last {timePeriodName}
                 </span>
               ) : (
-                <span>— vs. Last Month</span>
+                <span>— vs. Last {timePeriodName}</span>
               )}
             </div>
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Avg Check-Ins/User</div>
+            <div className={styles.statLabel}>Avg Check-Ins per User</div>
             <div className={styles.statValue}>{userActivity.avgCheckInsPerUser}</div>
-            {/* DUMMY DATA: Percentage change is hardcoded */}
             <div className={styles.statChange}>
               {avgCheckInsChangePercent === null ? (
-                <span>— vs. Last Month</span>
+                <span>— vs. Last {timePeriodName}</span>
               ) : avgCheckInsChangePercent > 0 ? (
                 <span className={styles.changePositive}>
-                  ↑ {avgCheckInsChangePercent}% vs. Last Month
+                  ↑ {avgCheckInsChangePercent}% vs. Last {timePeriodName}
                 </span>
               ) : avgCheckInsChangePercent < 0 ? (
                 <span className={styles.changeNegative}>
-                  ↓ {Math.abs(Number(avgCheckInsChangePercent))}% vs. Last Month
+                  ↓ {Math.abs(Number(avgCheckInsChangePercent))}% vs. Last {timePeriodName}
                 </span>
               ) : (
-                <span>— vs. Last Month</span>
+                <span>— vs. Last {timePeriodName}</span>
               )}
             </div>
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Avg Time App Opened</div>
-            {/* DUMMY DATA: Using newAccountsCreated as placeholder. Real implementation needs app open tracking in mobile app */}
-            <div className={styles.statValue}>
-              {userActivity.newAccountsCreated.toLocaleString()}
-            </div>
-            {/* DUMMY DATA: Percentage change is hardcoded */}
+            <div className={styles.statLabel}>Avg Journal Entries per User</div>
+            <div className={styles.statValue}>{userActivity.avgEntriesPerUser}</div>
             <div className={styles.statChange}>
-              <span>— vs. Last Month</span>
+              {avgEntriesChangePercent === null ? (
+                <span>— vs. Last {timePeriodName}</span>
+              ) : avgEntriesChangePercent > 0 ? (
+                <span className={styles.changePositive}>
+                  ↑ {avgCheckInsChangePercent}% vs. Last {timePeriodName}
+                </span>
+              ) : avgEntriesChangePercent < 0 ? (
+                <span className={styles.changeNegative}>
+                  ↓ {Math.abs(Number(avgEntriesChangePercent))}% vs. Last {timePeriodName}
+                </span>
+              ) : (
+                <span>— vs. Last {timePeriodName}</span>
+              )}
             </div>
           </div>
         </div>
@@ -487,7 +645,22 @@ export default function DashboardPage() {
         {/* Monthly Activities Chart */}
         <div className={styles.chartCard}>
           <div className={styles.chartHeader}>
-            <h3 className={styles.chartTitle}>Average Monthly User Activities</h3>
+            <h3 className={styles.chartTitle}>User Activities Over Time</h3>
+
+            <select
+              value={activityGroupOption}
+              onChange={(e) => {
+                setActivityGroupOption(e.target.value as ActivityGroupOption);
+              }}
+              className={styles.dropdown}
+            >
+              {ACTIVITY_GROUP_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+
             <div className={styles.legend}>
               <span className={styles.legendItem}>
                 <span className={`${styles.legendDot} ${styles.dotCheckIns}`}></span>
@@ -495,25 +668,33 @@ export default function DashboardPage() {
               </span>
               <span className={styles.legendItem}>
                 <span className={`${styles.legendDot} ${styles.dotEntries}`}></span>
-                Entries Written
+                Journal Entries Written
               </span>
             </div>
           </div>
           <div className={styles.statsRow}>
             <div className={styles.stat}>
-              <div className={styles.statNum}>
-                {Math.round(userActivity.avgCheckInsPerUser * 100)}
-              </div>
-              <div className={styles.statLabel}>Check-ins</div>
+              <div className={styles.statNum}>{userActivity.totalCheckIns}</div>
+              <div className={styles.statLabel}>Total Check-ins</div>
             </div>
             <div className={styles.stat}>
-              <div className={styles.statNum}>
-                {Math.round(userActivity.avgEntriesPerUser * 100)}
-              </div>
-              <div className={styles.statLabel}>Entries Written</div>
+              <div className={styles.statNum}>{userActivity.totalEntries}</div>
+              <div className={styles.statLabel}>Total Journal Entries Written</div>
             </div>
           </div>
-          <SimpleLineChart data={monthlyActivity} dataKey1="checkIns" dataKey2="entries" />
+          <SimpleLineChart data={activityGroups} dataKey1="checkIns" dataKey2="entries" />
+        </div>
+
+        {/* User Retention Chart */}
+        <div className={styles.chartCard}>
+          <div className={styles.chartHeader}>
+            <h3 className={styles.chartTitle}>User Retention</h3>
+          </div>
+          <p className={styles.statLabel}>
+            Calculated as the percentage of users who interact with the app each day after signing
+            up.
+          </p>
+          <UserRetentionChart data={stats.userRetention} />
         </div>
       </section>
 

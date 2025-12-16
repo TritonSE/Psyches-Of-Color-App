@@ -15,13 +15,16 @@ export type UserActivityStats = {
   totalUsersChangePercent?: number | null;
   newAccountsCreated: number;
   newAccountsChangePercent?: number | null;
+  totalCheckIns: number;
   avgCheckInsPerUser: number;
   avgCheckInsChangePercent?: number | null;
+  totalEntries: number;
   avgEntriesPerUser: number;
+  avgEntriesChangePercent?: number | null;
 };
 
-export type MonthlyActivity = {
-  month: string;
+export type ActivityGroup = {
+  group: string;
   checkIns: number;
   entries: number;
 };
@@ -37,8 +40,9 @@ export type OnboardingAnalytics = {
 
 export type StatsResponse = {
   userActivity: UserActivityStats;
-  monthlyActivity: MonthlyActivity[];
+  activityGroups: ActivityGroup[];
   onboardingAnalytics: OnboardingAnalytics;
+  userRetention: number[];
 };
 
 export type ActivityType = "mcq" | "wwyd" | "text";
@@ -82,17 +86,20 @@ function generateMockData(): StatsResponse {
       totalUsersChangePercent: 12,
       newAccountsCreated: 486,
       newAccountsChangePercent: 8,
+      totalCheckIns: 12031,
       avgCheckInsPerUser: 150,
       avgCheckInsChangePercent: 5,
+      totalEntries: 512,
       avgEntriesPerUser: 200,
+      avgEntriesChangePercent: 3,
     },
-    monthlyActivity: [
-      { month: "2024-07", checkIns: 120, entries: 85 },
-      { month: "2024-08", checkIns: 135, entries: 95 },
-      { month: "2024-09", checkIns: 180, entries: 120 },
-      { month: "2024-10", checkIns: 225, entries: 145 },
-      { month: "2024-11", checkIns: 280, entries: 180 },
-      { month: "2024-12", checkIns: 315, entries: 210 },
+    activityGroups: [
+      { group: "2024-07", checkIns: 120, entries: 85 },
+      { group: "2024-08", checkIns: 135, entries: 95 },
+      { group: "2024-09", checkIns: 180, entries: 120 },
+      { group: "2024-10", checkIns: 225, entries: 145 },
+      { group: "2024-11", checkIns: 280, entries: 180 },
+      { group: "2024-12", checkIns: 315, entries: 210 },
     ],
     onboardingAnalytics: {
       ageRange: {
@@ -134,6 +141,7 @@ function generateMockData(): StatsResponse {
         Rural: 420,
       },
     },
+    userRetention: [1, 0.75, 0.6, 0.5, 0.2, 0, 0],
   };
 }
 
@@ -142,19 +150,27 @@ function generateMockData(): StatsResponse {
  * @param uid - User ID from Firebase auth
  * @returns Promise with statistics data
  */
-export async function fetchStats(idToken: string): Promise<StatsResponse> {
+export async function fetchStats(
+  idToken: string,
+  startDate: string,
+  endDate: string,
+  activityGroup: string,
+): Promise<StatsResponse> {
   // DEV ONLY: Return mock data
   if (USE_MOCK_DATA) {
     console.warn("⚠️  DEV MODE: Using mock statistics data!");
     return generateMockData();
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/stats`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`,
+  const response = await fetch(
+    `${API_BASE_URL}/api/stats?start_date=${startDate}&end_date=${endDate}&activity_group=${activityGroup}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
     },
-  });
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch statistics");
