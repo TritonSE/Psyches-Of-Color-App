@@ -5,6 +5,8 @@ const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
 export type User = {
   _id: string;
+  name: string;
+  email: string;
   isAdmin: boolean;
 };
 
@@ -13,13 +15,16 @@ export type UserActivityStats = {
   totalUsersChangePercent?: number | null;
   newAccountsCreated: number;
   newAccountsChangePercent?: number | null;
+  totalCheckIns: number;
   avgCheckInsPerUser: number;
   avgCheckInsChangePercent?: number | null;
+  totalEntries: number;
   avgEntriesPerUser: number;
+  avgEntriesChangePercent?: number | null;
 };
 
-export type MonthlyActivity = {
-  month: string;
+export type ActivityGroup = {
+  group: string;
   checkIns: number;
   entries: number;
 };
@@ -35,8 +40,40 @@ export type OnboardingAnalytics = {
 
 export type StatsResponse = {
   userActivity: UserActivityStats;
-  monthlyActivity: MonthlyActivity[];
+  activityGroups: ActivityGroup[];
   onboardingAnalytics: OnboardingAnalytics;
+  userRetention: number[];
+};
+
+export type ActivityType = "mcq" | "wwyd" | "text";
+
+export type Unit = {
+  _id: string;
+  title: string;
+  order?: number;
+  lessons: Lesson[];
+};
+
+export type Lesson = {
+  _id: string;
+  title: string;
+  order?: number;
+  description: string;
+  activities: Activity[];
+  unit: string;
+};
+
+export type ActivityOption = {
+  content: string;
+  affirmation: string;
+};
+
+export type Activity = {
+  _id: string;
+  type: ActivityType;
+  question: string;
+  options?: ActivityOption[];
+  affirmation?: string;
 };
 
 /**
@@ -49,17 +86,20 @@ function generateMockData(): StatsResponse {
       totalUsersChangePercent: 12,
       newAccountsCreated: 486,
       newAccountsChangePercent: 8,
+      totalCheckIns: 12031,
       avgCheckInsPerUser: 150,
       avgCheckInsChangePercent: 5,
+      totalEntries: 512,
       avgEntriesPerUser: 200,
+      avgEntriesChangePercent: 3,
     },
-    monthlyActivity: [
-      { month: "2024-07", checkIns: 120, entries: 85 },
-      { month: "2024-08", checkIns: 135, entries: 95 },
-      { month: "2024-09", checkIns: 180, entries: 120 },
-      { month: "2024-10", checkIns: 225, entries: 145 },
-      { month: "2024-11", checkIns: 280, entries: 180 },
-      { month: "2024-12", checkIns: 315, entries: 210 },
+    activityGroups: [
+      { group: "2024-07", checkIns: 120, entries: 85 },
+      { group: "2024-08", checkIns: 135, entries: 95 },
+      { group: "2024-09", checkIns: 180, entries: 120 },
+      { group: "2024-10", checkIns: 225, entries: 145 },
+      { group: "2024-11", checkIns: 280, entries: 180 },
+      { group: "2024-12", checkIns: 315, entries: 210 },
     ],
     onboardingAnalytics: {
       ageRange: {
@@ -101,6 +141,7 @@ function generateMockData(): StatsResponse {
         Rural: 420,
       },
     },
+    userRetention: [1, 0.75, 0.6, 0.5, 0.2, 0, 0],
   };
 }
 
@@ -109,25 +150,62 @@ function generateMockData(): StatsResponse {
  * @param uid - User ID from Firebase auth
  * @returns Promise with statistics data
  */
-export async function fetchStats(idToken: string): Promise<StatsResponse> {
+export async function fetchStats(
+  idToken: string,
+  startDate: string,
+  endDate: string,
+  activityGroup: string,
+): Promise<StatsResponse> {
   // DEV ONLY: Return mock data
   if (USE_MOCK_DATA) {
     console.warn("⚠️  DEV MODE: Using mock statistics data!");
     return generateMockData();
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/stats`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`,
+  const response = await fetch(
+    `${API_BASE_URL}/api/stats?start_date=${startDate}&end_date=${endDate}&activity_group=${activityGroup}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
     },
-  });
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch statistics");
   }
 
   return (await response.json()) as StatsResponse;
+}
+
+export async function fetchAllUsers(idToken: string): Promise<User[]> {
+  const response = await fetch(`${API_BASE_URL}/api/users/all`, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch users");
+  }
+
+  const data = (await response.json()) as { users: User[] };
+  return data.users;
+}
+
+export async function downloadData(idToken: string): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/stats/export_all`, {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to download file");
+  }
+
+  return await response.blob();
 }
 
 /**
@@ -150,5 +228,210 @@ export async function verifyAdmin(idToken: string): Promise<boolean> {
   } catch (error) {
     console.error("Error verifying admin status:", error);
     return false;
+  }
+}
+
+// Units
+export async function fetchAllUnits(idToken: string): Promise<Unit[]> {
+  const response = await fetch(`${API_BASE_URL}/api/units`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch units");
+  }
+
+  return (await response.json()) as Unit[];
+}
+
+export async function createUnit(idToken: string, title: string): Promise<Unit> {
+  const response = await fetch(`${API_BASE_URL}/api/units`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create unit");
+  }
+
+  return (await response.json()) as Unit;
+}
+
+export async function updateUnit(
+  idToken: string,
+  unitId: string,
+  title?: string,
+  order?: number,
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/units/${unitId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+      order,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update unit");
+  }
+}
+
+export async function deleteUnit(idToken: string, unitId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/units/${unitId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete unit");
+  }
+}
+
+// Lessons
+export async function createLesson(
+  idToken: string,
+  title: string,
+  description: string,
+  unitId: string,
+): Promise<Lesson> {
+  const response = await fetch(`${API_BASE_URL}/api/lessons`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+      description,
+      unit: unitId,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create lesson");
+  }
+
+  return (await response.json()) as Lesson;
+}
+
+export async function updateLesson(
+  idToken: string,
+  lessonId: string,
+  title?: string,
+  description?: string,
+  order?: number,
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      title,
+      description,
+      order,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update lesson");
+  }
+}
+
+export async function deleteLesson(idToken: string, lessonId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete lesson");
+  }
+}
+
+// Activities
+export async function createActivity(
+  idToken: string,
+  activityType: ActivityType,
+  question: string,
+  lessonId: string,
+  affirmation?: string,
+  options?: ActivityOption[],
+): Promise<Lesson> {
+  const response = await fetch(`${API_BASE_URL}/api/activities`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      type: activityType,
+      question,
+      lesson: lessonId,
+      options,
+      affirmation,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create activity");
+  }
+
+  return (await response.json()) as Lesson;
+}
+
+export async function updateActivity(
+  idToken: string,
+  activityId: string,
+  question: string,
+  affirmation?: string,
+  options?: ActivityOption[],
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      question,
+      options,
+      affirmation,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update lesson");
+  }
+}
+
+export async function deleteActivity(idToken: string, activityId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete activity");
   }
 }

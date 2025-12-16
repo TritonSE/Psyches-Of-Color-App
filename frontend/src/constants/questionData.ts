@@ -32,13 +32,11 @@ export const onboardingQuestions: QuestionData[] = [
     type: "multipleChoice",
     question: "What gender do you identify with?",
     options: ["Male", "Female", "Non-binary", "Prefer not to say", "Other"],
-    otherOptions: ["Trans-Male", "Trans-Female", "Gender Non-Conforming"],
   },
   {
     type: "multipleChoice",
     question: "Which ethnicity or ethnic group do you identify with (Select all that apply)",
     options: ["Black or African", "Hispanic or Latino", "Asian", "White", "Other"],
-    otherOptions: ["Option 1", "Option 2"],
   },
   {
     type: "multipleChoice",

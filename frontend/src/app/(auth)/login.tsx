@@ -1,15 +1,17 @@
 import { Link, Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
 import GoogleLogo from "@/assets/logo-google.svg";
+import Logo from "@/assets/poc-logo.png";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import { lightModeColors } from "@/constants/colors";
 import { useAuth } from "@/contexts/userContext";
 import { createMongoUser, getMongoUser, loginEmailPassword, signInWithGoogle } from "@/lib/auth";
+import { User } from "@/types";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -72,16 +74,21 @@ export default function Login() {
       const res = await signInWithGoogle();
       if (res.success) {
         const token = await res.user.getIdToken();
-        let user = await getMongoUser(token);
-        if (user === null && res.user.email !== null) {
-          // Create user if necessary because Google doesn't distinguish between signing in vs.
-          // signing up with Google, so we have to determine whether the user just signed up
-          user = await createMongoUser({
-            name: res.user.displayName ?? "User",
-            email: res.user.email,
-          });
+        let user: User | null = null;
+        try {
+          user = await getMongoUser(token);
+        } catch {
+          if (res.user.email !== null) {
+            // Create user if necessary because Google doesn't distinguish between signing in vs.
+            // signing up with Google, so we have to determine whether the user just signed up
+            user = await createMongoUser({
+              name: res.user.displayName ?? "User",
+              email: res.user.email,
+            });
+          }
+        } finally {
+          setMongoUser(user);
         }
-        setMongoUser(user);
       } else {
         Alert.alert(`Error signing in with Google: ${res.error.message}`);
       }
@@ -132,8 +139,8 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Mascots style={styles.logo} />
-        <Text style={styles.title}>Psyches of Color</Text>
+        <Mascots style={styles.mascots} />
+        <Image style={styles.logo} source={Logo} />
       </View>
       <InputBox
         label="Email"
@@ -234,10 +241,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: {
+  mascots: {
     width: 253,
     height: 116,
     marginBottom: 16,
+  },
+  logo: {
+    width: 300,
+    height: 36,
   },
   title: {
     color: lightModeColors.darkFont,

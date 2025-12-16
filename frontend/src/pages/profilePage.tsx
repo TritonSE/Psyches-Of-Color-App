@@ -22,6 +22,10 @@ const resourcesPhoneNumbers = [
     number: "911",
   },
   {
+    name: "Domestic Violence Hotline",
+    number: "1-800-799-SAFE",
+  },
+  {
     name: "LGBTQIA Hotline",
     number: "1-888-843-4564",
   },
@@ -254,6 +258,7 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 20,
+    gap: 8,
   },
   sectionTitle: {
     fontSize: 18,
@@ -340,7 +345,8 @@ const styles = StyleSheet.create({
   resourcesRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    flexWrap: "wrap",
+    gap: 4,
     flex: 1,
   },
   resourcesText: {

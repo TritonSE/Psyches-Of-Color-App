@@ -49,22 +49,6 @@
   align-items: center;
 }
 
-.filterButton {
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid #ebebeb;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #000000;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filterButton:hover {
-  border-color: #1a4d2e;
-  color: #1a4d2e;
-}
-
 .dropdown {
   padding: 8px 16px;
   background: white;
@@ -89,6 +73,21 @@
 
 .downloadButton:hover {
   background: #2d5f3f;
+}
+
+.timeRangeFilterRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dateInputLabel {
+  margin-left: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
 }
 
 .section {
@@ -425,6 +424,25 @@
   gap: 12px;
   font-size: 14px;
   color: #6c6c6c;
+}
+
+.usersTable {
+  margin-top: 24px;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #000;
+  color: #000;
+}
+
+.usersTableCell {
+  border: 1px solid #000;
+  padding: 8px 12px;
+  text-align: left;
+  color: #000;
+}
+
+.usersTableHeaderCell {
+  font-weight: 600;
 }
 
 @media (max-width: 1200px) {

@@ -1,0 +1,30 @@
+.button {
+  cursor: pointer;
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.primaryFilled {
+  background: #1a4d2e;
+  color: white;
+}
+
+.dangerFilled {
+  background: #c13d2f;
+  color: white;
+}
+
+.primaryOutlined {
+  background: white;
+  color: #1a4d2e;
+  border: 1px solid #1a4d2e;
+}
+
+.dangerOutlined {
+  background: white;
+  color: #c13d2f;
+  border: 1px solid #c13d2f;
+}

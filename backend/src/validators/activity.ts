@@ -1,8 +1,8 @@
 import { body } from "express-validator";
 
 const validateType = body("type")
-  .isIn(["reflection", "mcq", "wwyd"])
-  .withMessage("type must be one of: reflection, mcq, wwyd");
+  .isIn(["text", "mcq", "wwyd"])
+  .withMessage("type must be one of: text, mcq, wwyd");
 
 const validateQuestion = body("question")
   .notEmpty()
@@ -21,16 +21,16 @@ const validateOptions = body("options").custom((value, { req }) => {
       }
     });
   } else if (value) {
-    throw new Error("options should not be provided for reflection type");
+    throw new Error("options should not be provided for text type");
   }
 
   return true;
 });
 
 const validateAffirmation = body("affirmation").custom((value, { req }) => {
-  if (req.body.type === "reflection") {
+  if (req.body.type === "text") {
     if (!value) {
-      throw new Error("affirmation is required for reflection type");
+      throw new Error("affirmation is required for text type");
     }
   } else if (value) {
     throw new Error("affirmation should not be provided for mcq or wwyd types");

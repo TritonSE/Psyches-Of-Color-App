@@ -41,7 +41,7 @@ const activitySchema = new mongoose.Schema(
           },
           isCorrect: {
             type: Boolean,
-            default: false, // Added default false
+            default: true,
           },
         },
       ],
@@ -61,6 +61,10 @@ const activitySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Lesson",
       required: false, // Changed to false to allow circular creation in seed script
+    },
+    affirmation: {
+      type: String,
+      required: false,
     },
   },
   {

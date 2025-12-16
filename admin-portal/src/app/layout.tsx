@@ -5,6 +5,8 @@ import { AuthProvider } from "../contexts/AuthContext";
 
 import type { Metadata } from "next";
 
+import { ContextEditorProvider } from "@/contexts/ContentEditorContext";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ContextEditorProvider>{children}</ContextEditorProvider>
+        </AuthProvider>
       </body>
     </html>
   );

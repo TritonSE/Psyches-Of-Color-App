@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     if (!loading) {
       if (user && isAdmin) {
-        router.push("/dashboard");
+        router.push("/dashboard/statistics");
       } else {
         router.push("/login");
       }

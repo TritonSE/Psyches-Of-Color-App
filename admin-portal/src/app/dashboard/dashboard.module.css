@@ -30,7 +30,12 @@
   flex: 1;
 }
 
+.navLink {
+  width: 100%;
+}
+
 .navButton {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;

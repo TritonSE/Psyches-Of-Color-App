@@ -1,6 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Activity } from "../models/activity";
 import createHttpError from "http-errors";
+import { createActivityValidator, updateActivityValidator } from "src/validators/activity";
+import { matchedData, validationResult } from "express-validator";
+import validationErrorParser from "src/util/validationErrorParser";
+import { adminMiddleware, authMiddleware } from "src/middleware/auth";
+import { Lesson } from "src/models/lesson";
 
 const router = express.Router();
 
@@ -21,87 +26,124 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-// For admin portal, add auth checks first
-// // POST route to create a new activity
-// router.post(
-//   "/",
-//   createActivityValidator,
-//   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     try {
-//       const errors = validationResult(req);
+// POST route to create a new activity
+router.post(
+  "/",
+  authMiddleware,
+  adminMiddleware,
+  createActivityValidator,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const errors = validationResult(req);
 
-//       if (!errors.isEmpty()) {
-//         validationErrorParser(errors);
-//       }
+      if (!errors.isEmpty()) {
+        validationErrorParser(errors);
+      }
 
-//       const { type, question, options, affirmation, lesson } = matchedData(req);
+      const { type, question, options, affirmation, lesson } = matchedData(req);
 
-//       const newActivity = new Activity({
-//         type,
-//         question,
-//         options,
-//         affirmation,
-//         lesson,
-//       });
+      const newActivity = new Activity({
+        type,
+        question,
+        options,
+        affirmation,
+        lesson,
+      });
 
-//       const savedActivity = await newActivity.save();
+      const savedActivity = await newActivity.save();
 
-//       res.status(201).json(savedActivity);
-//     } catch (e) {
-//       next(e);
-//     }
-//   },
-// );
+      // Add this activity's ID to its parent lesson's activity list
+      await Lesson.findByIdAndUpdate(lesson, {
+        $push: {
+          activities: savedActivity._id,
+        },
+      });
 
-// // PUT route to update an existing activity
-// router.put(
-//   "/:id",
-//   updateActivityValidator,
-//   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     const { id } = req.params;
+      res.status(201).json(savedActivity);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
 
-//     try {
-//       const errors = validationResult(req);
+// PUT route to update an existing activity
+router.put(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  updateActivityValidator,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { id } = req.params;
 
-//       if (!errors.isEmpty()) {
-//         validationErrorParser(errors);
-//       }
+    try {
+      const errors = validationResult(req);
 
-//       const { question, options, affirmation, lesson } = matchedData(req);
+      if (!errors.isEmpty()) {
+        validationErrorParser(errors);
+      }
 
-//       if (!question && !options && !affirmation && !lesson) {
-//         throw createHttpError(400, "At least one field must be provided for update");
-//       }
+      const { question, options, affirmation, lesson } = matchedData(req);
 
-//       const activity = await Activity.findById(id);
+      if (!question && !options && !affirmation && !lesson) {
+        throw createHttpError(400, "At least one field must be provided for update");
+      }
 
-//       if (!activity) {
-//         throw createHttpError(404, "Activity not found");
-//       }
+      const activity = await Activity.findById(id);
 
-//       // Only allow updating options if the type is mcq or wwyd
-//       if (activity.type !== "mcq" && activity.type !== "wwyd" && options) {
-//         throw createHttpError(400, "options can only be updated for mcq or wwyd activities");
-//       }
+      if (!activity) {
+        throw createHttpError(404, "Activity not found");
+      }
 
-//       // Only allow updating affirmation if the type is reflection
-//       if (activity.type !== "reflection" && affirmation) {
-//         throw createHttpError(400, "affirmation can only be updated for reflection activities");
-//       }
+      // Only allow updating options if the type is mcq or wwyd
+      if (activity.type !== "mcq" && activity.type !== "wwyd" && options) {
+        throw createHttpError(400, "options can only be updated for mcq or wwyd activities");
+      }
 
-//       // Update the activity fields
-//       activity.question = question || activity.question;
-//       activity.options = options || activity.options;
-//       activity.affirmation = affirmation || activity.affirmation;
-//       activity.lesson = lesson || activity.lesson;
+      // // Only allow updating affirmation if the type is reflection
+      // if (activity.type !== "reflection" && affirmation) {
+      //   throw createHttpError(400, "affirmation can only be updated for reflection activities");
+      // }
 
-//       const updatedActivity = await activity.save();
+      // Update the activity fields
+      activity.question = question || activity.question;
+      activity.options = options || activity.options;
+      activity.affirmation = affirmation || activity.affirmation;
+      activity.lesson = lesson || activity.lesson;
 
-//       res.status(200).json(updatedActivity);
-//     } catch (e) {
-//       next(e);
-//     }
-//   },
-// );
+      const updatedActivity = await activity.save();
+
+      res.status(200).json(updatedActivity);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+// DELETE route to delete an activity
+router.delete(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const deletedActivity = await Activity.findByIdAndDelete({ _id: id });
+      if (deletedActivity === null) {
+        throw createHttpError(404, "Activity not found");
+      }
+
+      // Remove this activity's ID from its parent lesson's activity list
+      await Lesson.findByIdAndUpdate(deletedActivity.lesson, {
+        $pull: {
+          lessons: deletedActivity._id,
+        },
+      });
+
+      res.status(204).send();
+    } catch (e) {
+      next(e);
+    }
+  },
+);
 
 export { router as activityRouter };

@@ -22,7 +22,8 @@ export default function ActivitiesPage() {
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [currLesson, setCurrLesson] = useState<Lesson | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStartActivityModalOpen, setIsStartActivityModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   // 1. New State for completion view
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
@@ -77,6 +78,14 @@ export default function ActivitiesPage() {
 
   const currentQuestion = currLesson?.activities[currentIndex];
   const currentAnswer = currentQuestion ? (answers[currentIndex] ?? "") : "";
+  const chosenOption = currentQuestion?.options?.find((option) => option.content === currentAnswer);
+  const currentAffirmation =
+    currentQuestion?.type === "text"
+      ? currentQuestion?.affirmation
+      : // If we can't find our option in the list, assume the user chose "Other" and typed their own answer
+        chosenOption
+        ? chosenOption.affirmation
+        : currentQuestion?.options?.find((option) => option.content === "Other")?.affirmation;
 
   const handleAnswer = (answer: string) => {
     if (!currLesson) return;
@@ -145,7 +154,7 @@ export default function ActivitiesPage() {
   const handleFinishExit = () => {
     setIsLessonCompleted(false);
     setCurrLesson(null);
-    setIsModalOpen(false);
+    setIsStartActivityModalOpen(false);
   };
 
   // 4. Render Completion View if state is true
@@ -210,7 +219,7 @@ export default function ActivitiesPage() {
                       }}
                       onPress={() => {
                         setCurrLesson(lesson);
-                        setIsModalOpen(true);
+                        setIsStartActivityModalOpen(true);
                       }}
                     />
                   );
@@ -248,7 +257,13 @@ export default function ActivitiesPage() {
 
           <View style={styles.nextButtonContainer}>
             <NextButton
-              onPress={() => void handleNext()}
+              onPress={() => {
+                if (currentAffirmation) {
+                  setIsFeedbackModalOpen(true);
+                } else {
+                  void handleNext();
+                }
+              }}
               disabled={!currentAnswer || isLoading}
               textOption={
                 currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
@@ -260,19 +275,35 @@ export default function ActivitiesPage() {
 
       {currLesson && (
         <ActivityPopup
-          isOpen={isModalOpen}
+          isOpen={isStartActivityModalOpen}
           onClose={() => {
-            setIsModalOpen(false);
+            setIsStartActivityModalOpen(false);
           }}
           color="green"
           title={currLesson.title}
           description={currLesson.description}
           onStart={() => {
-            setIsModalOpen(false);
+            setIsStartActivityModalOpen(false);
             // Answers are reset in useEffect based on currLesson
           }}
+          startText="START"
         />
       )}
+
+      <ActivityPopup
+        isOpen={isFeedbackModalOpen}
+        onClose={() => {
+          setIsFeedbackModalOpen(false);
+        }}
+        color="green"
+        title=""
+        description={currentAffirmation}
+        onStart={() => {
+          setIsFeedbackModalOpen(false);
+          void handleNext();
+        }}
+        startText="NEXT"
+      />
     </SafeAreaView>
   );
 }

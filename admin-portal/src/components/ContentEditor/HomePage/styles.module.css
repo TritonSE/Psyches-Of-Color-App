@@ -1,0 +1,81 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: #6c6c6c;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ebebeb;
+  border-top-color: #1a4d2e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.section {
+  margin-bottom: 48px;
+}
+
+.unitListRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: 0.5px;
+  margin: 0 0 24px 0;
+}
+
+.addUnitButton {
+  padding: 8px 24px;
+  background: #1a4d2e;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+}
+
+.unitsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}

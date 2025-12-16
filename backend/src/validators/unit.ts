@@ -18,5 +18,15 @@ const validateLessons = body("lessons")
     return true;
   });
 
+const validateOrder = body("order")
+  .notEmpty()
+  .withMessage("order is required")
+  .isInt()
+  .withMessage("order must be an integer");
+
 export const createUnitValidator = [validateTitle];
-export const updateUnitValidator = [validateTitle.optional(), validateLessons.optional()];
+export const updateUnitValidator = [
+  validateTitle.optional(),
+  validateLessons.optional(),
+  validateOrder.optional(),
+];

@@ -1,7 +1,8 @@
 import express, { NextFunction, Response } from "express";
 
-import { PsychesRequest, verifyAuthToken } from "../middleware/auth";
+import { PsychesRequest, adminMiddleware, verifyAuthToken } from "../middleware/auth";
 import { User } from "../models/users";
+import { firebaseAuth } from "src/services/firebase";
 
 const router = express.Router();
 
@@ -35,6 +36,23 @@ router.get(
         error: e,
       });
       return;
+    }
+  },
+);
+
+// GET route to get all users - requires admin permissions
+router.get(
+  "/api/users/all",
+  verifyAuthToken,
+  adminMiddleware,
+  async (req: PsychesRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // Get all users
+      const users = await User.find({ isAdmin: false });
+      res.status(200).send({ users });
+      return;
+    } catch (e) {
+      next(e);
     }
   },
 );
@@ -229,6 +247,8 @@ router.delete(
       }
 
       await User.deleteOne({ uid });
+
+      await firebaseAuth.deleteUser(uid);
 
       res.status(200).json({ message: "User account deleted successfully" });
     } catch (error) {

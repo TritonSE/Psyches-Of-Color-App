@@ -28,7 +28,7 @@ const moodTextMap = {
   Good: "Glad you're feeling good!",
   Okay: "Feeling okay today? Nice — steady days count too.",
   Meh: "That's alright, we all have those days.",
-  Bad: "Really sorry you're feeling bad — hope things brighten up soon.",
+  Bad: "Really sorry you're feeling bad — we hope our app brightens your mood today.",
 };
 
 type MoodValue = (typeof moods)[number]["value"];

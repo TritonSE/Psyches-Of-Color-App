@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { getAuth, signOut } from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import {
   Alert,
@@ -12,10 +13,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useAuth } from "@/contexts/userContext";
 import { deleteAccount } from "@/lib/auth";
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { setMongoUser } = useAuth();
 
   const navigateBack = () => {
     router.back();
@@ -41,6 +44,8 @@ export default function SettingsScreen() {
             void (async () => {
               const result = await deleteAccount();
               if (result.success) {
+                await signOut(getAuth());
+                setMongoUser(null);
                 Alert.alert("Account Deleted", "Your account has been successfully deleted.", [
                   {
                     text: "OK",
