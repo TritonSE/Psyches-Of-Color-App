@@ -2,7 +2,7 @@ import express, { NextFunction, Response } from "express";
 
 import { PsychesRequest, adminMiddleware, verifyAuthToken } from "../middleware/auth";
 import { User } from "../models/users";
-import { firebaseAuth } from "src/services/firebase";
+import { firebaseAuth } from "../services/firebase";
 
 const router = express.Router();
 

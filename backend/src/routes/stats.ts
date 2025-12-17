@@ -1,10 +1,10 @@
 import { stringify } from "csv-stringify/sync";
 import express from "express";
 
-import { JournalEntry } from "src/models/journalEntry";
-import { adminMiddleware, verifyAuthToken } from "src/middleware/auth";
-import { Mood } from "src/models/mood";
-import { User } from "src/models/users";
+import { JournalEntry } from "../models/journalEntry";
+import { adminMiddleware, verifyAuthToken } from "../middleware/auth";
+import { Mood } from "../models/mood";
+import { User } from "../models/users";
 import { ObjectId } from "mongoose";
 
 const router = express.Router();

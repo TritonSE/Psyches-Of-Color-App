@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Activity } from "../models/activity";
 import createHttpError from "http-errors";
-import { createActivityValidator, updateActivityValidator } from "src/validators/activity";
+import { createActivityValidator, updateActivityValidator } from "../validators/activity";
 import { matchedData, validationResult } from "express-validator";
-import validationErrorParser from "src/util/validationErrorParser";
-import { adminMiddleware, authMiddleware } from "src/middleware/auth";
-import { Lesson } from "src/models/lesson";
+import validationErrorParser from "../util/validationErrorParser";
+import { adminMiddleware, authMiddleware } from "../middleware/auth";
+import { Lesson } from "../models/lesson";
 
 const router = express.Router();
 

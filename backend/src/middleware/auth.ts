@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { decodeAuthToken } from "../services/auth";
-import { User } from "src/models/users";
+import { User } from "../models/users";
 
 export type PsychesRequest = {
   userUid?: string;

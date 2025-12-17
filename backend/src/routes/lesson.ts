@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Lesson } from "../models/lesson";
 import createHttpError from "http-errors";
-import { createLessonValidator, updateLessonValidator } from "src/validators/lesson";
-import { adminMiddleware, authMiddleware } from "src/middleware/auth";
+import { createLessonValidator, updateLessonValidator } from "../validators/lesson";
+import { adminMiddleware, authMiddleware } from "../middleware/auth";
 import { matchedData, validationResult } from "express-validator";
-import validationErrorParser from "src/util/validationErrorParser";
-import { Unit } from "src/models/unit";
+import validationErrorParser from "../util/validationErrorParser";
+import { Unit } from "../models/unit";
 
 const router = express.Router();
 

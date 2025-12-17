@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import { Mood } from "../models/mood";
 import { User } from "../models/users";
-import { verifyAuthToken, PsychesRequest } from "src/middleware/auth";
+import { verifyAuthToken, PsychesRequest } from "../middleware/auth";
 
 const router: Router = express.Router();
 
