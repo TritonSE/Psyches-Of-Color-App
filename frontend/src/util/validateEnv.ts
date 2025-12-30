@@ -1,5 +1,5 @@
 import { cleanEnv } from "envalid";
-import { str } from "envalid/dist/validators";
+import { str, url } from "envalid/dist/validators";
 
 // Validate environment variables
 // Expo SDK 52 automatically loads .env files for EXPO_PUBLIC_ variables
@@ -8,9 +8,12 @@ import { str } from "envalid/dist/validators";
 const env = cleanEnv(
   process.env,
   {
-    EXPO_PUBLIC_BACKEND_URI: str({
+    EXPO_PUBLIC_BACKEND_URI: url({
       default: "http://localhost:3000",
       desc: "Backend API URI - should be set in .env file in frontend directory",
+    }),
+    EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: str({
+      desc: "Web client ID to use for Google Sign-in - get this from the Firebase console under Authentication -> Sign in methods -> Google",
     }),
   },
   {
@@ -25,17 +28,5 @@ const env = cleanEnv(
     },
   },
 );
-
-// Validate URL format and warn if invalid
-try {
-  new URL(env.EXPO_PUBLIC_BACKEND_URI);
-} catch {
-  console.error(
-    `Error: EXPO_PUBLIC_BACKEND_URI "${env.EXPO_PUBLIC_BACKEND_URI}" is not a valid URL format.`,
-  );
-  console.error(
-    "Please set EXPO_PUBLIC_BACKEND_URI in your .env file (e.g., EXPO_PUBLIC_BACKEND_URI=http://localhost:3000)",
-  );
-}
 
 export default env;

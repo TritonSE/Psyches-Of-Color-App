@@ -21,7 +21,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
 GoogleSignin.configure({
-  webClientId: "795345347789-bbejfenj4bfe0vv8ar2uka2nhui4dhjm.apps.googleusercontent.com",
+  webClientId: env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
 });
 
 type AuthResponse =
@@ -57,7 +57,7 @@ export const createMongoUser = async ({ name, email }: { name: string; email: st
 
   if (!firebaseUser || !idToken) return null;
 
-  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users`, {
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
