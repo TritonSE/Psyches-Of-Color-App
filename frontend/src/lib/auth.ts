@@ -81,7 +81,7 @@ export const updateUserCharacter = async (character: string) => {
 
   if (!firebaseUser || !idToken) return null;
 
-  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${firebaseUser.uid}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -245,7 +245,7 @@ export const deleteAccount = async (): Promise<{ success: boolean; error?: strin
     const idToken = await user.getIdToken();
 
     // Delete user from MongoDB AND Firebase - backend takes care of both
-    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${user.uid}`, {
+    const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${user.uid}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${idToken}`,

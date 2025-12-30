@@ -126,7 +126,7 @@ export default function ActivitiesPage() {
       }
 
       const res = await fetch(
-        `${env.EXPO_PUBLIC_BACKEND_URI}/users/${mongoUser.uid}/completed/${currLesson._id}`,
+        `${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${mongoUser.uid}/completed/${currLesson._id}`,
         {
           method: "PUT",
           headers: {

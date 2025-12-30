@@ -90,7 +90,7 @@ export default function EditProfile() {
       if (!firebaseUser || !idToken) return;
 
       // Update both Firebase and Mongo users' names
-      const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+      const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${firebaseUser.uid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

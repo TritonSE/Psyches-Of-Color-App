@@ -58,7 +58,7 @@ router.get(
 );
 
 // POST route to create a user profile
-router.post("/users", async (req: PsychesRequest, res: Response): Promise<void> => {
+router.post("/api/users", async (req: PsychesRequest, res: Response): Promise<void> => {
   try {
     const { name, email, uid } = req.body;
 
@@ -88,7 +88,7 @@ router.post("/users", async (req: PsychesRequest, res: Response): Promise<void> 
 
 // PUT route to update a user profile
 router.put(
-  "/users/:uid",
+  "/api/users/:uid",
   verifyAuthToken,
   async (req: PsychesRequest, res: Response): Promise<void> => {
     try {
@@ -132,7 +132,7 @@ router.put(
 
 // PUT: Mark an lesson as completed by a user
 router.put(
-  "/users/:uid/completed/:lessonId",
+  "/api/users/:uid/completed/:lessonId",
   verifyAuthToken,
   async (req: PsychesRequest, res: Response): Promise<void> => {
     const { uid, lessonId } = req.params;
@@ -227,7 +227,7 @@ router.put(
 
 // DELETE route to delete a user account
 router.delete(
-  "/users/:uid",
+  "/api/users/:uid",
   verifyAuthToken,
   async (req: PsychesRequest, res: Response): Promise<void> => {
     try {

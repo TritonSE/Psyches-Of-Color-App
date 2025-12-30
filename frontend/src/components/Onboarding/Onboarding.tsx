@@ -35,7 +35,7 @@ async function updateUserOnboardingInfo(onboardingInfo: OnboardingInfo) {
 
   if (!firebaseUser || !idToken) return;
 
-  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/users/${firebaseUser.uid}`, {
+  const res = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/users/${firebaseUser.uid}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
