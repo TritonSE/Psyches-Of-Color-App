@@ -22,7 +22,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "psychesofcolorapp",
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
+      googleServicesFile: "./google-services.json",
       infoPlist: {
         NSLocationWhenInUseUsageDescription: "We need your location to provide better services.",
         NSLocationAlwaysUsageDescription:
@@ -61,6 +61,9 @@ export default {
         {
           ios: {
             useFrameworks: "static",
+          },
+          android: {
+            targetSdkVersion: 35,
           },
         },
       ],
