@@ -1,0 +1,40 @@
+{
+    "project_info": {
+      "project_number": "500859346542",
+      "project_id": "psyches-of-color-prod",
+      "storage_bucket": "psyches-of-color-prod.firebasestorage.app"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:500859346542:android:7c0be0cb6d8fb04231507f",
+          "android_client_info": {
+            "package_name": "com.psychesofcolor.mobileapp"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "500859346542-g004b655ngskqecmvqobk3g21bpiif5k.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyC3h6mLbrxpuvNsHpPUiYTWkcyruX1uAk4"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "500859346542-g004b655ngskqecmvqobk3g21bpiif5k.apps.googleusercontent.com",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
+  
