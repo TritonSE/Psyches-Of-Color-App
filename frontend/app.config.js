@@ -24,10 +24,6 @@ export default {
       bundleIdentifier: "psychesofcolorapp",
       googleServicesFile: "./google-services.json",
       infoPlist: {
-        NSLocationWhenInUseUsageDescription: "We need your location to provide better services.",
-        NSLocationAlwaysUsageDescription:
-          "We need your location to provide location-based recommendations.",
-        NSCameraUsageDescription: "This app uses the camera to let you take photos for uploading.",
         NSPhotoLibraryUsageDescription: "This app accesses your photos to let you share them.",
       },
     },
@@ -68,16 +64,9 @@ export default {
         },
       ],
       [
-        "expo-location",
-        {
-          locationAlwaysAndWhenInUsePermission: "Allow $(PRODUCT_NAME) to use your location.",
-        },
-      ],
-      [
         "expo-image-picker",
         {
           photosPermission: "The app accesses your photos to let you share them.",
-          cameraPermission: "The app uses the camera to let you take photos for uploading.",
         },
       ],
       [
