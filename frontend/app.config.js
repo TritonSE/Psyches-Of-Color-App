@@ -5,11 +5,11 @@ export default {
     scheme: "psychesofcolor",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./src/assets/icon.png",
+    icon: "./src/assets/images/app-icon.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
     splash: {
-      image: "./src/assets/splash-icon.png",
+      image: "./src/assets/images/app-icon.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
@@ -29,7 +29,7 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./src/assets/adaptive-icon.png",
+        foregroundImage: "./src/assets/images/app-icon.png",
         backgroundColor: "#ffffff",
       },
       package: "com.psychesofcolor.mobileapp",
@@ -51,7 +51,7 @@ export default {
         origin: false,
       },
       EXPO_PUBLIC_BACKEND_URI: process.env.EXPO_PUBLIC_BACKEND_URI,
-      EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+      EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
     },
     plugins: [
       [
@@ -89,6 +89,18 @@ export default {
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "@react-native-google-signin/google-signin",
+      [
+        "expo-splash-screen",
+        {
+          backgroundColor: "#FFFFFF",
+          image: "./src/assets/images/app-icon.png",
+          dark: {
+            image: "./src/assets/images/app-icon.png",
+            backgroundColor: "#000000",
+          },
+          imageWidth: 200,
+        },
+      ],
     ],
     owner: "ben332004",
   },

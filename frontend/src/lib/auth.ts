@@ -71,10 +71,10 @@ export const createMongoUser = async ({ name, email }: { name: string; email: st
   });
   if (!res.ok) {
     const text = await res.text();
-    console.log('could not create user:', res.status, text)
+    console.log("could not create user:", res.status, text);
     throw new Error(`HTTP error! status: ${res.status.toString()}`);
   }
-  console.log('created user successfully!');
+  console.log("created user successfully!");
   return (await res.json()).user as User;
 };
 
@@ -157,7 +157,7 @@ export const loginEmailPassword = async (
  * If user doesn't exist in MongoDB, attempts to create one
  */
 export const getMongoUser = async (idToken: string): Promise<User | null> => {
-  console.log('getting mongo user! backend url:', env.EXPO_PUBLIC_BACKEND_URI);
+  console.log("getting mongo user! backend url:", env.EXPO_PUBLIC_BACKEND_URI);
   const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/whoami`, {
     headers: {
       Authorization: `Bearer ${idToken}`,
@@ -179,7 +179,10 @@ export const getMongoUser = async (idToken: string): Promise<User | null> => {
  */
 export const signInWithGoogle = async (): Promise<AuthResponse> => {
   try {
-    console.log('going to sign in with google, web client id is:', env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID);
+    console.log(
+      "going to sign in with google, web client id is:",
+      env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    );
     // Check if your device supports Google Play
     const hasGoogleServices = await GoogleSignin.hasPlayServices({
       showPlayServicesUpdateDialog: true,

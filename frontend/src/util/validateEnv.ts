@@ -1,6 +1,6 @@
 import { cleanEnv } from "envalid";
 import { str, url } from "envalid/dist/validators";
-import Constants from 'expo-constants'
+import Constants from "expo-constants";
 
 // Validate environment variables
 // Expo SDK 52 automatically loads .env files for EXPO_PUBLIC_ variables
