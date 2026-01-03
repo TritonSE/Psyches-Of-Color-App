@@ -1,12 +1,13 @@
 import { cleanEnv } from "envalid";
 import { str, url } from "envalid/dist/validators";
+import Constants from 'expo-constants'
 
 // Validate environment variables
 // Expo SDK 52 automatically loads .env files for EXPO_PUBLIC_ variables
 // For development on iOS simulator, use http://localhost:3000
 // For development on physical device, use your computer's local IP (e.g., http://192.168.1.100:3000)
 const env = cleanEnv(
-  process.env,
+  Constants.expoConfig?.extra,
   {
     EXPO_PUBLIC_BACKEND_URI: url({
       default: "http://localhost:3000",

@@ -236,6 +236,9 @@ router.get("/", verifyAuthToken, adminMiddleware, async (req, res) => {
     const residenceStats: Record<string, number> = {};
 
     users.forEach((user) => {
+      // Skip any users who haven't completed onboarding
+      if (!user.completedOnboarding) return;
+
       const info = user.onboardingInfo;
 
       // Age range

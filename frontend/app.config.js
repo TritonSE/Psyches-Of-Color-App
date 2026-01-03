@@ -1,8 +1,8 @@
 export default {
   expo: {
-    name: "frontend",
+    name: "Psyches of Color",
     slug: "psyches-of-color-app",
-    scheme: "frontend",
+    scheme: "psychesofcolor",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./src/assets/icon.png",
@@ -50,6 +50,8 @@ export default {
       router: {
         origin: false,
       },
+      EXPO_PUBLIC_BACKEND_URI: process.env.EXPO_PUBLIC_BACKEND_URI,
+      EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
     },
     plugins: [
       [

@@ -1,6 +1,5 @@
 import { FirebaseAuthTypes, getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { Alert } from "react-native";
 
 import { getMongoUser } from "@/lib/auth";
 import { User } from "@/types";
@@ -49,7 +48,9 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         setMongoUser(null);
       }
     } catch (error) {
-      Alert.alert(`Error fetching current user: ${String(error)}`);
+      // Don't display an alert if fetching current user fails - e.g. this could occur when auth state refreshes
+      // right after signing up but before the user is created in our MongoDB database through our backend
+      console.log(`Error fetching current user: ${String(error)}`);
     } finally {
       setLoadingUser(false);
     }
