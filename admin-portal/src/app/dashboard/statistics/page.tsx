@@ -757,7 +757,7 @@ export default function DashboardPage() {
         </div>
 
         <div className={styles.chartCard}>
-          <h3 className={styles.chartTitle}>Counseling</h3>
+          <h3 className={styles.chartTitle}>Therapy</h3>
           <HorizontalBarChart data={counselingData} />
         </div>
       </section>
