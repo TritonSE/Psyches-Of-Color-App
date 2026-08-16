@@ -6,13 +6,6 @@ export default {
     version: "1.0.0",
     orientation: "portrait",
     icon: "./src/assets/images/app-icon.png",
-    userInterfaceStyle: "light",
-    newArchEnabled: true,
-    splash: {
-      image: "./src/assets/images/app-icon.png",
-      resizeMode: "contain",
-      backgroundColor: "#ffffff",
-    },
     fonts: [
       {
         asset: "./src/assets/fonts/socialGothic",
@@ -21,11 +14,19 @@ export default {
     ],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "psychesofcolorapp",
-      googleServicesFile: "./google-services.json",
+      bundleIdentifier: "org.psychesofcolor.mobileapp",
       infoPlist: {
-        NSPhotoLibraryUsageDescription: "This app accesses your photos to let you share them.",
+        "NSCameraUsageDescription": "This app uses the camera to let you take photos for uploading.",
+        "NSPhotoLibraryUsageDescription": "This app accesses your photos to let you share them.",
+        ITSAppUsesNonExemptEncryption: false
       },
+      googleServicesFile: "./GoogleServices-Info.plist",
+      splash: {
+        image: "./src/assets/images/app-icon.png",
+        resizeMode: "contain",
+        backgroundColor: "#ffffff",
+      },
+      "appDelegateLanguage": "objc"
     },
     android: {
       adaptiveIcon: {
@@ -39,6 +40,11 @@ export default {
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.RECORD_AUDIO",
       ],
+      splash: {
+        image: "./src/assets/images/app-icon.png",
+        resizeMode: "contain",
+        backgroundColor: "#ffffff",
+      },
     },
     web: {
       favicon: "./src/assets/favicon.png",
@@ -69,6 +75,7 @@ export default {
         "expo-image-picker",
         {
           photosPermission: "The app accesses your photos to let you share them.",
+          "cameraPermission": "The app uses the camera to let you take photos for uploading."
         },
       ],
       [
@@ -86,8 +93,12 @@ export default {
         },
       ],
       "expo-router",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
+      [
+        "@react-native-firebase/app",
+        {
+          disableOpenUrlFix: true, 
+        }
+      ],
       "@react-native-google-signin/google-signin",
       [
         "expo-splash-screen",
@@ -101,6 +112,7 @@ export default {
           imageWidth: 200,
         },
       ],
+      "expo-asset"
     ],
     owner: "ben332004",
   },
