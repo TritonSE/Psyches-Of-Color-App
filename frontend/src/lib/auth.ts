@@ -4,6 +4,7 @@
 
 import { User } from "@/types";
 import env from "@/util/validateEnv";
+import { getApps, initializeApp } from "@react-native-firebase/app";
 import auth, {
   createUserWithEmailAndPassword,
   FirebaseAuthTypes,
@@ -23,6 +24,20 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 GoogleSignin.configure({
   webClientId: env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
 });
+
+const firebaseOptions = {
+  appId: "1:500859346542:ios:7f949f2fa28f27de31507f",
+  apiKey: "AIzaSyBQHBxD3KMRTwf5hehaYRlvQOWdC_Pr7sM",
+  clientId: "500859346542-1ankabio2gnv545lfqavtikk0ljbmmau.apps.googleusercontent.com",
+  projectId: "psyches-of-color-prod",
+  messagingSenderId: "500859346542",
+  storageBucket: "psyches-of-color-prod.firebasestorage.app",
+  databaseURL: "https://psyches-of-color-prod.firebaseio.com",
+};
+
+if (getApps().length === 0) {
+  void initializeApp(firebaseOptions);
+}
 
 type AuthResponse =
   | {
