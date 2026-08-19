@@ -1,4 +1,5 @@
 import { FirebaseAuthTypes, getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 import { getMongoUser } from "@/lib/auth";
@@ -35,6 +36,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [loadingUser, setLoadingUser] = useState(true);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [mongoUser, setMongoUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
 
   const refreshMongoUser = async () => {
     setMongoUser(mongoUser);
@@ -68,6 +70,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     void refreshMongoUser();
+
+    // When the user logs out, clear any cached data (e.g. journal entries) that
+    // was fetched on behalf of the previous user so it isn't shown to the next
+    // user and so in-flight queries don't surface stale "not authenticated" errors.
+    if (!firebaseUser) {
+      queryClient.clear();
+    }
   }, [firebaseUser]);
 
   return (

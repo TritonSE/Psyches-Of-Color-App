@@ -2,7 +2,16 @@ import { Ionicons } from "@expo/vector-icons";
 import auth from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Button from "@/components/Button";
@@ -11,7 +20,11 @@ import { User } from "@/types";
 import env from "@/util/validateEnv";
 
 const styles = StyleSheet.create({
+  editProfilePageContainer: {
+    flex: 1,
+  },
   editProfilePage: {
+    flex: 1,
     gap: 20,
     alignItems: "center",
   },
@@ -124,41 +137,46 @@ export default function EditProfile() {
   };
 
   return (
-    <SafeAreaView style={styles.editProfilePage}>
-      <View style={styles.profileNavbar}>
-        <TouchableOpacity style={styles.returnArrow} onPress={navigateBack}>
-          <Ionicons name="arrow-back-outline" size={24} color="#B4B4B4" />
-        </TouchableOpacity>
-        <Text style={styles.profileTitle}>Profile</Text>
-        {/* Place an empty view on the right so the arrow goes on the left and "Profile" text in the center */}
-        <View />
-      </View>
-      <View style={styles.changeAvatarSection}>
-        <Text style={styles.changeAvatarText}>Edit Profile</Text>
-      </View>
-      <View style={styles.updateInfoSection}>
-        <View style={styles.inputSection}>
-          <Text style={styles.inputTitle}>Name</Text>
-          <TextInput
-            style={styles.inputBox}
-            placeholder="Type here..."
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-            }}
-          />
-        </View>
-      </View>
-      <Button
-        onPress={() => {
-          void onSave();
-        }}
+    <SafeAreaView style={styles.editProfilePageContainer}>
+      <KeyboardAvoidingView
+        style={styles.editProfilePage}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        Save
-      </Button>
-      <Button onPress={navigateBack} style={styles.cancelButton}>
-        Cancel
-      </Button>
+        <View style={styles.profileNavbar}>
+          <TouchableOpacity style={styles.returnArrow} onPress={navigateBack}>
+            <Ionicons name="arrow-back-outline" size={24} color="#B4B4B4" />
+          </TouchableOpacity>
+          <Text style={styles.profileTitle}>Profile</Text>
+          {/* Place an empty view on the right so the arrow goes on the left and "Profile" text in the center */}
+          <View />
+        </View>
+        <View style={styles.changeAvatarSection}>
+          <Text style={styles.changeAvatarText}>Edit Profile</Text>
+        </View>
+        <View style={styles.updateInfoSection}>
+          <View style={styles.inputSection}>
+            <Text style={styles.inputTitle}>Name</Text>
+            <TextInput
+              style={styles.inputBox}
+              placeholder="Type here..."
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+              }}
+            />
+          </View>
+        </View>
+        <Button
+          onPress={() => {
+            void onSave();
+          }}
+        >
+          Save
+        </Button>
+        <Button onPress={navigateBack} style={styles.cancelButton}>
+          Cancel
+        </Button>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

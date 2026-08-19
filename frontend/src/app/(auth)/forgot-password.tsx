@@ -1,6 +1,14 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { z } from "zod";
 
 import Button from "@/components/Button";
@@ -21,9 +29,15 @@ export default function ForgotPassword() {
   }, [email]);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <Header title="Forgot Password" />
-      <View style={styles.contentContainer}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.promptContainer}>
           <Text style={styles.title}>Enter email</Text>
           <Text style={styles.description}>
@@ -62,8 +76,8 @@ export default function ForgotPassword() {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -73,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
   },
   contentContainer: {
-    flex: 1,
+    flexGrow: 1,
     paddingTop: 30,
     paddingHorizontal: 15,
     gap: 30,

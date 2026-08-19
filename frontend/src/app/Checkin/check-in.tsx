@@ -1,6 +1,14 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import NextButton from "../../components/NextButton";
@@ -103,23 +111,28 @@ const CheckIn: React.FC = () => {
         <Text style={styles.headerTitle}>Check In</Text>
       </View>
 
-      <View style={styles.container}>
-        <ProgressBar progress={currentIndex / questions.length} />
-        <Mascots style={styles.logo} />
+      <KeyboardAvoidingView
+        style={styles.flexOne}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <ProgressBar progress={currentIndex / questions.length} />
+          <Mascots style={styles.logo} />
 
-        <Question
-          type={currentQuestion.type}
-          question={currentQuestion.question}
-          options={currentQuestion.options}
-          placeholder={currentQuestion.placeholder}
-          otherOptions={currentQuestion.otherOptions}
-          onAnswer={handleAnswer}
-        />
+          <Question
+            type={currentQuestion.type}
+            question={currentQuestion.question}
+            options={currentQuestion.options}
+            placeholder={currentQuestion.placeholder}
+            otherOptions={currentQuestion.otherOptions}
+            onAnswer={handleAnswer}
+          />
 
-        <View style={styles.nextButtonContainer}>
-          <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next" />
-        </View>
-      </View>
+          <View style={styles.nextButtonContainer}>
+            <NextButton onPress={handleNext} disabled={!!isNextDisabled} textOption="Next" />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -130,8 +143,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  container: {
+  flexOne: {
     flex: 1,
+  },
+  container: {
+    flexGrow: 1,
     paddingVertical: 40,
     paddingHorizontal: 20,
     backgroundColor: lightModeColors.background,

@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
@@ -118,60 +126,69 @@ export default function Signup() {
     }
   };
   return (
-    <SafeAreaView style={styles.safeContainer}>
-      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.container}>
-          <BackButton path="./confirmBackToLogin" />
-          <View style={styles.header}>
-            <Mascots style={styles.mascots} />
-            <Image style={styles.logo} source={Logo} />
+    <View style={styles.safeContainer}>
+      <KeyboardAvoidingView
+        style={styles.scrollContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <BackButton path="./confirmBackToLogin" />
+            <View style={styles.header}>
+              <Mascots style={styles.mascots} />
+              <Image style={styles.logo} source={Logo} />
+            </View>
+            <InputBox
+              label="First Name"
+              placeholder="Enter First Name"
+              value={firstName}
+              onChangeText={setFirstName}
+              containerStyle={{ marginBottom: 16 }}
+              errorMessage={firstNameError}
+            />
+            <InputBox
+              label="Last Name"
+              placeholder="Enter Last Name"
+              value={lastName}
+              onChangeText={setLastName}
+              containerStyle={{ marginBottom: 16 }}
+              errorMessage={lastNameError}
+            />
+            <InputBox
+              label="Email"
+              placeholder="Enter Email"
+              value={email}
+              onChangeText={setEmail}
+              containerStyle={{ marginBottom: 16 }}
+              errorMessage={emailError}
+            />
+            <InputBox
+              label="Password"
+              placeholder="Enter Password"
+              value={password}
+              onChangeText={setPassword}
+              containerStyle={{ marginBottom: 16 }}
+              errorMessage={passwordError}
+              hidden={true}
+            />
+            <Button
+              disabled={loading}
+              style={styles.loginButton}
+              onPress={() => {
+                void handleSignup();
+              }}
+              textStyle={{ fontFamily: "SG-DemiBold" }}
+            >
+              Sign Up
+            </Button>
           </View>
-          <InputBox
-            label="First Name"
-            placeholder="Enter First Name"
-            value={firstName}
-            onChangeText={setFirstName}
-            containerStyle={{ marginBottom: 16 }}
-            errorMessage={firstNameError}
-          />
-          <InputBox
-            label="Last Name"
-            placeholder="Enter Last Name"
-            value={lastName}
-            onChangeText={setLastName}
-            containerStyle={{ marginBottom: 16 }}
-            errorMessage={lastNameError}
-          />
-          <InputBox
-            label="Email"
-            placeholder="Enter Email"
-            value={email}
-            onChangeText={setEmail}
-            containerStyle={{ marginBottom: 16 }}
-            errorMessage={emailError}
-          />
-          <InputBox
-            label="Password"
-            placeholder="Enter Password"
-            value={password}
-            onChangeText={setPassword}
-            containerStyle={{ marginBottom: 16 }}
-            errorMessage={passwordError}
-            hidden={true}
-          />
-          <Button
-            disabled={loading}
-            style={styles.loginButton}
-            onPress={() => {
-              void handleSignup();
-            }}
-            textStyle={{ fontFamily: "SG-DemiBold" }}
-          >
-            Sign Up
-          </Button>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 const styles = StyleSheet.create({
@@ -219,6 +236,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 16,
+    marginBottom: 24,
   },
   bottomHalfContainer: {
     flexDirection: "column",

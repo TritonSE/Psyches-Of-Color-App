@@ -30,7 +30,7 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./src/assets/images/app-icon.png",
+        foregroundImage: "./src/assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
       package: "com.psychesofcolor.mobileapp",

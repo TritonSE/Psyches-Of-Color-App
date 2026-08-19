@@ -1,6 +1,15 @@
 import { Link, Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { z } from "zod";
 
 import Mascots from "@/assets/Poc_Mascots.svg";
@@ -137,69 +146,73 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Mascots style={styles.mascots} />
-        <Image style={styles.logo} source={Logo} />
-      </View>
-      <InputBox
-        label="Email"
-        placeholder="Enter Email"
-        value={email}
-        onChangeText={setEmail}
-        containerStyle={{ marginBottom: 16 }}
-        errorMessage={emailError}
-      />
-      <InputBox
-        label="Password"
-        placeholder="Enter Password"
-        value={password}
-        onChangeText={setPassword}
-        hidden={true}
-        showForgotPassword={true}
-        onForgotPassword={() => {
-          router.navigate("/forgot-password");
-        }}
-        containerStyle={{ marginBottom: 16 }}
-        errorMessage={passwordError}
-      />
-      <View style={styles.bottomHalfContainer}>
-        <Button
-          disabled={loading}
-          style={styles.loginButton}
-          onPress={() => {
-            void handleLogin();
-          }}
-          textStyle={{ fontFamily: "SG-DemiBold" }}
-        >
-          Login
-        </Button>
-        <View style={styles.continueWithTextContainer}>
-          <View style={styles.line}></View>
-          <Text style={styles.continueWithText}>Or</Text>
-          <View style={styles.line}></View>
+    <KeyboardAvoidingView
+      style={styles.flexOne}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <View style={styles.header}>
+          <Mascots style={styles.mascots} />
+          <Image style={styles.logo} source={Logo} />
         </View>
-        <Button
-          disabled={loading}
-          onPress={() => {
-            void handleGoogleLogin();
+        <InputBox
+          label="Email"
+          placeholder="Enter Email"
+          value={email}
+          onChangeText={setEmail}
+          containerStyle={{ marginBottom: 16 }}
+          errorMessage={emailError}
+        />
+        <InputBox
+          label="Password"
+          placeholder="Enter Password"
+          value={password}
+          onChangeText={setPassword}
+          hidden={true}
+          showForgotPassword={true}
+          onForgotPassword={() => {
+            router.navigate("/forgot-password");
           }}
-          style={{ gap: 16 }}
-        >
-          <GoogleLogo width={24} height={24} />
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: 600,
-              color: lightModeColors.lightFont,
-              fontFamily: "SG-DemiBold",
+          containerStyle={{ marginBottom: 16 }}
+          errorMessage={passwordError}
+        />
+        <View style={styles.bottomHalfContainer}>
+          <Button
+            disabled={loading}
+            style={styles.loginButton}
+            onPress={() => {
+              void handleLogin();
             }}
+            textStyle={{ fontFamily: "SG-DemiBold" }}
           >
-            Continue with Google
-          </Text>
-        </Button>
-        {/* Commenting out Continue with Apple until we implement it if necessary for App Store release */}
-        {/* <Button
+            Login
+          </Button>
+          <View style={styles.continueWithTextContainer}>
+            <View style={styles.line}></View>
+            <Text style={styles.continueWithText}>Or</Text>
+            <View style={styles.line}></View>
+          </View>
+          <Button
+            disabled={loading}
+            onPress={() => {
+              void handleGoogleLogin();
+            }}
+            style={{ gap: 16 }}
+          >
+            <GoogleLogo width={24} height={24} />
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: 600,
+                color: lightModeColors.lightFont,
+                fontFamily: "SG-DemiBold",
+              }}
+            >
+              Continue with Google
+            </Text>
+          </Button>
+          {/* Commenting out Continue with Apple until we implement it if necessary for App Store release */}
+          {/* <Button
           onPress={() => {
             // TODO: implement Apple login
             console.log("Apple login!");
@@ -218,28 +231,33 @@ export default function Login() {
             Continue with Apple
           </Text>
         </Button> */}
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Don&apos;t have an account? </Text>
-          <Link href="/signup" style={styles.signupLink}>
-            Sign Up
-          </Link>
+          <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>Don&apos;t have an account? </Text>
+            <Link href="/signup" style={styles.signupLink}>
+              Sign Up
+            </Link>
+          </View>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  flexOne: {
+    flex: 1,
+  },
   header: {
     flexGrow: 0.3,
     justifyContent: "center",
     alignItems: "center",
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: 32,
   },
   mascots: {
     width: 253,
@@ -260,6 +278,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 16,
+    marginBottom: 8,
   },
   bottomHalfContainer: {
     flexDirection: "column",

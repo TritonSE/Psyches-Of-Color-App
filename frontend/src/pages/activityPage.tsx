@@ -1,7 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ActivityButton from "@/components/ActivityButton";
@@ -51,6 +60,10 @@ export default function ActivitiesPage() {
     void getAllSections();
   }, []);
 
+  // Determines the status of each lesson *within a single unit*. The first
+  // lesson of every unit is always eligible to start ("inProgress" once
+  // reached), regardless of progress in other units - so units can be done in
+  // any order, but lessons/activities within a unit must still be done in order.
   const getLessonStatuses = (lessons: Lesson[]) => {
     const statuses: ("inProgress" | "completed" | "incomplete")[] = [];
     lessons.forEach((lesson, index) => {
@@ -65,9 +78,6 @@ export default function ActivitiesPage() {
     });
     return statuses;
   };
-
-  const allLessons = units.flatMap((unit) => unit.lessons ?? []);
-  const lessonStatuses = getLessonStatuses(allLessons);
 
   useEffect(() => {
     if (!currLesson) return;
@@ -164,114 +174,123 @@ export default function ActivitiesPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {!currLesson ? (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => {
-                router.back();
-              }}
-            >
-              <Ionicons name="arrow-back-outline" size={24} color="gray" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Activities</Text>
-          </View>
-
-          {units.map((unit, sectionIndex) => (
-            <View key={unit._id || sectionIndex} style={styles.sectionContainer}>
-              <SectionButton title={unit.title} color="green" />
-
-              <View style={styles.optionsContainer}>
-                {unit.lessons?.map((lesson, lessonIndex) => {
-                  if (!lesson) return null;
-
-                  const precedingLessonsCount = units
-                    .slice(0, sectionIndex)
-                    .reduce((acc, u) => acc + (u.lessons?.length ?? 0), 0);
-
-                  const globalIndex = precedingLessonsCount + lessonIndex;
-                  const status = lessonStatuses[globalIndex];
-
-                  if (status === "incomplete") {
-                    return (
-                      <View
-                        key={lesson._id || lessonIndex}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
-                          marginRight: lessonIndex % 2 === 0 ? 0 : -99,
-                          backgroundColor: "#E0E0E0",
-                          borderRadius: 12,
-                        }}
-                      />
-                    );
-                  }
-
-                  return (
-                    <ActivityButton
-                      key={lesson._id || lessonIndex}
-                      status={status} // "completed" | "inProgress"
-                      color="green"
-                      style={{
-                        marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
-                        marginRight: lessonIndex % 2 === 0 ? 0 : -99,
-                      }}
-                      onPress={() => {
-                        setCurrLesson(lesson);
-                        setIsStartActivityModalOpen(true);
-                      }}
-                    />
-                  );
-                })}
-              </View>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        {!currLesson ? (
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => {
+                  router.back();
+                }}
+              >
+                <Ionicons name="arrow-back-outline" size={24} color="gray" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Activities</Text>
             </View>
-          ))}
-        </ScrollView>
-      ) : (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={handleBack}>
-              <Ionicons name="arrow-back-outline" size={24} color="gray" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>{currLesson.title}</Text>
-          </View>
 
-          <ProgressBar progress={(currentIndex + 1) / currLesson.activities.length} />
+            {units.map((unit, sectionIndex) => {
+              const unitLessonStatuses = getLessonStatuses(unit.lessons ?? []);
 
-          <View style={styles.main}>
-            {currentQuestion && (
-              <>
-                <Question
-                  type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
-                  question={currentQuestion.question}
-                  options={currentQuestion?.options?.map((o) => o.content) ?? []}
-                  onAnswer={handleAnswer}
-                  currentAnswer={currentAnswer}
-                  placeholder={currentQuestion.type === "text" ? "Type your answer..." : undefined}
-                  variant="activity"
-                />
-              </>
-            )}
-          </View>
+              return (
+                <View key={unit._id || sectionIndex} style={styles.sectionContainer}>
+                  <SectionButton title={unit.title} color="green" />
 
-          <View style={styles.nextButtonContainer}>
-            <NextButton
-              onPress={() => {
-                if (currentAffirmation) {
-                  setIsFeedbackModalOpen(true);
-                } else {
-                  void handleNext();
+                  <View style={styles.optionsContainer}>
+                    {unit.lessons?.map((lesson, lessonIndex) => {
+                      if (!lesson) return null;
+
+                      const status = unitLessonStatuses[lessonIndex];
+
+                      if (status === "incomplete") {
+                        return (
+                          <View
+                            key={lesson._id || lessonIndex}
+                            style={{
+                              width: 60,
+                              height: 60,
+                              marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
+                              marginRight: lessonIndex % 2 === 0 ? 0 : -99,
+                              backgroundColor: "#E0E0E0",
+                              borderRadius: 12,
+                            }}
+                          />
+                        );
+                      }
+
+                      return (
+                        <ActivityButton
+                          key={lesson._id || lessonIndex}
+                          status={status} // "completed" | "inProgress"
+                          color="green"
+                          style={{
+                            marginLeft: lessonIndex % 2 === 1 ? 0 : -99,
+                            marginRight: lessonIndex % 2 === 0 ? 0 : -99,
+                          }}
+                          onPress={() => {
+                            setCurrLesson(lesson);
+                            setIsStartActivityModalOpen(true);
+                          }}
+                        />
+                      );
+                    })}
+                  </View>
+                </View>
+              );
+            })}
+          </ScrollView>
+        ) : (
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.header}>
+              <TouchableOpacity onPress={handleBack}>
+                <Ionicons name="arrow-back-outline" size={24} color="gray" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>{currLesson.title}</Text>
+            </View>
+
+            <ProgressBar progress={(currentIndex + 1) / currLesson.activities.length} />
+
+            <View style={styles.main}>
+              {currentQuestion && (
+                <>
+                  <Question
+                    type={currentQuestion.type === "text" ? "longAnswer" : "multipleChoice"}
+                    question={currentQuestion.question}
+                    options={currentQuestion?.options?.map((o) => o.content) ?? []}
+                    onAnswer={handleAnswer}
+                    currentAnswer={currentAnswer}
+                    placeholder={
+                      currentQuestion.type === "text" ? "Type your answer..." : undefined
+                    }
+                    variant="activity"
+                  />
+                </>
+              )}
+            </View>
+
+            <View style={styles.nextButtonContainer}>
+              <NextButton
+                onPress={() => {
+                  if (currentAffirmation) {
+                    setIsFeedbackModalOpen(true);
+                  } else {
+                    void handleNext();
+                  }
+                }}
+                disabled={!currentAnswer || isLoading}
+                textOption={
+                  currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
                 }
-              }}
-              disabled={!currentAnswer || isLoading}
-              textOption={
-                currentIndex === currLesson.activities.length - 1 ? "Complete" : "Continue"
-              }
-            />
-          </View>
-        </ScrollView>
-      )}
+              />
+            </View>
+          </ScrollView>
+        )}
+      </KeyboardAvoidingView>
 
       {currLesson && (
         <ActivityPopup
@@ -339,11 +358,10 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     alignItems: "center",
-    paddingTop: 32,
     paddingBottom: 50,
   },
   scrollContent: {
-    paddingVertical: 40,
+    paddingBottom: 40,
     paddingHorizontal: 20,
     flexGrow: 1,
     justifyContent: "flex-start",

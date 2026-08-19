@@ -1,3 +1,4 @@
+import { getAuth } from "@react-native-firebase/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import { DocumentDirectoryPath, readFile, writeFile } from "react-native-fs";
@@ -23,10 +24,11 @@ export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: strin
 
   return useQuery({
     queryKey: ["journalEntries", createdAtGte, createdAtLte],
+    enabled: !!firebaseUser,
     queryFn: async () => {
       if (!firebaseUser) return null;
       try {
-        const idToken = await firebaseUser?.getIdToken();
+        const idToken = await firebaseUser.getIdToken();
         const url = new URL(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries`);
         if (createdAtGte) {
           url.searchParams.set("createdAtGte", createdAtGte);
@@ -46,6 +48,9 @@ export const useGetJournalEntries = (createdAtGte?: string, createdAtLte?: strin
           throw new Error(`HTTP error! status: ${response.status.toString()}`);
         }
       } catch (error) {
+        // Avoid showing an error if the user has since logged out (e.g. the auth
+        // token became invalid mid-request because the user signed out).
+        if (!getAuth().currentUser) return null;
         Alert.alert(`Error retrieving journal entries: ${String(error)}`);
         return null;
       }
@@ -58,10 +63,11 @@ export const useGetJournalEntryById = (id?: string) => {
 
   return useQuery({
     queryKey: ["journalEntries", id],
+    enabled: !!firebaseUser && !!id,
     queryFn: async () => {
       if (!firebaseUser || !id) return null;
       try {
-        const idToken = await firebaseUser?.getIdToken();
+        const idToken = await firebaseUser.getIdToken();
         const response = await fetch(`${env.EXPO_PUBLIC_BACKEND_URI}/api/journalEntries/${id}`, {
           headers: {
             Authorization: `Bearer ${idToken}`,
@@ -74,6 +80,7 @@ export const useGetJournalEntryById = (id?: string) => {
           throw new Error(`HTTP error! status: ${response.status.toString()}`);
         }
       } catch (error) {
+        if (!getAuth().currentUser) return null;
         Alert.alert(`Error retrieving journal entry: ${String(error)}`);
         return null;
       }

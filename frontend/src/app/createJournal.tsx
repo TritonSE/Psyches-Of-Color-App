@@ -5,7 +5,9 @@ import { useContext, useState } from "react";
 import {
   Alert,
   Image,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -171,91 +173,95 @@ export default function CreateJournal() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.pageContainer}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={showExitModal}
-            onRequestClose={() => {
-              setShowExitModal(false);
-            }}
-          >
-            <View style={styles.blurContainer}>
-              <ExitJournal
-                onClose={() => {
-                  setShowExitModal(false);
-                }}
-              />
-            </View>
-          </Modal>
-
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => {
-                // Show the confirm exit modal if any fields were modified
-                const isModified = titleText !== "" || paragraphText !== "" || image !== null;
-                if (isModified) {
-                  setShowExitModal(true);
-                } else {
-                  router.back();
-                }
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <View style={styles.pageContainer}>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={showExitModal}
+              onRequestClose={() => {
+                setShowExitModal(false);
               }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="gray" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Journal</Text>
-          </View>
-          <View style={styles.enterTitle}>
-            <View style={styles.titleInputContainer}>
-              {titleText === "" && <Text style={styles.titlePlaceholder}>Enter Title...</Text>}
+              <View style={styles.blurContainer}>
+                <ExitJournal
+                  onClose={() => {
+                    setShowExitModal(false);
+                  }}
+                />
+              </View>
+            </Modal>
+
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => {
+                  // Show the confirm exit modal if any fields were modified
+                  const isModified = titleText !== "" || paragraphText !== "" || image !== null;
+                  if (isModified) {
+                    setShowExitModal(true);
+                  } else {
+                    router.back();
+                  }
+                }}
+              >
+                <Ionicons name="arrow-back-outline" size={24} color="gray" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Journal</Text>
+            </View>
+            <View style={styles.enterTitle}>
+              <View style={styles.titleInputContainer}>
+                {titleText === "" && <Text style={styles.titlePlaceholder}>Enter Title...</Text>}
+                <TextInput
+                  style={styles.titleInput}
+                  value={titleText}
+                  onChangeText={setTitleText}
+                  placeholder=""
+                />
+              </View>
+              <Text style={styles.date}>{formattedDate}</Text>
+            </View>
+            <View style={styles.subheader}>
+              <Journal />
+              <Text style={styles.subheadText}>Journal Entry</Text>
+            </View>
+
+            <View style={styles.inputContainer}>
+              {paragraphText === "" && <Text style={styles.placeholder}>Type here</Text>}
               <TextInput
-                style={styles.titleInput}
-                value={titleText}
-                onChangeText={setTitleText}
+                style={styles.input}
+                value={paragraphText}
+                onChangeText={setParagraphText}
                 placeholder=""
+                multiline={true}
               />
             </View>
-            <Text style={styles.date}>{formattedDate}</Text>
-          </View>
-          <View style={styles.subheader}>
-            <Journal />
-            <Text style={styles.subheadText}>Journal Entry</Text>
-          </View>
 
-          <View style={styles.inputContainer}>
-            {paragraphText === "" && <Text style={styles.placeholder}>Type here</Text>}
-            <TextInput
-              style={styles.input}
-              value={paragraphText}
-              onChangeText={setParagraphText}
-              placeholder=""
-              multiline={true}
-            />
-          </View>
-
-          <View style={styles.subheader}>
-            <Photo />
-            <Text style={styles.subheadText}>Add Photo</Text>
-          </View>
-
-          <View style={styles.subheader}>
-            <Text style={styles.caption}>
-              Note: images are stored on your local device only and will not be available if you log
-              in on another device or delete and reinstall the app!
-            </Text>
-          </View>
-
-          {image ? (
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: image }} style={styles.image} />
+            <View style={styles.subheader}>
+              <Photo />
+              <Text style={styles.subheadText}>Add Photo</Text>
             </View>
-          ) : (
-            <View></View>
-          )}
 
-          <View style={styles.imageButtons}>
-            {/* <Button
+            <View style={styles.subheader}>
+              <Text style={styles.caption}>
+                Note: images are stored on your local device only and will not be available if you
+                log in on another device or delete and reinstall the app!
+              </Text>
+            </View>
+
+            {image ? (
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: image }} style={styles.image} />
+              </View>
+            ) : (
+              <View></View>
+            )}
+
+            <View style={styles.imageButtons}>
+              {/* <Button
               onPress={() => {
                 void handleTakePhoto();
               }}
@@ -264,32 +270,33 @@ export default function CreateJournal() {
             >
               Take Photo
             </Button> */}
+              <Button
+                onPress={() => {
+                  void handleChoosePhoto();
+                }}
+                style={styles.imageButton}
+                textStyle={styles.imageButtonText}
+              >
+                Gallery
+              </Button>
+            </View>
+
             <Button
+              style={
+                titleText !== "" && paragraphText !== ""
+                  ? styles.submitButton
+                  : styles.submitButtonDisabled
+              }
+              disabled={titleText === "" || paragraphText === ""}
               onPress={() => {
-                void handleChoosePhoto();
+                void onSaveJournal();
               }}
-              style={styles.imageButton}
-              textStyle={styles.imageButtonText}
             >
-              Gallery
+              Log Journal
             </Button>
           </View>
-
-          <Button
-            style={
-              titleText !== "" && paragraphText !== ""
-                ? styles.submitButton
-                : styles.submitButtonDisabled
-            }
-            disabled={titleText === "" || paragraphText === ""}
-            onPress={() => {
-              void onSaveJournal();
-            }}
-          >
-            Log Journal
-          </Button>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
