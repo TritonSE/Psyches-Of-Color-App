@@ -86,6 +86,48 @@ router.post("/api/users", async (req: PsychesRequest, res: Response): Promise<vo
   }
 });
 
+// PUT: Update the user's lastCompletedWeeklyCheckIn to the current date/time
+// NOTE: This must be registered before the generic "/api/users/:uid" route
+// below, otherwise Express will match "last-completed-weekly" as the :uid
+// param and incorrectly reject the request with a 403.
+router.put(
+  "/api/users/last-completed-weekly",
+  verifyAuthToken,
+  async (req: PsychesRequest, res: Response): Promise<void> => {
+    try {
+      const currentUserUid = req.userUid;
+
+      const user = await User.findOne({ uid: currentUserUid });
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      // --- FIX START: Sanitize here too ---
+      // Even though we aren't adding a lesson, .save() validates the whole document.
+      // We must clean the array if it's dirty, otherwise this save will fail.
+      if (user.completedLessons && user.completedLessons.length > 0) {
+        user.completedLessons = user.completedLessons.filter((l) => l && l.lessonId);
+      }
+      // --- FIX END ---
+
+      user.lastCompletedWeeklyCheckIn = new Date();
+      await user.save();
+
+      res.status(200).json({
+        message: "Weekly check-in timestamp updated",
+        lastCompletedWeeklyCheckIn: user.lastCompletedWeeklyCheckIn,
+      });
+      return;
+    } catch (error) {
+      console.error("Error updating lastCompletedWeeklyCheckIn:", error);
+      res.status(500).json({ message: "Server error", error: (error as Error).message });
+      return;
+    }
+  },
+);
+
 // PUT route to update a user profile
 router.put(
   "/api/users/:uid",
@@ -182,45 +224,6 @@ router.put(
     } catch (error) {
       console.error("Error updating completed lessons:", error);
       res.status(500).json({ message: "Server error", error: (error as Error).message });
-    }
-  },
-);
-
-// PUT: Update the user's lastCompletedWeeklyCheckIn to the current date/time
-router.put(
-  "/api/users/last-completed-weekly",
-  verifyAuthToken,
-  async (req: PsychesRequest, res: Response): Promise<void> => {
-    try {
-      const currentUserUid = req.userUid;
-
-      const user = await User.findOne({ uid: currentUserUid });
-
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-        return;
-      }
-
-      // --- FIX START: Sanitize here too ---
-      // Even though we aren't adding a lesson, .save() validates the whole document.
-      // We must clean the array if it's dirty, otherwise this save will fail.
-      if (user.completedLessons && user.completedLessons.length > 0) {
-        user.completedLessons = user.completedLessons.filter((l) => l && l.lessonId);
-      }
-      // --- FIX END ---
-
-      user.lastCompletedWeeklyCheckIn = new Date();
-      await user.save();
-
-      res.status(200).json({
-        message: "Weekly check-in timestamp updated",
-        lastCompletedWeeklyCheckIn: user.lastCompletedWeeklyCheckIn,
-      });
-      return;
-    } catch (error) {
-      console.error("Error updating lastCompletedWeeklyCheckIn:", error);
-      res.status(500).json({ message: "Server error", error: (error as Error).message });
-      return;
     }
   },
 );
