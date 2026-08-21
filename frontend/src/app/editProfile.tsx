@@ -18,6 +18,7 @@ import Button from "@/components/Button";
 import { UserContext } from "@/contexts/userContext";
 import { User } from "@/types";
 import env from "@/util/validateEnv";
+import { lightModeColors } from "@/constants/colors";
 
 const styles = StyleSheet.create({
   editProfilePageContainer: {
@@ -159,6 +160,7 @@ export default function EditProfile() {
             <TextInput
               style={styles.inputBox}
               placeholder="Type here..."
+              placeholderTextColor={lightModeColors.mutedFont}
               value={name}
               onChangeText={(text) => {
                 setName(text);

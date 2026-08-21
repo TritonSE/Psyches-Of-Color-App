@@ -150,7 +150,10 @@ export default function Login() {
       style={styles.flexOne}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.header}>
           <Mascots style={styles.mascots} />
           <Image style={styles.logo} source={Logo} />
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightModeColors.background,
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 32,
+    paddingBottom: 64,
   },
   mascots: {
     width: 253,

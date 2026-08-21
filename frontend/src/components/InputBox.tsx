@@ -76,6 +76,7 @@ const InputBox: React.FC<InputBoxProps> = ({
         <TextInput
           style={[styles.input, style]}
           placeholder={placeholder}
+          placeholderTextColor={lightModeColors.mutedFont}
           value={value}
           onChangeText={(text) => {
             onChangeText(text.trim());

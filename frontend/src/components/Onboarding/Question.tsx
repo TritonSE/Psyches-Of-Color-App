@@ -146,6 +146,7 @@ export const Question = ({
                       <TextInput
                         style={styles.textInput}
                         placeholder="Please specify..."
+                        placeholderTextColor={lightModeColors.mutedFont}
                         value={selectedAnswer}
                         onChangeText={handleChangeText}
                         multiline={true}
@@ -184,6 +185,7 @@ export const Question = ({
             value={selectedAnswer}
             onChangeText={handleChangeText}
             placeholder={placeholder}
+            placeholderTextColor={lightModeColors.mutedFont}
             multiline={type === "longAnswer"}
           />
         </View>

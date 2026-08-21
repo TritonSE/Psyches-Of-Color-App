@@ -1,3 +1,4 @@
+import { lightModeColors } from "@/constants/colors";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -102,6 +103,7 @@ export const Question = ({
           value={selectedAnswer}
           onChangeText={handleChangeText}
           placeholder={placeholder}
+          placeholderTextColor={lightModeColors.mutedFont}
         />
       )}
     </View>
