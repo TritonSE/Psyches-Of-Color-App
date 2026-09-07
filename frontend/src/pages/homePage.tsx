@@ -20,7 +20,7 @@ import type { ImageSourcePropType } from "react-native";
 
 import CheckinPopup from "@/app/Checkin/CheckInCompletedPopup";
 import checkinIcon from "@/assets/checkinIcon.png";
-import crisisBtn from "@/assets/crisisBtn.png";
+import pocLogo from "@/assets/images/app-icon.png";
 import fireman from "@/assets/fireman.png";
 import ArrowRightIcon from "@/assets/icons/arrow-icon-right.svg";
 import ArrowLeftIcon from "@/assets/icons/arrow-icon.svg";
@@ -41,7 +41,7 @@ import MoodCheckinPopup from "@/pages/checkInPopup";
 // Ensure Image receives the correct source type when PNG modules are typed as string
 const IMG = {
   checkinIcon: checkinIcon as unknown as ImageSourcePropType,
-  crisisBtn: crisisBtn as unknown as ImageSourcePropType,
+  pocLogo: pocLogo as unknown as ImageSourcePropType,
   fireman: fireman as unknown as ImageSourcePropType,
   journalIcon: journalIcon as unknown as ImageSourcePropType,
   lessonsIcon: lessonsIcon as unknown as ImageSourcePropType,
@@ -453,9 +453,9 @@ export default function HomePage() {
             <Text style={styles.title}>Hey {mongoUser?.name ?? "there"}!</Text>
             <Text style={styles.subtitle}>Welcome Back</Text>
           </View>
-          <Button style={styles.crisisButton}>
-            <Image source={IMG.crisisBtn}></Image>
-          </Button>
+          <View style={styles.pocLogo}>
+            <Image source={IMG.pocLogo} style={styles.pocLogoImage}></Image>
+          </View>
         </View>
 
         {/* Quote Box */}
@@ -763,10 +763,17 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     color: "#2E563C",
   },
-  crisisButton: {
+  pocLogo: {
     backgroundColor: "white",
     width: 50,
     height: 50,
+    borderRadius: 25,
+    overflow: "hidden",
+  },
+  pocLogoImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   quoteBox: {
     marginTop: 24,
