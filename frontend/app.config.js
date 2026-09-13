@@ -67,7 +67,7 @@ export default {
             useFrameworks: "static",
           },
           android: {
-            targetSdkVersion: 35,
+            targetSdkVersion: 36,
           },
         },
       ],
