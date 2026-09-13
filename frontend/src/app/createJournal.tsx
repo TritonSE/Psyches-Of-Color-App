@@ -384,7 +384,6 @@ const styles = StyleSheet.create({
   titleInputContainer: {
     position: "relative",
     width: "100%",
-    height: 29,
   },
   titlePlaceholder: {
     fontFamily: "Social Gothic",
@@ -397,7 +396,11 @@ const styles = StyleSheet.create({
   },
   titleInput: {
     width: 358,
-    height: 29,
+    height: 'auto',
+    minHeight: 36,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    textAlignVertical: "center",
     fontFamily: "Social Gothic",
     fontSize: 24,
     fontWeight: 600,
